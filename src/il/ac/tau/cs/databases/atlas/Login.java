@@ -5,6 +5,7 @@ import il.ac.tau.cs.databases.atlas.graphics.Utils;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -71,10 +72,6 @@ public class Login extends JFrame {
 		// Show login screen
 		setVisible(true);
 
-		// Close login screen
-		// this.setVisible(false);
-		// this.dispose();
-
 	}
 
 	private void createLoginPanel(JPanel panel, int width, int height) {
@@ -83,14 +80,22 @@ public class Login extends JFrame {
 		panel.setOpaque(false);
 
 		// Create buttons and text boxes
+		
 		label = new JLabel("Log in or sign up:");
 		label.setForeground(Color.WHITE);
-		username = new JTextField("Username", 20);
+		label.setFont(new Font("Century Gothic", Font.PLAIN, 36));
+		
+		username = new JTextField("Username");
 		username.addMouseListener(new ClearTextBox());
+		username.setFont(new Font("Century Gothic", Font.PLAIN, 15));
+		
 		password = new JPasswordField("Password", 20);
 		password.addMouseListener(new ClearTextBox());
+		password.setFont(new Font("Century Gothic", Font.PLAIN, 15));
+		
 		loginButton = new JButton("Glimpse into the past!");
 		loginButton.addActionListener(new LoginAction());
+		loginButton.setFont(new Font("Century Gothic", Font.PLAIN, 20));
 
 		// Add buttons and text boxes
 		panel.add(label);
