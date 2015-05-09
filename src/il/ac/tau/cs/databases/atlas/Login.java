@@ -40,6 +40,7 @@ public class Login extends JFrame {
 	private JLabel label;
 	private JTextField username;
 	private JPasswordField password;
+	private JDateChooser dateOfBirth; 
 	private JButton loginButton;
 	private boolean wereCredentialsEntered = false;
 
