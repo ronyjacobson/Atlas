@@ -18,7 +18,8 @@ public class Utils {
 	public final static int MESSAGE_HEIGHT = 100;
 	public final static int BUTTON_WIDTH = 90;
 	public final static int BUTTON_HEIGHT = 50;
-	public final static String DEFAULT_FILE_NAME = "atlas.sqlproj";
+	public final static String PROJECT_NAME = "ATLAS";
+	public final static String DEFAULT_FILE_NAME = PROJECT_NAME + ".sqlproj";
 	public final static String DEFAULT_SKIN = "graphics/skins/default/";
 	public final static String PACKAGE_PATH = "/il/ac/tau/cs/databases/atlas/";
 	
