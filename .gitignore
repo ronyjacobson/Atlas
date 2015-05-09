@@ -1,3 +1,7 @@
 *.iml
 .idea/
 target/
+.classpath
+.project
+*.prefs
+src/il/ac/tau/cs/databases/atlas/graphics/skins/default/Thumbs.db
