@@ -26,6 +26,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import com.toedter.calendar.JDateChooser;
+
 /**
  * Create and show a login screen.
  * 
