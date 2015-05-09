@@ -26,6 +26,11 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+/**
+ * Create and show a login screen.
+ * 
+ * @throws IOException
+ */
 public class Login extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -61,6 +66,9 @@ public class Login extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		// Add login panel
+		// TODO change layout
+		// http://stackoverflow.com/questions/11165807/put-jbutton-in-bottom-right
+		// https://docs.oracle.com/javase/tutorial/uiswing/layout/visual.html
 		setLayout(new BorderLayout());
 		setLayout(new FlowLayout());
 		GridLayout panelLayout = new GridLayout(NUM_OF_COMPONENTS, 1);
@@ -74,6 +82,12 @@ public class Login extends JFrame {
 
 	}
 
+	/**
+	 * Create and fill the login panel
+	 * @param panel The panel to fill
+	 * @param width The parent window width
+	 * @param height The parent window height
+	 */
 	private void createLoginPanel(JPanel panel, int width, int height) {
 
 		// Make panel transparent
@@ -104,6 +118,9 @@ public class Login extends JFrame {
 		panel.add(loginButton);
 	}
 
+	/**
+	 * Clear text boxes
+	 */
 	private class ClearTextBox implements MouseListener {
 
 		@Override
@@ -132,6 +149,9 @@ public class Login extends JFrame {
 		}
 	}
 
+	/**
+	 * Log in or sign up to the system using the data base
+	 */
 	private class LoginAction implements ActionListener {
 
 		@Override
@@ -148,11 +168,26 @@ public class Login extends JFrame {
 			} else if (password.getPassword().length == 0) {
 				JOptionPane.showMessageDialog(null,
 						"Password can not be blank.", Utils.PROJECT_NAME, 1);
+			} else {
+				// Login or signup
+				verifyUsernamePassword();
 			}
-
-			// Login
-			// TODO
 		}
 
+		private void verifyUsernamePassword() {
+			// TODO
+			
+			// Close login screen
+			setVisible(false);
+			dispose();
+			
+			// Show map
+			try {
+				new Map();
+			} catch (IOException e) {
+				// TODO Handle Exception
+				e.printStackTrace();
+			}
+		}
 	}
 }
