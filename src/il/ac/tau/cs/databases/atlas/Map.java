@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import il.ac.tau.cs.databases.atlas.graphics.Utils;
+import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -30,7 +30,7 @@ public class Map extends JFrame {
 	 */
 	public Map() throws IOException {
 
-		String mapImagePath = Utils.getSkin() + "Background.png";
+		String mapImagePath = GrapicUtils.getSkin() + "Background.png";
 
 		// Get graphics attributes
 		InputStream imageStream = getClass().getResourceAsStream(mapImagePath);
@@ -42,7 +42,7 @@ public class Map extends JFrame {
 		URL imageURL = getClass().getResource(mapImagePath);
 		setContentPane(new JLabel(new ImageIcon(imageURL)));
 		setSize(width, height);
-		setTitle(Utils.PROJECT_NAME);
+		setTitle(GrapicUtils.PROJECT_NAME);
 		setLocationRelativeTo(null);
 
 		// Set Actions
@@ -57,6 +57,7 @@ public class Map extends JFrame {
 		setVisible(true);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void addComponentsToPanel(Container pane) {
 
         JButton jbnButton;
@@ -89,7 +90,8 @@ public class Map extends JFrame {
         gBC.gridy = 1;
         pane.add(jbnButton, gBC);
 
-        JComboBox jcmbSample = new JComboBox(new String[]{"ComboBox 1", "hi", "hello"});
+        @SuppressWarnings("rawtypes")
+		JComboBox jcmbSample = new JComboBox(new String[]{"ComboBox 1", "hi", "hello"});
         gBC.ipady = 0;
         gBC.weighty = 1.0;
         gBC.anchor = GridBagConstraints.PAGE_END;

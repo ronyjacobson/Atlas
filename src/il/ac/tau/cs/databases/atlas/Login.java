@@ -3,7 +3,9 @@ package il.ac.tau.cs.databases.atlas;
 import il.ac.tau.cs.databases.atlas.db.MockQueries;
 import il.ac.tau.cs.databases.atlas.db.Queries;
 import il.ac.tau.cs.databases.atlas.db.User;
-import il.ac.tau.cs.databases.atlas.graphics.Utils;
+import il.ac.tau.cs.databases.atlas.utils.AudioUtils;
+import il.ac.tau.cs.databases.atlas.utils.DateUtils;
+import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -60,7 +62,7 @@ public class Login extends JFrame {
 
 	public Login() throws IOException {
 
-		String loginImagePath = Utils.getSkin() + "Login.png";
+		String loginImagePath = GrapicUtils.getSkin() + "Login.png";
 
 		// Get graphics attributes
 		InputStream imageStream = getClass().getResourceAsStream(loginImagePath);
@@ -72,7 +74,7 @@ public class Login extends JFrame {
 		URL imageURL = getClass().getResource(loginImagePath);
 		setContentPane(new JLabel(new ImageIcon(imageURL)));
 		setSize(width, height);
-		setTitle(Utils.PROJECT_NAME);
+		setTitle(GrapicUtils.PROJECT_NAME);
 		setLocationRelativeTo(null);
 
 		// Set Actions
@@ -202,15 +204,15 @@ public class Login extends JFrame {
 
 			// Validate input
 			if (!wereCredentialsEntered) {
-				JOptionPane.showMessageDialog(null, "Please enter login credentials.", Utils.PROJECT_NAME, 1);
+				JOptionPane.showMessageDialog(null, "Please enter login credentials.", GrapicUtils.PROJECT_NAME, 1);
 			} else if (username.getText().equalsIgnoreCase("")) {
-				JOptionPane.showMessageDialog(null, "Username can not be blank.", Utils.PROJECT_NAME, 1);
+				JOptionPane.showMessageDialog(null, "Username can not be blank.", GrapicUtils.PROJECT_NAME, 1);
 			} else if (password.getPassword().length == 0) {
-				JOptionPane.showMessageDialog(null, "Password can not be blank.", Utils.PROJECT_NAME, 1);
+				JOptionPane.showMessageDialog(null, "Password can not be blank.", GrapicUtils.PROJECT_NAME, 1);
 			} else if (DateUtils.isToday(wasBornOn.getCalendar())) {
-				JOptionPane.showMessageDialog(null, "No way you were born today, enter a valid birhday.", Utils.PROJECT_NAME, 1);
+				JOptionPane.showMessageDialog(null, "No way you were born today, enter a valid birthday.", GrapicUtils.PROJECT_NAME, 1);
 			} else if (wasBornIn.getSelectedItem().toString().equals(DEFAULT_LOCATION)) {
-				JOptionPane.showMessageDialog(null, "Please choose a birth place from the list.", Utils.PROJECT_NAME, 1);
+				JOptionPane.showMessageDialog(null, "Please choose a birth place from the list.", GrapicUtils.PROJECT_NAME, 1);
 			} else {
 				// Create user
 				User user = new User(username.getText(), String.copyValueOf(password.getPassword()), wasBornOn.getDate(), wasBornIn
@@ -225,11 +227,11 @@ public class Login extends JFrame {
 						LoginSuccesful();
 					} else {
 						// Error
-						JOptionPane.showMessageDialog(null, "Wrong username and password combination.", Utils.PROJECT_NAME, 1);
+						JOptionPane.showMessageDialog(null, "Wrong username and password combination.", GrapicUtils.PROJECT_NAME, 1);
 					}
 				} else {
 					// Suggest to sing up
-					int reply = JOptionPane.showConfirmDialog(null, "Unregistered user. Would you like to register?", Utils.PROJECT_NAME,
+					int reply = JOptionPane.showConfirmDialog(null, "Unregistered user. Would you like to register?", GrapicUtils.PROJECT_NAME,
 							JOptionPane.YES_NO_OPTION);
 					if (reply == JOptionPane.YES_OPTION) {
 						if (queries.registerUser(user)) {
@@ -250,6 +252,15 @@ public class Login extends JFrame {
 		// Close login screen
 		setVisible(false);
 		dispose();
+
+		// Play audio
+		Runnable r = new Runnable() {
+			public void run() {
+				String loginAudioPath = getClass().getResource(GrapicUtils.getSkin() + "glimpse_melody.wav").getPath();
+				new AudioUtils().playSound(loginAudioPath);
+			}
+		};
+		new Thread(r).start();
 
 		// Show map
 		try {

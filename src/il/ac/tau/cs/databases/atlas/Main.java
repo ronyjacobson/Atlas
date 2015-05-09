@@ -1,7 +1,8 @@
 package il.ac.tau.cs.databases.atlas;
 
 import il.ac.tau.cs.databases.atlas.State;
-import il.ac.tau.cs.databases.atlas.graphics.Utils;
+import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
+
 import java.awt.Toolkit;
 
 public class Main {
@@ -13,7 +14,7 @@ public class Main {
 	 */
 	private static void initialize() throws Exception {
 		// Get the user's screen size
-		Utils.screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		GrapicUtils.screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		// Load earlier state
 		try {
 			State.autoLoad();

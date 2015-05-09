@@ -1,6 +1,6 @@
 package il.ac.tau.cs.databases.atlas;
 
-import il.ac.tau.cs.databases.atlas.graphics.Utils;
+import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class Splash {
 	
 	public Splash() throws IOException {
 		
-		String splashImagePath = Utils.getSkin() + "Splash.png";
+		String splashImagePath = GrapicUtils.getSkin() + "Splash.png";
 		
 		// Create Window
 		JWindow splashWindow = new JWindow();
@@ -36,8 +36,8 @@ public class Splash {
 		// Set graphics
 		URL imageURL = getClass().getResource(splashImagePath);
 		splashWindow.getContentPane().add(new JLabel("", new ImageIcon(imageURL), SwingConstants.CENTER));
-		splashWindow.setBounds((Utils.screenSize.width - width) / 2,
-				(Utils.screenSize.height - height) / 2, width, height);
+		splashWindow.setBounds((GrapicUtils.screenSize.width - width) / 2,
+				(GrapicUtils.screenSize.height - height) / 2, width, height);
 		
 		// Show splash screen
 		splashWindow.setVisible(true);

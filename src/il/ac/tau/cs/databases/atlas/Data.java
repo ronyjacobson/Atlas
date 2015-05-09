@@ -1,6 +1,6 @@
 package il.ac.tau.cs.databases.atlas;
 
-import il.ac.tau.cs.databases.atlas.graphics.Utils;
+import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -20,9 +20,9 @@ public class Data implements Serializable {
 	 */
 	public Data() {
 		setCategory(0);
-		setSkin(Utils.DEFAULT_SKIN); // Initialize default skin
+		setSkin(GrapicUtils.DEFAULT_SKIN); // Initialize default skin
 		skins = new ArrayList<>();
-		skins.add(Utils.DEFAULT_SKIN);
+		skins.add(GrapicUtils.DEFAULT_SKIN);
 	}
 		
 	public int setCategory() {

@@ -1,6 +1,6 @@
 package il.ac.tau.cs.databases.atlas;
 
-import il.ac.tau.cs.databases.atlas.graphics.Utils;
+import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -33,7 +33,7 @@ public class State {
 	public static void autoSave() throws Exception {
 		try {
 			// Serialize data object to a file
-			FileOutputStream fileOut = new FileOutputStream(Utils.DEFAULT_FILE_NAME);
+			FileOutputStream fileOut = new FileOutputStream(GrapicUtils.DEFAULT_FILE_NAME);
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
 			out.writeObject(data);
 			out.close();
@@ -46,7 +46,7 @@ public class State {
 	public static void autoLoad() throws Exception {
 		try {
 			// Deserialize data object from a file
-			FileInputStream fileIn = new FileInputStream(Utils.DEFAULT_FILE_NAME);
+			FileInputStream fileIn = new FileInputStream(GrapicUtils.DEFAULT_FILE_NAME);
 			ObjectInputStream in = new ObjectInputStream(fileIn);
 			data = (Data) in.readObject();
 			in.close();
