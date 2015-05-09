@@ -19,6 +19,7 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -42,7 +43,8 @@ public class Login extends JFrame {
 	private JLabel label;
 	private JTextField username;
 	private JPasswordField password;
-	private JDateChooser dateOfBirth; 
+	private JDateChooser wasBornOn;
+	private JComboBox<String> wasBornIn;
 	private JButton loginButton;
 	private boolean wereCredentialsEntered = false;
 
@@ -87,9 +89,13 @@ public class Login extends JFrame {
 
 	/**
 	 * Create and fill the login panel
-	 * @param panel The panel to fill
-	 * @param width The parent window width
-	 * @param height The parent window height
+	 * 
+	 * @param panel
+	 *            The panel to fill
+	 * @param width
+	 *            The parent window width
+	 * @param height
+	 *            The parent window height
 	 */
 	private void createLoginPanel(JPanel panel, int width, int height) {
 
@@ -97,28 +103,52 @@ public class Login extends JFrame {
 		panel.setOpaque(false);
 
 		// Create buttons and text boxes
-		
+		ClearTextBox clearTextBoxListner = new ClearTextBox();
+		Font labelFont = new Font("Century Gothic", Font.PLAIN, 36);
+		Font fieldFont = new Font("Century Gothic", Font.PLAIN, 15);
+
 		label = new JLabel("Log in or sign up:");
 		label.setForeground(Color.WHITE);
-		label.setFont(new Font("Century Gothic", Font.PLAIN, 36));
-		
+		label.setFont(labelFont);
+
 		username = new JTextField("Username");
-		username.addMouseListener(new ClearTextBox());
-		username.setFont(new Font("Century Gothic", Font.PLAIN, 15));
-		
+		username.addMouseListener(clearTextBoxListner);
+		username.setFont(fieldFont);
+
 		password = new JPasswordField("Password", 20);
-		password.addMouseListener(new ClearTextBox());
-		password.setFont(new Font("Century Gothic", Font.PLAIN, 15));
-		
+		password.addMouseListener(clearTextBoxListner);
+		password.setFont(fieldFont);
+
+		wasBornOn = new JDateChooser();
+		wasBornOn.addMouseListener(clearTextBoxListner);
+		wasBornOn.setFont(fieldFont);
+
+		wasBornIn = new JComboBox<String>(getAllGeoLocation());
+		wasBornIn.addMouseListener(clearTextBoxListner);
+		wasBornIn.setFont(fieldFont);
+
 		loginButton = new JButton("Glimpse into the past!");
 		loginButton.addActionListener(new LoginAction());
-		loginButton.setFont(new Font("Century Gothic", Font.PLAIN, 20));
+		loginButton.setFont(fieldFont);
 
 		// Add buttons and text boxes
 		panel.add(label);
 		panel.add(username);
 		panel.add(password);
+		//TODO
+		// panel.add(wasBornOn)
+		// panel.add(wasBornIn)
 		panel.add(loginButton);
+	}
+
+	/**
+	 * @return An array of strings representing the display names of all
+	 *         geographical locations in the database
+	 */
+	private String[] getAllGeoLocation() {
+		// TODO
+		String[] geoLocations = {"Tel-Aviv", "New-York", "Paris"};
+		return geoLocations;
 	}
 
 	/**
@@ -159,7 +189,7 @@ public class Login extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			
+
 			// Validate input
 			if (!wereCredentialsEntered) {
 				JOptionPane.showMessageDialog(null,
@@ -179,11 +209,11 @@ public class Login extends JFrame {
 
 		private void verifyUsernamePassword() {
 			// TODO
-			
+
 			// Close login screen
 			setVisible(false);
 			dispose();
-			
+
 			// Show map
 			try {
 				new Map();
