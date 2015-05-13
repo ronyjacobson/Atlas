@@ -12,14 +12,11 @@ import java.awt.Insets;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -36,10 +33,9 @@ public class Map extends JFrame {
 
 	/**
 	 * Creates and shows the map screen.
-	 * 
-	 * @throws IOException
+	 * @throws Exception 
 	 */
-	public Map() throws IOException {
+	public Map() throws Exception {
 
 		String mapImagePath = GrapicUtils.getSkin() + "Background.png";
 
@@ -63,13 +59,10 @@ public class Map extends JFrame {
 		// Set up the content pane.
 		addComponentsToPanel(getContentPane());
 		pack();
-
-		// Show map screen
-		setVisible(true);
+		
 	}
 
-	@SuppressWarnings("unchecked")
-	private void addComponentsToPanel(Container pane) {
+	private void addComponentsToPanel(Container pane) throws Exception {
 		
 		// Define Layout
 		pane.setLayout(new GridBagLayout());
@@ -97,8 +90,8 @@ public class Map extends JFrame {
 		gBC.gridy = 3;
 		pane.add(timeline, gBC);
 
+		// Add close listener so map will be disposed on close
 		addWindowListener(new WindowAdapter() {
-
 			@Override
 			public void windowClosing(WindowEvent e) {
 				// Dispose of the native component cleanly
@@ -106,14 +99,15 @@ public class Map extends JFrame {
 			}
 		});
 
+		// Set frame to be visible
 		setVisible(true);
 
-		// Initialize the native browser component, and if successful...
+		// Initialize the browser
 		if (map.initialise()) {
-			// ...navigate to the desired URL
+			// Navigate to the following URL
 			map.setUrl("http://www.google.com/maps/");
 		} else {
-			System.out.println("Failed to initialise browser");
+			throw new MapBrowser.BrowserException();
 		}
 
 	}

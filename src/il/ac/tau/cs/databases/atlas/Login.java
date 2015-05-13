@@ -266,6 +266,12 @@ public class Login extends JFrame {
 		} catch (IOException e) {
 			// TODO Handle Exception
 			e.printStackTrace();
+		} catch (MapBrowser.BrowserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }

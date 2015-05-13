@@ -145,4 +145,10 @@ public final class MapBrowser extends Canvas {
             }
         }
     }
+    
+    public static final class BrowserException extends Exception {
+    	public BrowserException() {
+			super("Failed to initialise map browser.");
+		}
+    }
 }
