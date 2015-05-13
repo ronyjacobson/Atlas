@@ -3,10 +3,11 @@ package il.ac.tau.cs.databases.atlas;
 import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
 
 import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -26,10 +27,11 @@ import javax.swing.JPanel;
 public class Map extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private static final int NUM_OF_BUTTONS = 6;
-	private static final int GAP_BETWEEN_COMPONENTS = 25;
+	private static final int GAP_BETWEEN_BUTTONS = 45;
+	private static final int GAP_BETWEEN_COMPONENTS = 10;
 	private static int width;
 	private static int height;
+	private static final MapBrowser map = new MapBrowser();
 
 	/**
 	 * Creates and shows the map screen.
@@ -67,22 +69,17 @@ public class Map extends JFrame {
 
 	@SuppressWarnings("unchecked")
 	private void addComponentsToPanel(Container pane) {
-
-		// Create Components
-		final MapBrowser map = new MapBrowser();
 		
 		// Define Layout
 		pane.setLayout(new GridBagLayout());
 		GridBagConstraints gBC = new GridBagConstraints();
 
-		// Add Buttons
-		gBC.fill = GridBagConstraints.HORIZONTAL;
-		gBC.gridx = 0;
-		gBC.gridy = 0;
+		// Add Buttons		
 		pane.add(createButtonsPanel());
 			
-		// Map
-		gBC.ipady = 350; // This component has more breadth compared to other buttons
+		// Add Map
+		gBC.fill = GridBagConstraints.HORIZONTAL;
+		gBC.ipady = 330; // This component has more breadth compared to other buttons
 		gBC.weightx = 0.0;
 		gBC.gridwidth = 3;
 		gBC.gridx = 0;
@@ -124,8 +121,7 @@ public class Map extends JFrame {
 	private JPanel createButtonsPanel() {
 		
 		// Create buttons panel
-		GridLayout buttonsPanelLayout = new GridLayout(1, NUM_OF_BUTTONS);
-		buttonsPanelLayout.setHgap(GAP_BETWEEN_COMPONENTS);
+		FlowLayout buttonsPanelLayout = new FlowLayout(FlowLayout.CENTER, GAP_BETWEEN_BUTTONS, GAP_BETWEEN_COMPONENTS);
 		JPanel buttonsPanel = new JPanel(buttonsPanelLayout);
 		
 		// Define Buttons
@@ -139,31 +135,39 @@ public class Map extends JFrame {
 		// Make panel transparent
 		buttonsPanel.setOpaque(false);
 
-		// Create buttons and text boxes
+		// Define buttons attributes
 		Font fieldFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_FIELD);
+		Dimension dimension = new Dimension(width / 20, height / 15);
 		
+		// Create buttons and text boxes
 		// Add a button for Category1 
 		buttonCategory1 = new JButton("Category 1");
+		buttonCategory1.setPreferredSize(dimension);
 		buttonCategory1.setFont(fieldFont);
 		buttonsPanel.add(buttonCategory1);
 		// Add a button for Category2
 		buttonCategory2 = new JButton("Category 2");
+		buttonCategory2.setPreferredSize(dimension);
 		buttonCategory2.setFont(fieldFont);
 		buttonsPanel.add(buttonCategory2);
 		// Add a button for Category3
 		buttonCategory3 = new JButton("Category 3");
+		buttonCategory3.setPreferredSize(dimension);
 		buttonCategory3.setFont(fieldFont);
 		buttonsPanel.add(buttonCategory3);
 		// Add a button for Category4
 		buttonCategory4 = new JButton("Category 4");
+		buttonCategory4.setPreferredSize(dimension);
 		buttonCategory4.setFont(fieldFont);
 		buttonsPanel.add(buttonCategory4);
 		// Add a button for adding values 
 		buttonAdd = new JButton("Add");
+		buttonAdd.setPreferredSize(dimension);
 		buttonAdd.setFont(fieldFont);
 		buttonsPanel.add(buttonAdd);
 		// Add a button for search 
 		buttonSearch = new JButton("Search");
+		buttonSearch.setPreferredSize(dimension);
 		buttonSearch.setFont(fieldFont);
 		buttonsPanel.add(buttonSearch);
 		
