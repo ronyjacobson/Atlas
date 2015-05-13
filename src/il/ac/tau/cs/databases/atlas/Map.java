@@ -23,6 +23,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 
 public class Map extends JFrame {
 
@@ -73,29 +74,28 @@ public class Map extends JFrame {
 		// Define Layout
 		pane.setLayout(new GridBagLayout());
 		GridBagConstraints gBC = new GridBagConstraints();
+		gBC.insets = new Insets(GAP_BETWEEN_COMPONENTS, 0, 0, 0); // Padding
 
-		// Add Buttons		
+		// Add Buttons
+		gBC.gridx = 0;
+		gBC.gridy = 1;
 		pane.add(createButtonsPanel());
 			
 		// Add Map
 		gBC.fill = GridBagConstraints.HORIZONTAL;
-		gBC.ipady = 330; // This component has more breadth compared to other buttons
+		gBC.ipady = 300; // This component has more breadth compared to other buttons
 		gBC.weightx = 0.0;
 		gBC.gridwidth = 3;
 		gBC.gridx = 0;
-		gBC.gridy = 1;
+		gBC.gridy = 2;
 		pane.add(map, gBC);
 
-		@SuppressWarnings("rawtypes")
-		JComboBox jcmbSample = new JComboBox(new String[] { "ComboBox 1", "hi", "hello" });
+		JScrollBar timeline = new JScrollBar(JScrollBar.HORIZONTAL, 0, 1, 0, 100);
 		gBC.ipady = 0;
-		gBC.weighty = 1.0;
-		gBC.anchor = GridBagConstraints.PAGE_END;
-		gBC.insets = new Insets(10, 0, 0, 0); // Padding
-		gBC.gridx = 1;
+		gBC.gridx = 0;
 		gBC.gridwidth = 2;
-		gBC.gridy = 2;
-		pane.add(jcmbSample, gBC);
+		gBC.gridy = 3;
+		pane.add(timeline, gBC);
 
 		addWindowListener(new WindowAdapter() {
 
@@ -118,8 +118,7 @@ public class Map extends JFrame {
 
 	}
 
-	private JPanel createButtonsPanel() {
-		
+	private JPanel createButtonsPanel() {		
 		// Create buttons panel
 		FlowLayout buttonsPanelLayout = new FlowLayout(FlowLayout.CENTER, GAP_BETWEEN_BUTTONS, GAP_BETWEEN_COMPONENTS);
 		JPanel buttonsPanel = new JPanel(buttonsPanelLayout);
@@ -137,41 +136,41 @@ public class Map extends JFrame {
 
 		// Define buttons attributes
 		Font fieldFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_FIELD);
-		Dimension dimension = new Dimension(width / 20, height / 15);
+		Dimension dimensionCategory = new Dimension(width / 7, height / 13);
+		Dimension dimensionOther = new Dimension((int)dimensionCategory.getWidth() / 3, (int)dimensionCategory.getHeight());
 		
 		// Create buttons and text boxes
 		// Add a button for Category1 
 		buttonCategory1 = new JButton("Category 1");
-		buttonCategory1.setPreferredSize(dimension);
+		buttonCategory1.setPreferredSize(dimensionCategory);
 		buttonCategory1.setFont(fieldFont);
 		buttonsPanel.add(buttonCategory1);
 		// Add a button for Category2
 		buttonCategory2 = new JButton("Category 2");
-		buttonCategory2.setPreferredSize(dimension);
+		buttonCategory2.setPreferredSize(dimensionCategory);
 		buttonCategory2.setFont(fieldFont);
 		buttonsPanel.add(buttonCategory2);
 		// Add a button for Category3
 		buttonCategory3 = new JButton("Category 3");
-		buttonCategory3.setPreferredSize(dimension);
+		buttonCategory3.setPreferredSize(dimensionCategory);
 		buttonCategory3.setFont(fieldFont);
 		buttonsPanel.add(buttonCategory3);
 		// Add a button for Category4
 		buttonCategory4 = new JButton("Category 4");
-		buttonCategory4.setPreferredSize(dimension);
+		buttonCategory4.setPreferredSize(dimensionCategory);
 		buttonCategory4.setFont(fieldFont);
 		buttonsPanel.add(buttonCategory4);
 		// Add a button for adding values 
-		buttonAdd = new JButton("Add");
-		buttonAdd.setPreferredSize(dimension);
+		buttonAdd = new JButton("+");
+		buttonAdd.setPreferredSize(dimensionOther);
 		buttonAdd.setFont(fieldFont);
 		buttonsPanel.add(buttonAdd);
 		// Add a button for search 
-		buttonSearch = new JButton("Search");
-		buttonSearch.setPreferredSize(dimension);
+		buttonSearch = new JButton("@");
+		buttonSearch.setPreferredSize(dimensionOther);
 		buttonSearch.setFont(fieldFont);
 		buttonsPanel.add(buttonSearch);
 		
 		// Return the panel
-		return buttonsPanel;
-	}
+		return buttonsPanel;}
 }
