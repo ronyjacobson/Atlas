@@ -14,10 +14,8 @@ import org.eclipse.swt.events.MouseListener;
 public class GrapicUtils {
 
 	public static Dimension screenSize;
-	public final static int MESSAGE_WIDTH = 250;
-	public final static int MESSAGE_HEIGHT = 100;
-	public final static int BUTTON_WIDTH = 90;
-	public final static int BUTTON_HEIGHT = 50;
+	public static final int FONT_SIZE_LABEL = 36;
+	public static final int FONT_SIZE_FIELD = 15;
 	public final static String PROJECT_NAME = "ATLAS";
 	public final static String DEFAULT_FILE_NAME = PROJECT_NAME + ".sqlproj";
 	public final static String DEFAULT_SKIN = "graphics/skins/default/";

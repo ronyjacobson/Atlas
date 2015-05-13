@@ -46,8 +46,6 @@ public class Login extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private static final int NUM_OF_COMPONENTS = 9;
 	private static final int GAP_BETWEEN_COMPONENTS = 16;
-	private static final int FONT_SIZE_LABEL = 36;
-	private static final int FONT_SIZE_FIELD = 15;
 	private static final String DEFAULT_LOCATION = "Choose birth place...";
 
 	private static final Queries queries = new MockQueries();
@@ -112,8 +110,8 @@ public class Login extends JFrame {
 
 		// Create buttons and text boxes
 		ClearTextBox clearTextBoxListner = new ClearTextBox();
-		Font labelFont = new Font("Century Gothic", Font.PLAIN, FONT_SIZE_LABEL);
-		Font fieldFont = new Font("Century Gothic", Font.PLAIN, FONT_SIZE_FIELD);
+		Font labelFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_LABEL);
+		Font fieldFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_FIELD);
 
 		label = new JLabel("Log in or sign up:");
 		label.setForeground(Color.WHITE);
