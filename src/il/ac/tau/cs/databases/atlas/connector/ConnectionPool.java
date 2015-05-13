@@ -1,9 +1,14 @@
 package il.ac.tau.cs.databases.atlas.connector;
 
-import java.util.*;
+import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
+
 import java.sql.*;
 
-public class ConnectionPool {
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+public enum ConnectionPool {
+    INSTANCE;
+
     private static final String dbBaseUrl = "jdbc:mysql://";
     private String userName;
     private String password;
@@ -11,41 +16,39 @@ public class ConnectionPool {
     private String port;
     private String dbName;
     private int maxConnections;
-    private Vector<Connection> connectionPool;
+    private ConcurrentLinkedQueue<Connection> connectionPool;
 
-    public ConnectionPool(String userName, String password, String ip, String port, String dbName) {
+    public synchronized void initialize(String userName, String password, String ip, String port, String dbName) throws AtlasServerException {
         this.userName = userName;
         this.password = password;
         this.ip = ip;
         this.port = port;
         this.dbName = dbName;
         this.maxConnections = DriverConstants.MAX_NUM_OF_CONNECTIONS;
-        connectionPool = new Vector<>();
-        initialize();
-    }
+        connectionPool = new ConcurrentLinkedQueue<>();
 
-    private void initialize() {
         //Here we can initialize all the information that we need
         DriverManager.setLoginTimeout(DriverConstants.CONNECTION_TIMEOUT);
         initializeConnectionPool();
     }
 
-    private void initializeConnectionPool() {
+    private void initializeConnectionPool() throws AtlasServerException {
         while (!isConnectionPoolFull()) {
             System.out.println("Connection Pool is NOT full. Proceeding with adding new connections");
             //Adding new connection instance until the pool is full
-            connectionPool.addElement(createNewConnectionForPool());
+            connectionPool.add(createNewConnectionForPool());
+
         }
         System.out.println("Connection Pool is full.");
     }
 
-    private synchronized boolean isConnectionPoolFull() {
+    private boolean isConnectionPoolFull() {
         //Check the pool size
         return connectionPool.size() >= maxConnections;
     }
 
     //Creating a connection
-    private Connection createNewConnectionForPool() {
+    private Connection createNewConnectionForPool() throws AtlasServerException {
         Connection connection;
 
         try {
@@ -56,35 +59,33 @@ public class ConnectionPool {
         } catch (SQLException sqle) {
             System.err.println("SQLException: " + sqle);
             System.out.println("Unable to connect - " + sqle.getMessage());
-            return null;
+            throw new AtlasServerException("Unable to create connection pool");
         } catch (ClassNotFoundException cnfe) {
             System.err.println("ClassNotFoundException: " + cnfe);
             System.out.println("Unable to load the MySQL JDBC driver..");
-            return null;
+            throw new AtlasServerException("Unable to create connection pool");
         }
 
         return connection;
     }
 
-    public synchronized Connection getConnectionFromPool() {
-        Connection connection = null;
-
+    /**
+     * @return connection if there is one available or null where pool is empty
+     */
+    public Connection getConnectionFromPool() {
         //Check if there is a connection available. There are times when all the connections in the pool may be used up
-        if (connectionPool.size() > 0) {
-            connection = connectionPool.firstElement();
-            connectionPool.removeElementAt(0);
-        }
+        Connection connection = connectionPool.poll();
         //Giving away the connection from the connection pool
         return connection;
     }
 
-    public synchronized void returnConnectionToPool(Connection connection) {
+    public void returnConnectionToPool(Connection connection) {
         //Adding the connection from the client back to the connection pool
-        connectionPool.addElement(connection);
+        connectionPool.add(connection);
     }
 
     public int getNumberOfTotalConnectionsAvailable() {
-        return this.maxConnections;
+        return maxConnections;
     }
 
     public void close() {
