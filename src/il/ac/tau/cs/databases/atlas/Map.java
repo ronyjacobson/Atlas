@@ -1,5 +1,6 @@
 package il.ac.tau.cs.databases.atlas;
 
+import il.ac.tau.cs.databases.atlas.graphics.map.MapBrowser;
 import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
 
 import java.awt.Container;
@@ -9,6 +10,8 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -105,7 +108,8 @@ public class Map extends JFrame {
 		// Initialize the browser
 		if (map.initialise()) {
 			// Navigate to the following URL
-			map.setUrl("http://www.google.com/maps/");
+			map.setUrl(GrapicUtils.MAP_HTML_PATH);
+			// Or use map.setUrl("http://www.google.com/maps/");
 		} else {
 			throw new MapBrowser.BrowserException();
 		}
@@ -133,7 +137,7 @@ public class Map extends JFrame {
 		Dimension dimensionCategory = new Dimension(width / 7, height / 13);
 		Dimension dimensionOther = new Dimension((int)dimensionCategory.getWidth() / 3, (int)dimensionCategory.getHeight());
 		
-		// Create buttons and text boxes
+		// Create buttons
 		// Add a button for Category1 
 		buttonCategory1 = new JButton("Category 1");
 		buttonCategory1.setPreferredSize(dimensionCategory);
@@ -164,6 +168,14 @@ public class Map extends JFrame {
 		buttonSearch.setPreferredSize(dimensionOther);
 		buttonSearch.setFont(fieldFont);
 		buttonsPanel.add(buttonSearch);
+		
+		// Add listeners
+		buttonCategory1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // TODO
+            }
+        });
+		
 		
 		// Return the panel
 		return buttonsPanel;}

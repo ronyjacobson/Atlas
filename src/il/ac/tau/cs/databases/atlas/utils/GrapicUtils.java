@@ -1,6 +1,7 @@
 package il.ac.tau.cs.databases.atlas.utils;
 
 import il.ac.tau.cs.databases.atlas.State;
+import il.ac.tau.cs.databases.atlas.graphics.map.MapBrowser;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -20,6 +21,7 @@ public class GrapicUtils {
 	public final static String DEFAULT_FILE_NAME = PROJECT_NAME + ".sqlproj";
 	public final static String DEFAULT_SKIN = "graphics/skins/default/";
 	public final static String PACKAGE_PATH = "/il/ac/tau/cs/databases/atlas/";
+	public final static String MAP_HTML_PATH = MapBrowser.class.getResource("map.html").getPath().substring(1);
 	
 	/**
 	 * Returns the current skin.

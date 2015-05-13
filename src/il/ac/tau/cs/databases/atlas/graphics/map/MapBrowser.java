@@ -1,4 +1,4 @@
-package il.ac.tau.cs.databases.atlas;
+package il.ac.tau.cs.databases.atlas.graphics.map;
 
 import java.awt.Canvas;
 import java.util.concurrent.CountDownLatch;
