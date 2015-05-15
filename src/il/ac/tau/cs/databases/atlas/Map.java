@@ -1,42 +1,52 @@
 package il.ac.tau.cs.databases.atlas;
 
+import il.ac.tau.cs.databases.atlas.graphics.map.MapBrowser;
+import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
+
 import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-
-import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
-
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JTextField;
+import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 
 public class Map extends JFrame {
 
 	private static final long serialVersionUID = 1L;
+	private static final int GAP_BETWEEN_BUTTONS = 45;
+	private static final int GAP_BETWEEN_COMPONENTS = 10;
+	private static int width;
+	private static int height;
+	private static final MapBrowser map = new MapBrowser();
 
 	/**
 	 * Creates and shows the map screen.
-	 * 
-	 * @throws IOException
+	 * @throws Exception 
 	 */
-	public Map() throws IOException {
+	public Map() throws Exception {
 
 		String mapImagePath = GrapicUtils.getSkin() + "Background.png";
 
 		// Get graphics attributes
 		InputStream imageStream = getClass().getResourceAsStream(mapImagePath);
 		BufferedImage image = ImageIO.read(imageStream);
-		int width = image.getWidth();
-		int height = image.getHeight();
+		width = image.getWidth();
+		height = image.getHeight();
 
 		// Set graphics
 		URL imageURL = getClass().getResource(mapImagePath);
@@ -49,57 +59,124 @@ public class Map extends JFrame {
 		setResizable(false);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-		//Set up the content pane.
-        addComponentsToPanel(getContentPane());
-        pack();
-        
-		// Show map screen
+		// Set up the content pane.
+		addComponentsToPanel(getContentPane());
+		pack();
+		
+	}
+
+	private void addComponentsToPanel(Container pane) throws Exception {
+		
+		// Define Layout
+		pane.setLayout(new GridBagLayout());
+		GridBagConstraints gBC = new GridBagConstraints();
+		gBC.insets = new Insets(GAP_BETWEEN_COMPONENTS, 0, 0, 0); // Padding
+
+		// Add Buttons
+		gBC.gridx = 0;
+		gBC.gridy = 1;
+		pane.add(createButtonsPanel());
+			
+		// Add Map
+		gBC.fill = GridBagConstraints.HORIZONTAL;
+		gBC.ipady = 300; // This component has more breadth compared to other buttons
+		gBC.weightx = 0.0;
+		gBC.gridwidth = 3;
+		gBC.gridx = 0;
+		gBC.gridy = 2;
+		pane.add(map, gBC);
+
+		JScrollBar timeline = new JScrollBar(JScrollBar.HORIZONTAL, 0, 1, 0, 100);
+		gBC.ipady = 0;
+		gBC.gridx = 0;
+		gBC.gridwidth = 2;
+		gBC.gridy = 3;
+		pane.add(timeline, gBC);
+
+		// Add close listener so map will be disposed on close
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				// Dispose of the native component cleanly
+				map.dispose();
+			}
+		});
+
+		// Set frame to be visible
 		setVisible(true);
+
+		// Initialize the browser
+		if (map.initialise()) {
+			// Navigate to the following URL
+			map.setUrl(GrapicUtils.MAP_HTML_PATH);
+			// Or use map.setUrl("http://www.google.com/maps/");
+		} else {
+			throw new MapBrowser.BrowserException();
+		}
+
 	}
 
-	@SuppressWarnings("unchecked")
-	private void addComponentsToPanel(Container pane) {
+	private JPanel createButtonsPanel() {		
+		// Create buttons panel
+		FlowLayout buttonsPanelLayout = new FlowLayout(FlowLayout.CENTER, GAP_BETWEEN_BUTTONS, GAP_BETWEEN_COMPONENTS);
+		JPanel buttonsPanel = new JPanel(buttonsPanelLayout);
+		
+		// Define Buttons
+		JButton buttonCategory1;
+		JButton buttonCategory2;
+		JButton buttonCategory3;
+		JButton buttonCategory4;
+		JButton buttonAdd;
+		JButton buttonSearch;
+		
+		// Make panel transparent
+		buttonsPanel.setOpaque(false);
 
-        JButton jbnButton;
-        pane.setLayout(new GridBagLayout());
-        GridBagConstraints gBC = new GridBagConstraints();
-        gBC.fill = GridBagConstraints.HORIZONTAL;
-
-        jbnButton = new JButton("Button 1");
-        gBC.weightx = 0.5;
-        gBC.gridx = 0;
-        gBC.gridy = 0;
-        pane.add(jbnButton, gBC);
-
-        JTextField jtf = new JTextField("TextField 1");
-        gBC.gridx = 2;
-        gBC.gridy = 0;
-        jtf.setEditable(false);
-        pane.add(jtf, gBC);
-
-        jbnButton = new JButton("Button 3");
-        gBC.gridx = 2;
-        gBC.gridy = 0;
-        pane.add(jbnButton, gBC);
-
-        jbnButton = new JButton("Button 4");
-        gBC.ipady = 40;     //This component has more breadth compared to other buttons
-        gBC.weightx = 0.0;
-        gBC.gridwidth = 3;
-        gBC.gridx = 0;
-        gBC.gridy = 1;
-        pane.add(jbnButton, gBC);
-
-        @SuppressWarnings("rawtypes")
-		JComboBox jcmbSample = new JComboBox(new String[]{"ComboBox 1", "hi", "hello"});
-        gBC.ipady = 0;
-        gBC.weighty = 1.0;
-        gBC.anchor = GridBagConstraints.PAGE_END;
-        gBC.insets = new Insets(10,0,0,0);  //Padding
-        gBC.gridx = 1;
-        gBC.gridwidth = 2;
-        gBC.gridy = 2;
-        pane.add(jcmbSample, gBC);
- 
-	}
+		// Define buttons attributes
+		Font fieldFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_FIELD);
+		Dimension dimensionCategory = new Dimension(width / 7, height / 13);
+		Dimension dimensionOther = new Dimension((int)dimensionCategory.getWidth() / 3, (int)dimensionCategory.getHeight());
+		
+		// Create buttons
+		// Add a button for Category1 
+		buttonCategory1 = new JButton("Category 1");
+		buttonCategory1.setPreferredSize(dimensionCategory);
+		buttonCategory1.setFont(fieldFont);
+		buttonsPanel.add(buttonCategory1);
+		// Add a button for Category2
+		buttonCategory2 = new JButton("Category 2");
+		buttonCategory2.setPreferredSize(dimensionCategory);
+		buttonCategory2.setFont(fieldFont);
+		buttonsPanel.add(buttonCategory2);
+		// Add a button for Category3
+		buttonCategory3 = new JButton("Category 3");
+		buttonCategory3.setPreferredSize(dimensionCategory);
+		buttonCategory3.setFont(fieldFont);
+		buttonsPanel.add(buttonCategory3);
+		// Add a button for Category4
+		buttonCategory4 = new JButton("Category 4");
+		buttonCategory4.setPreferredSize(dimensionCategory);
+		buttonCategory4.setFont(fieldFont);
+		buttonsPanel.add(buttonCategory4);
+		// Add a button for adding values 
+		buttonAdd = new JButton("+");
+		buttonAdd.setPreferredSize(dimensionOther);
+		buttonAdd.setFont(fieldFont);
+		buttonsPanel.add(buttonAdd);
+		// Add a button for search 
+		buttonSearch = new JButton("@");
+		buttonSearch.setPreferredSize(dimensionOther);
+		buttonSearch.setFont(fieldFont);
+		buttonsPanel.add(buttonSearch);
+		
+		// Add listeners
+		buttonCategory1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // TODO
+            }
+        });
+		
+		
+		// Return the panel
+		return buttonsPanel;}
 }
