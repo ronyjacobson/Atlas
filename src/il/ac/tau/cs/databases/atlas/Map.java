@@ -106,7 +106,7 @@ public class Map extends JFrame {
 		setVisible(true);
 
 		// Initialize the browser
-		if (map.initialise()) {
+		if (map.initialize()) {
 			// Navigate to the following URL
 			map.setUrl(GrapicUtils.MAP_HTML_PATH);
 			// Or use map.setUrl("http://www.google.com/maps/");

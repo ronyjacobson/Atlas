@@ -58,7 +58,7 @@ public final class MapBrowser extends Canvas {
      *
      * @return true if the browser component was successfully created; false if it was not
      */
-    public boolean initialise() {
+    public boolean initialize() {
         CountDownLatch browserCreatedLatch = new CountDownLatch(1);
         SwtThread swtThread = new SwtThread(browserCreatedLatch);
         swtThreadReference.set(swtThread);
@@ -93,7 +93,7 @@ public final class MapBrowser extends Canvas {
     private class SwtThread extends Thread {
  
         /**
-         * Initialisation latch.
+         * Initialization latch.
          */
         private final CountDownLatch browserCreatedLatch;
  
