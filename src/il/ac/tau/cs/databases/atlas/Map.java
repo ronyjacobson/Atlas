@@ -25,6 +25,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 
+import org.eclipse.swt.widgets.Display;
+
 public class Map extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -36,7 +38,8 @@ public class Map extends JFrame {
 
 	/**
 	 * Creates and shows the map screen.
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	public Map() throws Exception {
 
@@ -62,11 +65,11 @@ public class Map extends JFrame {
 		// Set up the content pane.
 		addComponentsToPanel(getContentPane());
 		pack();
-		
+
 	}
 
 	private void addComponentsToPanel(Container pane) throws Exception {
-		
+
 		// Define Layout
 		pane.setLayout(new GridBagLayout());
 		GridBagConstraints gBC = new GridBagConstraints();
@@ -76,10 +79,11 @@ public class Map extends JFrame {
 		gBC.gridx = 0;
 		gBC.gridy = 1;
 		pane.add(createButtonsPanel());
-			
+
 		// Add Map
 		gBC.fill = GridBagConstraints.HORIZONTAL;
-		gBC.ipady = 300; // This component has more breadth compared to other buttons
+		gBC.ipady = 300; // This component has more breadth compared to other
+							// buttons
 		gBC.weightx = 0.0;
 		gBC.gridwidth = 3;
 		gBC.gridx = 0;
@@ -116,11 +120,11 @@ public class Map extends JFrame {
 
 	}
 
-	private JPanel createButtonsPanel() {		
+	private JPanel createButtonsPanel() {
 		// Create buttons panel
 		FlowLayout buttonsPanelLayout = new FlowLayout(FlowLayout.CENTER, GAP_BETWEEN_BUTTONS, GAP_BETWEEN_COMPONENTS);
 		JPanel buttonsPanel = new JPanel(buttonsPanelLayout);
-		
+
 		// Define Buttons
 		JButton buttonCategory1;
 		JButton buttonCategory2;
@@ -128,17 +132,17 @@ public class Map extends JFrame {
 		JButton buttonCategory4;
 		JButton buttonAdd;
 		JButton buttonSearch;
-		
+
 		// Make panel transparent
 		buttonsPanel.setOpaque(false);
 
 		// Define buttons attributes
 		Font fieldFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_FIELD);
 		Dimension dimensionCategory = new Dimension(width / 7, height / 13);
-		Dimension dimensionOther = new Dimension((int)dimensionCategory.getWidth() / 3, (int)dimensionCategory.getHeight());
-		
+		Dimension dimensionOther = new Dimension((int) dimensionCategory.getWidth() / 3, (int) dimensionCategory.getHeight());
+
 		// Create buttons
-		// Add a button for Category1 
+		// Add a button for Category1
 		buttonCategory1 = new JButton("Category 1");
 		buttonCategory1.setPreferredSize(dimensionCategory);
 		buttonCategory1.setFont(fieldFont);
@@ -158,25 +162,32 @@ public class Map extends JFrame {
 		buttonCategory4.setPreferredSize(dimensionCategory);
 		buttonCategory4.setFont(fieldFont);
 		buttonsPanel.add(buttonCategory4);
-		// Add a button for adding values 
+		// Add a button for adding values
 		buttonAdd = new JButton("+");
 		buttonAdd.setPreferredSize(dimensionOther);
 		buttonAdd.setFont(fieldFont);
 		buttonsPanel.add(buttonAdd);
-		// Add a button for search 
+		// Add a button for search
 		buttonSearch = new JButton("@");
 		buttonSearch.setPreferredSize(dimensionOther);
 		buttonSearch.setFont(fieldFont);
 		buttonsPanel.add(buttonSearch);
-		
+
 		// Add listeners
-		buttonCategory1.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // TODO
-            }
-        });
-		
-		
+		buttonCategory1.addActionListener(new BrowserErrorActionListener());
+
 		// Return the panel
-		return buttonsPanel;}
+		return buttonsPanel;
+	}
+	
+	public class BrowserErrorActionListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					map.getBrowser().execute("error();");
+				}
+			});
+		}
+	}
 }
