@@ -66,7 +66,7 @@ public class MapBrowserListeners {
 							} else {
 								imageIcon = "./flag-death.png";
 							}
-							map.getBrowser().execute("addMarker(" + result.getLocation().getLat() + "," + result.getLocation().getLng() + ",\"" + result.getLocation().getName() + "\");");
+							map.getBrowser().execute("addMarker(" + result.getLocation().getLat() + "," + result.getLocation().getLng() + ",\"" + result.getLocation().getName() + "\",\"" + imageIcon + "\");");
 						}
 					} else {
 						// TODO Show message?
