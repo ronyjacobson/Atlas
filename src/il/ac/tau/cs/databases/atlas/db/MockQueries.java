@@ -63,12 +63,12 @@ public class MockQueries implements Queries {
 	 * @return A list of results of all the matching entries in the database
 	 */
 	@Override
-	public ArrayList<Result> getResults(int year) {
+	public ArrayList<Result> getResults(int timeSlot) {
 		List<Location> geoLocations = getAllGeoLocations();
 		ArrayList<Result> results = new ArrayList<>();
 		results.add(new Result("a", geoLocations.get(0), null, geoLocations.get(1), null, "summary a", "wwwa"));
 		results.add(new Result("b", geoLocations.get(1), null, geoLocations.get(2), null, "summary b", "wwwb"));
-		results.add(new Result("b", geoLocations.get(2), null, geoLocations.get(0), null, "summary c", "wwwc"));
+		if (timeSlot % 2 != 0 ) results.add(new Result("b", geoLocations.get(2), null, geoLocations.get(0), null, "summary c", "wwwc"));
 		return results;
 	}
 

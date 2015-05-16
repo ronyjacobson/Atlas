@@ -46,14 +46,37 @@ public class MapBrowserListeners {
 	}
 
 	public static class BrowserAddMarkerActionListener implements ActionListener {
+		
+		int timeSlot;
+		
+		public BrowserAddMarkerActionListener(int timeSlot) {
+			this.timeSlot = timeSlot;
+		}
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
 					if (map != null) {
-						for (Result result : queries.getResults(0)) {
+						map.getBrowser().execute("deleteMarkers();");
+						for (Result result : queries.getResults(timeSlot)) {
 							map.getBrowser().execute("addMarker(" + result.getPlaceOnBirth().getLat() + "," + result.getPlaceOnBirth().getLng() + ",\"" + result.getPlaceOnBirth().getName() + "\");");
 						}
+					} else {
+						// TODO Show message?
+					}
+				}
+			});
+		}
+	}
+	
+	public static class BrowserDeleteMarkersActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					if (map != null) {
+						map.getBrowser().execute("deleteMarkers();");
 					} else {
 						// TODO Show message?
 					}

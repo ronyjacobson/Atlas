@@ -8,6 +8,6 @@ public interface Queries {
 	public boolean areUsernamePasswordCorrect(User user);
 	public boolean registerUser(User user);
 	public List<Location> getAllGeoLocations();
-	public List<Result> getResults(int year);
+	public List<Result> getResults(int timeSlot);
 	public List<String> getAllGeoLocationsNames();
 }

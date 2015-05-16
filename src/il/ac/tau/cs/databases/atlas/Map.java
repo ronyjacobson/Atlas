@@ -175,7 +175,9 @@ public class Map extends JFrame {
 		// Add listeners
 		buttonCategory1.addActionListener(new MapBrowserListeners.BrowserErrorActionListener());
 		buttonCategory2.addActionListener(new MapBrowserListeners.BrowserErrorActionListener("My Error"));
-		buttonCategory3.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener());
+		buttonCategory3.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(3));
+		buttonCategory4.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(4));
+		buttonAdd.addActionListener(new MapBrowserListeners.BrowserDeleteMarkersActionListener());
 
 		// Return the panel
 		return buttonsPanel;

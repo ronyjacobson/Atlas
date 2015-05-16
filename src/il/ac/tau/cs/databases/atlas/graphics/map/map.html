@@ -18,6 +18,7 @@
     <script type="text/javascript">
 
       var map;
+      var markers = [];
 
       function error(msg) {
 	alert(msg);
@@ -30,6 +31,27 @@
             map: map,
             title: name
             });
+            markers.push(marker);
+      }
+
+      function setAllMap(map) {
+            for (var i = 0; i < markers.length; i++) {
+                  markers[i].setMap(map);
+            }
+      }
+
+
+      function clearMarkers() {
+            setAllMap(null);
+      }
+
+      function showMarkers() {
+            setAllMap(map);
+      }
+
+      function deleteMarkers() {
+            clearMarkers();
+            markers = [];
       }
 
       function initialize() {
