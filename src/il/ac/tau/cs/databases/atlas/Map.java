@@ -1,6 +1,7 @@
 package il.ac.tau.cs.databases.atlas;
 
 import il.ac.tau.cs.databases.atlas.graphics.map.MapBrowser;
+import il.ac.tau.cs.databases.atlas.graphics.map.MapBrowserListeners;
 import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
 
 import java.awt.Container;
@@ -10,13 +11,12 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.net.URL;
+
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -24,8 +24,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
-
-import org.eclipse.swt.widgets.Display;
 
 public class Map extends JFrame {
 
@@ -113,7 +111,8 @@ public class Map extends JFrame {
 		if (map.initialize()) {
 			// Navigate to the following URL
 			map.setUrl(GrapicUtils.MAP_HTML_PATH);
-			// Or use map.setUrl("http://www.google.com/maps/");
+			// Set map for browser actions
+			MapBrowserListeners.setMap(map);
 		} else {
 			throw new MapBrowser.BrowserException();
 		}
@@ -174,20 +173,10 @@ public class Map extends JFrame {
 		buttonsPanel.add(buttonSearch);
 
 		// Add listeners
-		buttonCategory1.addActionListener(new BrowserErrorActionListener());
+		buttonCategory1.addActionListener(new MapBrowserListeners.BrowserErrorActionListener());
+		buttonCategory2.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener());
 
 		// Return the panel
 		return buttonsPanel;
-	}
-	
-	public class BrowserErrorActionListener implements ActionListener{
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					map.getBrowser().execute("error();");
-				}
-			});
-		}
 	}
 }

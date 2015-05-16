@@ -23,6 +23,15 @@
 	alert("A browser error occurred.");
       }
 
+
+      function addMarker(lat,lng) {
+            var marker = new google.maps.Marker({
+            position: new google.maps.LatLng(lat, lng),
+            map: map,
+            title: 'Chicago'
+            });
+      }
+
       function initialize() {
 
         var mapOptions = {
