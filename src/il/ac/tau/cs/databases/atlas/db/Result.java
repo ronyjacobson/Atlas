@@ -8,19 +8,17 @@ public class Result {
 	 *  A class representing a query result
 	 */
 	private String name;
-	private Location placeOnBirth;
-	private Date dateOfBirth;
-	private Location placeOnDeath;
-	private Date dateOfDeath;
+	private Location location;
+	private Date date;
+	private boolean isBirth;
 	private String summary;
 	private String wikiLink;
 	
-	public Result(String name, Location placeOnBirth, Date dateOfBirth, Location placeOnDeath, Date dateOfDeath, String summary, String wikiLink) {
+	public Result(String name, Location location, Date date, boolean isBirth, String summary, String wikiLink) {
 		this.name = name;
-		this.placeOnBirth = placeOnBirth;
-		this.dateOfBirth = dateOfBirth;
-		this.placeOnDeath = placeOnDeath;
-		this.dateOfDeath = dateOfDeath;
+		this.location = location;
+		this.isBirth = isBirth;
+		this.date = date;
 		this.summary = summary;
 		this.wikiLink = wikiLink;
 	}
@@ -33,38 +31,30 @@ public class Result {
 		this.name = name;
 	}
 
-	public Location getPlaceOnBirth() {
-		return placeOnBirth;
+	public Location getLocation() {
+		return location;
 	}
 
-	public void setPlaceOnBirth(Location placeOnBirth) {
-		this.placeOnBirth = placeOnBirth;
+	public void setLocation(Location location) {
+		this.location = location;
 	}
 
-	public Date getDateOfBirth() {
-		return dateOfBirth;
+	public Date getDate() {
+		return date;
 	}
 
-	public void setDateOfBirth(Date dateOfBirth) {
-		this.dateOfBirth = dateOfBirth;
+	public void setDate(Date date) {
+		this.date = date;
+	}
+	
+	public boolean isBirth() {
+		return isBirth;
 	}
 
-	public Location getPlaceOnDeath() {
-		return placeOnDeath;
+	public void setBirth(boolean isBirth) {
+		this.isBirth = isBirth;
 	}
-
-	public void setPlaceOnDeath(Location placeOnDeath) {
-		this.placeOnDeath = placeOnDeath;
-	}
-
-	public Date getDateOfDeath() {
-		return dateOfDeath;
-	}
-
-	public void setDateOfDeath(Date dateOfDeath) {
-		this.dateOfDeath = dateOfDeath;
-	}
-
+	
 	public String getSummary() {
 		return summary;
 	}

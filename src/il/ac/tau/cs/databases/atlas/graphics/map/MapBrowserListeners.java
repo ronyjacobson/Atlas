@@ -60,7 +60,13 @@ public class MapBrowserListeners {
 					if (map != null) {
 						map.getBrowser().execute("deleteMarkers();");
 						for (Result result : queries.getResults(timeSlot)) {
-							map.getBrowser().execute("addMarker(" + result.getPlaceOnBirth().getLat() + "," + result.getPlaceOnBirth().getLng() + ",\"" + result.getPlaceOnBirth().getName() + "\");");
+							String imageIcon;
+							if (result.isBirth()){
+								imageIcon = "./flag-birth.png";
+							} else {
+								imageIcon = "./flag-death.png";
+							}
+							map.getBrowser().execute("addMarker(" + result.getLocation().getLat() + "," + result.getLocation().getLng() + ",\"" + result.getLocation().getName() + "\");");
 						}
 					} else {
 						// TODO Show message?
