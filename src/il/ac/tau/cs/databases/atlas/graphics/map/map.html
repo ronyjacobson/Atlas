@@ -19,16 +19,16 @@
 
       var map;
 
-      function error() {
-	alert("A browser error occurred.");
+      function error(msg) {
+	alert(msg);
       }
 
 
-      function addMarker(lat,lng) {
+      function addMarker(lat,lng,name) {
             var marker = new google.maps.Marker({
             position: new google.maps.LatLng(lat, lng),
             map: map,
-            title: 'Chicago'
+            title: name
             });
       }
 

@@ -133,7 +133,7 @@ public class Login extends JFrame {
 		wasBornOn.addMouseListener(clearTextBoxListner);
 		wasBornOn.setFont(fieldFont);
 
-		List<String> options = queries.getAllGeoLocations();
+		List<String> options = queries.getAllGeoLocationsNames();
 		options.add(0, DEFAULT_LOCATION);
 		wasBornIn = new JComboBox<String>(options.toArray(new String[options.size()]));
 		wasBornIn.setFont(fieldFont);

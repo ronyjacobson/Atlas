@@ -1,6 +1,7 @@
 package il.ac.tau.cs.databases.atlas.db;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class MockQueries implements Queries {
@@ -30,16 +31,46 @@ public class MockQueries implements Queries {
 		return true;
 	}
 
+
+	/**
+	 * @return A list of all geographical locations in the database
+	 */
+	@Override
+	public List<Location> getAllGeoLocations() {
+		ArrayList<Location> geoLocations = new ArrayList<>();
+		geoLocations.add(new Location("Tel-Aviv", 32.0667, 34.8000));
+		geoLocations.add(new Location("New-York", 40.748817, -73.985428));
+		geoLocations.add(new Location("Paris", 48.8567, 2.3508));
+		return geoLocations;
+	}
+	
+
 	/**
 	 * @return A list of strings representing the display names of all
 	 *         geographical locations in the database
 	 */
 	@Override
-	public ArrayList<String> getAllGeoLocations() {
-		ArrayList<String> geoLocations = new ArrayList<>();
-		geoLocations.add("Tel-Aviv");
-		geoLocations.add("New-York");
-		geoLocations.add("Paris");
-		return geoLocations;
+	public List<String> getAllGeoLocationsNames() {
+		List<Location> geoLocations = getAllGeoLocations();
+		ArrayList<String> geoLocationsNames = new ArrayList<>();
+		for (Location location : geoLocations){
+			geoLocationsNames.add(location.getName());
+		}
+		return geoLocationsNames;
 	}
+
+	/**
+	 * @return A list of results of all the matching entries in the database
+	 */
+	@Override
+	public ArrayList<Result> getResults(int year) {
+		List<Location> geoLocations = getAllGeoLocations();
+		ArrayList<Result> results = new ArrayList<>();
+		results.add(new Result("a", geoLocations.get(0), null, geoLocations.get(1), null, "summary a", "wwwa"));
+		results.add(new Result("b", geoLocations.get(1), null, geoLocations.get(2), null, "summary b", "wwwb"));
+		results.add(new Result("b", geoLocations.get(2), null, geoLocations.get(0), null, "summary c", "wwwc"));
+		return results;
+	}
+
+
 }
