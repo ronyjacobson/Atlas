@@ -20,13 +20,24 @@
       var map;
       var markers = [];
       var myCenter = new google.maps.LatLng(31.0000, 0);
+      var infowindow;
 
       function error(msg) {
 	alert(msg);
       }
 
-
-      function addMarker(lat,lng,name,img) {
+      function addMarker(lat,lng,name,img,summery,wikilink) {
+            var contentString = '<div id="content">'+
+                 '<div id="siteNotice">'+
+                 '</div>'+
+                 '<h1 id="firstHeading" class="firstHeading">' + name + '</h1>' +
+                 '<div id="bodyContent">'+
+                 '<p>' + summery + '</p>'+
+                 '<p>Wikipedia link: ' + name + ', <a href="' + wikilink +'">'+
+                 wikilink + '</a> '+
+                 '</p>'+
+                 '</div>'+
+                 '</div>';
             var image = img;
             var marker = new google.maps.Marker({
             position: new google.maps.LatLng(lat, lng),
@@ -35,6 +46,13 @@
             icon: image
             });
             markers.push(marker);
+            google.maps.event.addListener(marker, 'click', function() {
+                  infowindow = new google.maps.InfoWindow({
+                      content: contentString,
+                      maxWidth: 450
+                  })
+                  infowindow.open(map,marker);
+            });
       }
 
       function setAllMap(map) {

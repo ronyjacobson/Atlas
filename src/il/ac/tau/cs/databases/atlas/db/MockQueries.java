@@ -66,9 +66,9 @@ public class MockQueries implements Queries {
 	public ArrayList<Result> getResults(int timeSlot) {
 		List<Location> geoLocations = getAllGeoLocations();
 		ArrayList<Result> results = new ArrayList<>();
-		if (timeSlot % 3 != 0 )results.add(new Result("a", geoLocations.get(0), null, true, "summary a", "wwwa"));
-		results.add(new Result("b", geoLocations.get(1), null, false, "summary b", "wwwb"));
-		if (timeSlot % 2 != 0 ) results.add(new Result("c", geoLocations.get(2), null, true, "summary c", "wwwc"));
+		if (timeSlot % 3 != 0 )results.add(new Result("a", geoLocations.get(0), null, true, "summary a", "https://en.wikipedia.org/w/index.php?title=A"));
+		results.add(new Result("b", geoLocations.get(1), null, false, "summary b", "https://en.wikipedia.org/w/index.php?title=B"));
+		if (timeSlot % 2 != 0 ) results.add(new Result("c", geoLocations.get(2), null, true, "summary c", "https://en.wikipedia.org/w/index.php?title=C"));
 		return results;
 	}
 
