@@ -1,6 +1,9 @@
 package il.ac.tau.cs.databases.atlas.connector.command.base;
 
 import il.ac.tau.cs.databases.atlas.connector.ConnectionPool;
+import il.ac.tau.cs.databases.atlas.connector.DynamicConnectionPool;
+import il.ac.tau.cs.databases.atlas.connector.FixedConnectionPool;
+import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
@@ -10,13 +13,13 @@ import java.sql.*;
  */
 public abstract class BaseDBCommand<T> {
     protected final Logger logger = Logger.getLogger(this.getClass().getName());
-    private static ConnectionPool connectionPool = ConnectionPool.INSTANCE;
+    private static ConnectionPool connectionPool = DynamicConnectionPool.INSTANCE;
 
 
-    public T execute() {
-        final Connection con = connectionPool.getConnectionFromPool();
+    public T execute() throws AtlasServerException {
+        final Connection con = connectionPool.checkOut();
         T result = innerExecute(con);
-        connectionPool.returnConnectionToPool(con);
+        connectionPool.checkIn(con);
         return result;
     }
 
@@ -25,7 +28,7 @@ public abstract class BaseDBCommand<T> {
      *
      * @return the value extracted from statement or resultSet
      */
-    protected abstract T innerExecute(Connection con);
+    protected abstract T innerExecute(Connection con) throws AtlasServerException;
 
     /**
      * Attempts to close all the given resources, ignoring errors
