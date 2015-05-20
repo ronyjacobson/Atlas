@@ -16,49 +16,86 @@
     </script>
 
     <script type="text/javascript">
-
+	
+      <!-- Define main parameters -->
       var map;
       var markers = [];
-      var myCenter = new google.maps.LatLng(31.0000, 0);
+      var mapCenter = new google.maps.LatLng(31.0000, 0);
+      var infowindow;
 
+      <!-- Error a custom message to the screen -->
       function error(msg) {
 	alert(msg);
       }
 
-
-      function addMarker(lat,lng,name,img) {
+      <!-- Add a location marker to the map -->
+      <!-- The marker will be places at (lat,lng) -->
+      <!-- Hovering over the marker will show name -->
+      <!-- The marker's icon will be img -->
+      <!-- Pressing the marker will show an info screen with the name as -->
+      <!-- a title, summery as the content and a link to wikipedia which is wikilink -->
+      function addMarker(lat,lng,name,img,summery,wikilink) {
+            // Define the icon of the marker
             var image = img;
+            // Define the content to be shown in the info screen
+            var contentString = '<div id="content">'+
+                 '<div id="siteNotice">'+
+                 '</div>'+
+                 '<h1 id="firstHeading" class="firstHeading">' + name + '</h1>' +
+                 '<div id="bodyContent">'+
+                 '<p>' + summery + '</p>'+
+                 '<p>Wikipedia link: ' + name + ', <a href="' + wikilink +'">'+
+                 wikilink + '</a> '+
+                 '</p>'+
+                 '</div>'+
+                 '</div>';
+            // Define the marker and it's properties
             var marker = new google.maps.Marker({
-            position: new google.maps.LatLng(lat, lng),
-            map: map,
-            title: name,
-            icon: image
+                position: new google.maps.LatLng(lat, lng),
+                map: map,
+                title: name,
+                icon: image
             });
+            // Store marker in memory
             markers.push(marker);
+            // Add on click listner to the marker si the info screen will be shown
+            google.maps.event.addListener(marker, 'click', function() {
+                  // Define the info screen
+                  infowindow = new google.maps.InfoWindow({
+                      content: contentString,
+                      maxWidth: 450
+                  })
+                  infowindow.open(map,marker);
+            });
       }
 
+      <!-- Set the map for all markers -->
       function setAllMap(map) {
             for (var i = 0; i < markers.length; i++) {
                   markers[i].setMap(map);
             }
       }
 
-
+      <!-- Clear the map of all markers but keep markers in memory -->
       function clearMarkers() {
             setAllMap(null);
       }
 
+
+      <!-- Show all markers on the map -->
       function showMarkers() {
             setAllMap(map);
       }
 
+
+      <!-- Delete the all markers on the map and in memory -->
       function deleteMarkers() {
             clearMarkers();
             markers = [];
       }
 
+      <!-- Define the center button -->
       function CenterControl(controlDiv, map) {
-
         // Set CSS for the control border
         var controlUI = document.createElement('div');
         controlUI.style.backgroundColor = '#fff';
@@ -85,31 +122,36 @@
         // Setup the click event listeners
         google.maps.event.addDomListener(controlUI, 'click', function() {
           map.setZoom(2)
-          map.setCenter(myCenter)
+          map.setCenter(mapCenter)
         });
+      }
 
-}
+      <!-- The map initilatization function -->
       function initialize() {
-
+	// Define the map properties
         var mapDiv = document.getElementById('map-canvas');
         var mapOptions = {
-          center: myCenter,
+          center: mapCenter,
           mapTypeId: google.maps.MapTypeId.SATELLITE,
           zoom: 2,
           streetViewControl: false,
           minZoom: 2,
           maxZoom: 17
         };
+
+        // Create the map
         map = new google.maps.Map(document.getElementById("map-canvas"),
             mapOptions);
 
+        // Add the center button
         var centerControlDiv = document.createElement('div');
         var centerControl = new CenterControl(centerControlDiv, map);
-
         centerControlDiv.index = 1;
         map.controls[google.maps.ControlPosition.LEFT].push(centerControlDiv);
       }
 
+      <!-- Main -->
+      // Load the map
       google.maps.event.addDomListener(window, 'load', initialize);
 
     </script>
