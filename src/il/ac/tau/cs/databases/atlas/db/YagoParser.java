@@ -23,6 +23,7 @@ public class YagoParser {
     private Set<String> locationTypes;
     private Set<String> categoryTypes;
     private Set<String> wikiTypes;
+    private Set<String> labelTypes;
 
     public YagoParser(File yagoDateFile, File yagoLocationFile, File yagoCategoryFile, File yagoLabelsFile, File yagoWikiFile, File yagoGeonamesFile, File geonamesCitiesFile, String parserOutputPath) {
         this.yagoDateFile = yagoDateFile;
@@ -69,7 +70,6 @@ public class YagoParser {
             String[] cols = line.trim().split("\\t");
             if (dateTypes.contains(cols[2])) {
                 File outfile = new File(concatToOutPath("date_" + cols[2] + ".tsv"));
-                File outfile = new File("date_" + cols[2] + ".tsv");
                 FileWriter fw = new FileWriter(outfile, true);
                 PrintWriter pw = new PrintWriter(fw, true);
                 Matcher m = p.matcher(cols[3]);
@@ -135,9 +135,8 @@ public class YagoParser {
     }
 
 
-    public void parseYagoGeonamesFile(String inputFilename) throws IOException {
-        File inputFile = new File(inputFilename);
-        BufferedReader br = new BufferedReader(new FileReader(inputFile));
+    public void parseYagoGeonamesFile(File yagoGeonamesFile) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(yagoGeonamesFile));
         Pattern p = Pattern.compile("http://sws.geonames.org/([0-9]+)");
         String line;
         while ((line = br.readLine()) != null) {
@@ -172,14 +171,13 @@ public class YagoParser {
         br.close();
     }
 
-    public void parseYagoLabelsFile(String inputFilename, Set<String> types) throws IOException {
-        File inputFile = new File(inputFilename);
-        BufferedReader br = new BufferedReader(new FileReader(inputFile));
+    public void parseYagoLabelsFile(File yagoLabelsFile) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(yagoLabelsFile));
         Pattern p = Pattern.compile("\"(.*)\"@eng");
         String line;
         while ((line = br.readLine()) != null) {
             String[] cols = line.trim().split("\\t");
-            if (types.contains(cols[2])) {
+            if (labelTypes.contains(cols[2])) {
                 File outfile = new File("labels.tsv");
                 FileWriter fw = new FileWriter(outfile, true);
                 PrintWriter pw = new PrintWriter(fw, true);
@@ -207,7 +205,7 @@ public class YagoParser {
         parseYagoCategoryFile(yagoCategoryFile);
         System.out.print("   Done\n");
         System.out.print("Parsing YAGO labels..");
-        parseYagoLabelsFile("/Users/admin/Downloads/yagoLabels.tsv", labelTypes);
+        parseYagoLabelsFile(yagoLabelsFile);
         System.out.print("Parsing YAGO wikipedia info..");
         parseYagoWikiFile(yagoWikiFile);
         System.out.print("   Done\n");

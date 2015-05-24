@@ -15,16 +15,18 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
     private File yagoDateFile;
     private File yagoLocationFile;
     private File yagoCategoryFile;
+    private File yagoLabelsFile;
     private File yagoWikiFile;
     private File yagoGeonamesFile;
     private File geonamesCitiesFile;
     private String parserOutputPath;
     private AtomicInteger progress;
 
-    public ParseFilesCommand(File yagoDateFile, File yagoLocationFile, File yagoCategoryFile, File yagoWikiFile, File yagoGeonamesFile, File geonamesCitiesFile, String parserOutputPath, AtomicInteger progress) {
+    public ParseFilesCommand(File yagoDateFile, File yagoLocationFile, File yagoCategoryFile, File yagoLabelsFile, File yagoWikiFile, File yagoGeonamesFile, File geonamesCitiesFile, String parserOutputPath, AtomicInteger progress) {
         this.yagoDateFile = yagoDateFile;
         this.yagoLocationFile = yagoLocationFile;
         this.yagoCategoryFile = yagoCategoryFile;
+        this.yagoLabelsFile = yagoLabelsFile;
         this.yagoWikiFile = yagoWikiFile;
         this.yagoGeonamesFile = yagoGeonamesFile;
         this.geonamesCitiesFile = geonamesCitiesFile;
@@ -36,7 +38,7 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
     @Override
     protected Boolean innerExecute(Connection con) throws AtlasServerException {
         // GUI should check if files exist
-        YagoParser yagoParser = new YagoParser(yagoDateFile, yagoLocationFile, yagoCategoryFile, yagoWikiFile, yagoGeonamesFile, geonamesCitiesFile, parserOutputPath);
+        YagoParser yagoParser = new YagoParser(yagoDateFile, yagoLocationFile, yagoCategoryFile, yagoLabelsFile, yagoWikiFile, yagoGeonamesFile, geonamesCitiesFile, parserOutputPath);
         try {
             yagoParser.parseFiles();
         } catch (IOException e) {
