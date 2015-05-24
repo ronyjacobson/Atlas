@@ -4,7 +4,9 @@ import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
 import java.sql.*;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This class is a singleton connection pool (thus the enum) with a fixed number of connections.
@@ -20,7 +22,7 @@ public enum FixedConnectionPool implements ConnectionPool {
     private String port;
     private String dbName;
     private int maxConnections;
-    private ConcurrentLinkedQueue<Connection> connectionPool;
+    private BlockingQueue<Connection> connectionPool;
 
     public synchronized void initialize(String userName, String password, String ip, String port, String dbName) throws AtlasServerException {
         this.userName = userName;
@@ -29,7 +31,7 @@ public enum FixedConnectionPool implements ConnectionPool {
         this.port = port;
         this.dbName = dbName;
         this.maxConnections = DriverConstants.MAX_NUM_OF_CONNECTIONS;
-        connectionPool = new ConcurrentLinkedQueue<>();
+        connectionPool = new ArrayBlockingQueue<>(maxConnections);
 
         //Here we can initialize all the information that we need
         DriverManager.setLoginTimeout(DriverConstants.CONNECTION_TIMEOUT);
@@ -78,7 +80,12 @@ public enum FixedConnectionPool implements ConnectionPool {
      */
     public Connection checkOut() {
         //Check if there is a connection available. There are times when all the connections in the pool may be used up
-        Connection connection = connectionPool.poll();
+        Connection connection = null;
+        try {
+            connection = connectionPool.poll(20, TimeUnit.SECONDS); // Block if no connection is available
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         //Giving away the connection from the connection pool
         return connection;
     }
