@@ -10,6 +10,10 @@ public class YagoParser {
 
     public static final String GEO_CITIES_INFO_OUT_NAME = "geo_cities_info.tsv";
     public static final String GEO_INFO_OUT_NAME = "geo_info.tsv";
+    public static final String WIKI_INFO_OUT_NAME = "wiki_info.tsv";
+    public static final String LABELS_INFO_OUT_NAME = "labels_info.tsv";
+    public static final String GEONAMES_URL_REGEX = "http://sws.geonames.org/([0-9]+)";
+    public static final String DATE_REGEX = "[0-9][0-9][0-9][0-9]-[#0-9][#0-9]-[#0-9][#0-9]";
 
     private final File yagoDateFile;
     private final File yagoLocationFile;
@@ -24,6 +28,10 @@ public class YagoParser {
     private Set<String> categoryTypes;
     private Set<String> wikiTypes;
     private Set<String> labelTypes;
+
+    private String concatToOutPath(String outFileName) {
+        return outputPath + File.separator + outFileName;
+    }
 
     public YagoParser(File yagoDateFile, File yagoLocationFile, File yagoCategoryFile, File yagoLabelsFile, File yagoWikiFile, File yagoGeonamesFile, File geonamesCitiesFile, String parserOutputPath) {
         this.yagoDateFile = yagoDateFile;
@@ -64,7 +72,7 @@ public class YagoParser {
 
     public void parseYagoDateFile(File yagoDateFile) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(yagoDateFile));
-        Pattern p = Pattern.compile("[0-9][0-9][0-9][0-9]-[#0-9][#0-9]-[#0-9][#0-9]");
+        Pattern p = Pattern.compile(DATE_REGEX);
         String line;
         while ((line = br.readLine()) != null) {
             String[] cols = line.trim().split("\\t");
@@ -80,10 +88,6 @@ public class YagoParser {
             }
         }
         br.close();
-    }
-
-    private String concatToOutPath(String outFileName) {
-        return outputPath + File.separator + outFileName;
     }
 
     public void parseYagoLocationFile(File yagoLocationFile) throws IOException {
@@ -124,7 +128,7 @@ public class YagoParser {
         while ((line = br.readLine()) != null) {
             String[] cols = line.trim().split("\\t");
             if (wikiTypes.contains(cols[1])) {
-                File outfile = new File(concatToOutPath("wiki_info.tsv"));
+                File outfile = new File(concatToOutPath(WIKI_INFO_OUT_NAME));
                 FileWriter fw = new FileWriter(outfile, true);
                 PrintWriter pw = new PrintWriter(fw, true);
                 pw.println(cols[0] + "\t" + cols[2]);
@@ -137,7 +141,7 @@ public class YagoParser {
 
     public void parseYagoGeonamesFile(File yagoGeonamesFile) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(yagoGeonamesFile));
-        Pattern p = Pattern.compile("http://sws.geonames.org/([0-9]+)");
+        Pattern p = Pattern.compile(GEONAMES_URL_REGEX);
         String line;
         while ((line = br.readLine()) != null) {
             String[] cols = line.trim().split("\\t");
@@ -178,7 +182,7 @@ public class YagoParser {
         while ((line = br.readLine()) != null) {
             String[] cols = line.trim().split("\\t");
             if (labelTypes.contains(cols[2])) {
-                File outfile = new File("labels.tsv");
+                File outfile = new File(LABELS_INFO_OUT_NAME);
                 FileWriter fw = new FileWriter(outfile, true);
                 PrintWriter pw = new PrintWriter(fw, true);
                 Matcher m = p.matcher(cols[3]);
@@ -190,7 +194,6 @@ public class YagoParser {
         }
         br.close();
     }
-
 
     public void parseFiles() throws IOException {
         validateFiles();
@@ -229,7 +232,6 @@ public class YagoParser {
                 new File("/Users/admin/Downloads/cities1000.txt"), "/Users/admin/Downloads");
         yagoParser.validateFiles();
         yagoParser.parseFiles();
-
     }
 
     private void validateFiles() {
