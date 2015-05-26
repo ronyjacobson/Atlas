@@ -196,28 +196,32 @@ public class YagoParser {
     }
 
     public void parseFiles() throws IOException {
-        validateFiles();
+        if (!validateFiles()) {
+            System.out.println("Terminating..");
+            throw new IOException("Bad input file");
+        }
+
         System.out.println("Parser started");
         System.out.print("Parsing dates..");
-        parseYagoDateFile(yagoDateFile);
-        System.out.print("   Done\n");
+        //parseYagoDateFile(yagoDateFile);
+        System.out.println("   Done");
         System.out.print("Parsing YAGO locations..");
-        parseYagoLocationFile(yagoLocationFile);
-        System.out.print("   Done\n");
+        //parseYagoLocationFile(yagoLocationFile);
+        System.out.println("   Done");
         System.out.print("Parsing YAGO categories..");
-        parseYagoCategoryFile(yagoCategoryFile);
-        System.out.print("   Done\n");
+        //parseYagoCategoryFile(yagoCategoryFile);
+        System.out.println("   Done");
         System.out.print("Parsing YAGO labels..");
-        parseYagoLabelsFile(yagoLabelsFile);
+        //parseYagoLabelsFile(yagoLabelsFile);
         System.out.print("Parsing YAGO wikipedia info..");
-        parseYagoWikiFile(yagoWikiFile);
-        System.out.print("   Done\n");
+        //parseYagoWikiFile(yagoWikiFile);
+        System.out.println("   Done");
         System.out.print("Parsing YAGO geonames info..");
-        parseYagoGeonamesFile(yagoGeonamesFile);
-        System.out.print("   Done\n");
+        //parseYagoGeonamesFile(yagoGeonamesFile);
+        System.out.println("   Done");
         System.out.print("Parsing Geonames cities info..");
-        parseGeonamesCitiesFile(geonamesCitiesFile);
-        System.out.print("   Done\n");
+        //parseGeonamesCitiesFile(geonamesCitiesFile);
+        System.out.println("   Done");
         System.out.println("Parsing complete");
     }
 
@@ -230,12 +234,11 @@ public class YagoParser {
                 new File("/Users/admin/Downloads/yagoWikipediaInfo.tsv"),
                 new File("/Users/admin/Downloads/yagoGeonamesEntityIds.tsv"),
                 new File("/Users/admin/Downloads/cities1000.txt"), "/Users/admin/Downloads");
-        yagoParser.validateFiles();
-        //yagoParser.parseFiles();
+        yagoParser.parseFiles();
     }
 
     private boolean validateFiles() {
-        System.out.println("Validating Files");
+        System.out.println("Datafiles Validation Started");
         return validateFile(yagoDateFile)
         && validateFile(yagoLocationFile)
         && validateFile(yagoCategoryFile)
@@ -243,12 +246,16 @@ public class YagoParser {
         && validateFile(yagoWikiFile)
         && validateFile(yagoGeonamesFile)
         && validateFile(geonamesCitiesFile);
+
     }
 
     private boolean validateFile(File datafile) {
+        System.out.print("Validating file: " + datafile.getName() + "..");
         if (datafile.exists() && !datafile.isDirectory() && datafile.canRead()) {
+            System.out.println("   Done");
             return true;
         }
+        System.out.println("   Error");
         return false;
     }
 
