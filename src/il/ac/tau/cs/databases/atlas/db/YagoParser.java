@@ -231,11 +231,25 @@ public class YagoParser {
                 new File("/Users/admin/Downloads/yagoGeonamesEntityIds.tsv"),
                 new File("/Users/admin/Downloads/cities1000.txt"), "/Users/admin/Downloads");
         yagoParser.validateFiles();
-        yagoParser.parseFiles();
+        //yagoParser.parseFiles();
     }
 
-    private void validateFiles() {
-//        TODO: implement me
+    private boolean validateFiles() {
+        System.out.println("Validating Files");
+        return validateFile(yagoDateFile)
+        && validateFile(yagoLocationFile)
+        && validateFile(yagoCategoryFile)
+        && validateFile(yagoLabelsFile)
+        && validateFile(yagoWikiFile)
+        && validateFile(yagoGeonamesFile)
+        && validateFile(geonamesCitiesFile);
+    }
+
+    private boolean validateFile(File datafile) {
+        if (datafile.exists() && !datafile.isDirectory() && datafile.canRead()) {
+            return true;
+        }
+        return false;
     }
 
 }
