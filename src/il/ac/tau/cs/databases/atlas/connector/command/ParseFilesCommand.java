@@ -47,7 +47,8 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
         progress.getAndIncrement(); // Increment progress for progress bar
 
         // create temporary table to connect yago places and geonames
-        String yagoToGeoTableName = "temp_yago_to_geo" + System.currentTimeMillis();
+        final long timeOfInitiation = System.currentTimeMillis();
+        String yagoToGeoTableName = "temp_yago_to_geo" + timeOfInitiation;
         createGeoToYagoTempTable(con, yagoToGeoTableName);
         progress.getAndIncrement();
 
