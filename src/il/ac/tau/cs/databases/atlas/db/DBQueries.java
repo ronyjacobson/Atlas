@@ -14,6 +14,8 @@ import org.apache.log4j.Logger;
 public class DBQueries implements Queries {
 
 	protected final Logger logger = Logger.getLogger(this.getClass().getName());
+	public int amountOfLatestResults = 0;
+	public int amountOfFemaleResults = 0;
 
 	@Override
 	/**
@@ -72,16 +74,6 @@ public class DBQueries implements Queries {
 	}
 
 	/**
-	 * @return A list of results of all the matching entries in the database
-	 */
-	// TODO
-	@Override
-	public ArrayList<Result> getResults(int startYear, int endYear,
-			String category) {
-		return null;
-	}
-
-	/**
 	 * @return True if the server is connected and online
 	 */
 	@Override
@@ -91,18 +83,16 @@ public class DBQueries implements Queries {
 
 	/**
 	 * @return A list of all the categories in the database
-	 * @throws AtlasServerException 
+	 * @throws AtlasServerException
 	 */
-	// TODO
 	@Override
 	public List<String> getAllCategoriesNames() throws AtlasServerException {
 		// Initialize DB query
 		GetCategoriesQuery query = new GetCategoriesQuery();
 		logger.info("Fetching category names...");
 		// Execute query
-		ArrayList<String> categories= query.execute();
+		ArrayList<String> categories = query.execute();
 		return categories;
-
 	}
 
 	/**
@@ -111,7 +101,7 @@ public class DBQueries implements Queries {
 	// TODO
 	@Override
 	public int getAmountOfLatestResults() {
-		return 10;
+		return amountOfLatestResults;
 	}
 
 	/**
@@ -121,7 +111,7 @@ public class DBQueries implements Queries {
 	// TODO
 	@Override
 	public int getStatsOfLatestResults() {
-		return 6;
+		return amountOfFemaleResults;
 	}
 
 	// TODO
@@ -151,6 +141,17 @@ public class DBQueries implements Queries {
 	@Override
 	public List<Result> getResults(String name) {
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @return A list of results of all the matching entries in the database
+	 */
+	// TODO
+	@Override
+	public List<Result> getResults(int startYear, int endYear, String category) {
+		amountOfLatestResults = 30;
+		amountOfFemaleResults = 40;
 		return null;
 	}
 

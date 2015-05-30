@@ -11,6 +11,7 @@ public interface Queries {
 	public static HashMap<String, Integer> locationsMap= new HashMap<String, Integer>();
 	public static ArrayList<String> locationsNames= new ArrayList<String>();
 	
+	
 	/**
 	 * @return True if the server is connected and online
 	 */
