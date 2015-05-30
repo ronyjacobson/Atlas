@@ -1,5 +1,7 @@
 package il.ac.tau.cs.databases.atlas.utils;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
@@ -12,13 +14,16 @@ import javax.sound.sampled.SourceDataLine;
 
 public class AudioUtils {
 
+	public static final String AUDIO_FILE_NAME = "glimpse_melody.wav";
     private final int BUFFER_SIZE = 128000;
     private File soundFile;
     private AudioInputStream audioStream;
     private AudioFormat audioFormat;
     private SourceDataLine sourceLine;
+    public static boolean stopSound = false;
 
     /**
+     * Plays a wav file
      * @param filename the name of the file that is going to be played
      */
     public void playSound(String filename){
@@ -57,7 +62,7 @@ public class AudioUtils {
 
         int nBytesRead = 0;
         byte[] abData = new byte[BUFFER_SIZE];
-        while (nBytesRead != -1) {
+        while (nBytesRead != -1 && !stopSound) {
             try {
                 nBytesRead = audioStream.read(abData, 0, abData.length);
             } catch (IOException e) {
@@ -71,5 +76,32 @@ public class AudioUtils {
 
         sourceLine.drain();
         sourceLine.close();
+    }
+    
+    /**
+     * Stops the sound
+     */
+    public void stopSound(){
+    	stopSound = true;
+    }
+    
+    public static class AudioToggleActionListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			if (!stopSound){
+				stopSound = true;
+			} else {
+				stopSound = false;
+				// Play audio
+				Runnable r = new Runnable() {
+					public void run() {
+						String loginAudioPath = getClass().getResource("../" + GrapicUtils.getSkin() + AUDIO_FILE_NAME).getPath();
+						new AudioUtils().playSound(loginAudioPath);
+					}
+				};
+				new Thread(r).start();
+			}
+		}
     }
 }

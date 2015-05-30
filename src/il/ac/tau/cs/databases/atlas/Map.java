@@ -2,6 +2,7 @@ package il.ac.tau.cs.databases.atlas;
 
 import il.ac.tau.cs.databases.atlas.graphics.map.MapBrowser;
 import il.ac.tau.cs.databases.atlas.graphics.map.MapBrowserListeners;
+import il.ac.tau.cs.databases.atlas.utils.AudioUtils;
 import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
 
 import java.awt.Container;
@@ -16,6 +17,7 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -28,7 +30,7 @@ import javax.swing.JScrollBar;
 public class Map extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private static final int GAP_BETWEEN_BUTTONS = 45;
+	private static final int GAP_BETWEEN_BUTTONS = 30;
 	private static final int GAP_BETWEEN_COMPONENTS = 10;
 	private static int width;
 	private static int height;
@@ -129,6 +131,7 @@ public class Map extends JFrame {
 		JButton buttonCategory2;
 		JButton buttonCategory3;
 		JButton buttonCategory4;
+		JButton buttonStats;
 		JButton buttonAdd;
 		JButton buttonSearch;
 
@@ -138,48 +141,62 @@ public class Map extends JFrame {
 		// Define buttons attributes
 		Font fieldFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_FIELD);
 		Dimension dimensionCategory = new Dimension(width / 7, height / 13);
-		Dimension dimensionOther = new Dimension((int) dimensionCategory.getWidth() / 3, (int) dimensionCategory.getHeight());
+		Dimension dimensionStats = new Dimension((int) dimensionCategory.getWidth() / 3, (int) dimensionCategory.getHeight());
+		Dimension dimensionOther = new Dimension((int) dimensionCategory.getWidth() / 3, (int) dimensionCategory.getHeight() / 2);
 
 		// Create buttons
+		List<String> categories = Main.queries.getAllCategoriesNames();
 		// Add a button for Category1
-		buttonCategory1 = new JButton("Category 1");
+		buttonCategory1 = new JButton(categories.get(0));
 		buttonCategory1.setPreferredSize(dimensionCategory);
 		buttonCategory1.setFont(fieldFont);
 		buttonsPanel.add(buttonCategory1);
 		// Add a button for Category2
-		buttonCategory2 = new JButton("Category 2");
+		buttonCategory2 = new JButton(categories.get(1));
 		buttonCategory2.setPreferredSize(dimensionCategory);
 		buttonCategory2.setFont(fieldFont);
 		buttonsPanel.add(buttonCategory2);
 		// Add a button for Category3
-		buttonCategory3 = new JButton("Category 3");
+		buttonCategory3 = new JButton(categories.get(2));
 		buttonCategory3.setPreferredSize(dimensionCategory);
 		buttonCategory3.setFont(fieldFont);
 		buttonsPanel.add(buttonCategory3);
 		// Add a button for Category4
-		buttonCategory4 = new JButton("Category 4");
+		buttonCategory4 = new JButton(categories.get(3));
 		buttonCategory4.setPreferredSize(dimensionCategory);
 		buttonCategory4.setFont(fieldFont);
 		buttonsPanel.add(buttonCategory4);
+		// Add a button for statistics
+		buttonStats = new JButton("Stats");
+		buttonStats.setPreferredSize(dimensionStats);
+		buttonStats.setFont(fieldFont);
+		buttonsPanel.add(buttonStats);
 		// Add a button for adding values
-		buttonAdd = new JButton("+");
+		buttonAdd = new JButton("Add");
 		buttonAdd.setPreferredSize(dimensionOther);
 		buttonAdd.setFont(fieldFont);
 		buttonsPanel.add(buttonAdd);
 		// Add a button for search
-		buttonSearch = new JButton("@");
+		buttonSearch = new JButton("Find");
 		buttonSearch.setPreferredSize(dimensionOther);
 		buttonSearch.setFont(fieldFont);
 		buttonsPanel.add(buttonSearch);
+		// Add a button for audio
+		buttonSearch = new JButton("Audio");
+		buttonSearch.setPreferredSize(dimensionOther);
+		buttonSearch.setFont(fieldFont);
+		buttonsPanel.add(buttonSearch);
+		
 
 		// Add listeners
 		buttonCategory1.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(1));
 		buttonCategory2.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(2));
 		buttonCategory3.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(3));
 		buttonCategory4.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(4));
+		buttonStats.addActionListener(new MapBrowserListeners.BrowserMessageActionListener("Showing 10 results. 10 Males and 10 Females."));
 		buttonAdd.addActionListener(new MapBrowserListeners.BrowserDeleteMarkersActionListener());
+		buttonSearch.addActionListener(new AudioUtils.AudioToggleActionListener());
 		//buttonSearch.addActionListener(new MapBrowserListeners.BrowserErrorActionListener());
-		buttonSearch.addActionListener(new MapBrowserListeners.BrowserErrorActionListener("My Message"));
 
 		// Return the panel
 		return buttonsPanel;

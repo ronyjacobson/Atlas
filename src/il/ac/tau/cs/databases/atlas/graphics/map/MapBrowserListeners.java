@@ -19,15 +19,15 @@ public class MapBrowserListeners {
 		MapBrowserListeners.map = map;
 	}
 
-	public static class BrowserErrorActionListener implements ActionListener {
+	public static class BrowserMessageActionListener implements ActionListener {
 
 		String msg;
 
-		public BrowserErrorActionListener() {
+		public BrowserMessageActionListener() {
 			this.msg = "A browser error occurred.";
 		}
 
-		public BrowserErrorActionListener(String msg) {
+		public BrowserMessageActionListener(String msg) {
 			this.msg = msg;
 		}
 

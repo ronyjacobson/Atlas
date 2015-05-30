@@ -10,6 +10,7 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JWindow;
 import javax.swing.SwingConstants;
 
@@ -50,8 +51,14 @@ public class Splash {
 		// Close splash screen
 		splashWindow.setVisible(false);
 		splashWindow.dispose();
+					
+		if (Main.queries.isConnectedToDB()){
+			// Start next screen
+			new Login();
+		} else {
+			// Error and exit
+			JOptionPane.showMessageDialog(null, "Failed to connect to the data base. Program will terminate.", GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
+		}
 		
-		// Start next screen
-		new Login();
 	}
 }

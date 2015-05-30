@@ -1,7 +1,5 @@
 package il.ac.tau.cs.databases.atlas;
 
-import il.ac.tau.cs.databases.atlas.db.MockQueries;
-import il.ac.tau.cs.databases.atlas.db.Queries;
 import il.ac.tau.cs.databases.atlas.db.User;
 import il.ac.tau.cs.databases.atlas.graphics.map.MapBrowser;
 import il.ac.tau.cs.databases.atlas.utils.AudioUtils;
@@ -48,8 +46,6 @@ public class Login extends JFrame {
 	private static final int NUM_OF_COMPONENTS = 9;
 	private static final int GAP_BETWEEN_COMPONENTS = 16;
 	private static final String DEFAULT_LOCATION = "Choose birth place...";
-
-	private static final Queries queries = new MockQueries();
 
 	private JLabel label;
 	private JTextField username;
@@ -133,7 +129,7 @@ public class Login extends JFrame {
 		wasBornOn.addMouseListener(clearTextBoxListner);
 		wasBornOn.setFont(fieldFont);
 
-		List<String> options = queries.getAllGeoLocationsNames();
+		List<String> options = Main.queries.getAllGeoLocationsNames();
 		options.add(0, DEFAULT_LOCATION);
 		wasBornIn = new JComboBox<String>(options.toArray(new String[options.size()]));
 		wasBornIn.setFont(fieldFont);
@@ -219,27 +215,27 @@ public class Login extends JFrame {
 
 				// Log in or sign up
 				// Check if user already registered
-				if (queries.isRegisteredUser(user)) {
+				if (Main.queries.isRegisteredUser(user)) {
 					// Check password validity
-					if (queries.areUsernamePasswordCorrect(user)) {
+					if (Main.queries.areUsernamePasswordCorrect(user)) {
 						// Login
 						LoginSuccesful();
 					} else {
 						// Error
-						JOptionPane.showMessageDialog(null, "Wrong username and password combination.", GrapicUtils.PROJECT_NAME, 1);
+						JOptionPane.showMessageDialog(null, "Wrong username and password combination.", GrapicUtils.PROJECT_NAME, JOptionPane.INFORMATION_MESSAGE);
 					}
 				} else {
 					// Suggest to sing up
 					int reply = JOptionPane.showConfirmDialog(null, "Unregistered user. Would you like to register?", GrapicUtils.PROJECT_NAME,
 							JOptionPane.YES_NO_OPTION);
 					if (reply == JOptionPane.YES_OPTION) {
-						if (queries.registerUser(user)) {
+						if (Main.queries.registerUser(user)) {
 							JOptionPane.showMessageDialog(null, "You are now registered!");
 							// Login
 							LoginSuccesful();
 						} else {
 							// TODO Throw exception?
-							JOptionPane.showMessageDialog(null, "Failed to register.");
+							JOptionPane.showMessageDialog(null, "Failed to register.", GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
 						}
 					}
 				}
@@ -255,7 +251,7 @@ public class Login extends JFrame {
 		// Play audio
 		Runnable r = new Runnable() {
 			public void run() {
-				String loginAudioPath = getClass().getResource(GrapicUtils.getSkin() + "glimpse_melody.wav").getPath();
+				String loginAudioPath = getClass().getResource(GrapicUtils.getSkin() + AudioUtils.AUDIO_FILE_NAME).getPath();
 				new AudioUtils().playSound(loginAudioPath);
 			}
 		};
