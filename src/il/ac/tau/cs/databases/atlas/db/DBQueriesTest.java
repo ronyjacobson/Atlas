@@ -12,10 +12,14 @@ import org.junit.Test;
 public class DBQueriesTest {
 	
 	DBQueries queries = new DBQueries();
+	String Tester = "Rony" ;
 	
 	@Before
 	public void setUp() throws Exception {
-		DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06","127.0.0.1", "3306", "dbmysql06");
+		if (Tester == "Rony") {
+			DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06","127.0.0.1", "3306", "dbmysql06");
+		}
+		
 	}
 	
 	@Test
