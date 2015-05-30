@@ -46,6 +46,13 @@ public class MockQueries implements Queries {
 	/**
 	 * @return A list of results of all the matching entries in the database
 	 */
+	public List<Result> getResults(String name) {
+		return getResults(1000, 2015, "");
+	}
+	
+	/**
+	 * @return A list of results of all the matching entries in the database
+	 */
 	@Override
 	public ArrayList<Result> getResults(int startYear, int endYear, String category) {
 		List<Location> geoLocations = getAllGeoLocations();
@@ -111,13 +118,6 @@ public class MockQueries implements Queries {
 
 
 	@Override
-	public boolean addNew(String name, String category, String birthDate,
-			String birthPlace, String deathDate, String deatePlace, String wikiLink) {
-		return true;
-	}
-
-
-	@Override
 	public HashMap<String, Integer> getGeoLocationsHashMap() {
 		// TODO Auto-generated method stub
 		return null;
@@ -130,5 +130,13 @@ public class MockQueries implements Queries {
 		return null;
 	}
 
+
+	@Override
+	public boolean addNew(String name, String category, String birthDate,
+			int birthlocationID, String deathDate, int deathlocationID,
+			String wikiLink) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }

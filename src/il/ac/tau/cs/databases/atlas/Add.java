@@ -257,7 +257,7 @@ public class Add extends JFrame {
 	}
 
 	/**
-	 * Add an entry to the data base
+	 * Add an entry to the database
 	 */
 	private class AddAction implements ActionListener {
 
@@ -303,7 +303,7 @@ public class Add extends JFrame {
 	}
 	
 	/**
-	 * Add yourself to the data base
+	 * Add yourself to the database
 	 */
 	private class AddYourselfAction implements ActionListener {
 
