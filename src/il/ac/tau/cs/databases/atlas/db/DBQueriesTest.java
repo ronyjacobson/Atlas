@@ -1,10 +1,14 @@
 package il.ac.tau.cs.databases.atlas.db;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import il.ac.tau.cs.databases.atlas.connector.DynamicConnectionPool;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -44,10 +48,17 @@ public class DBQueriesTest {
 	}
 	
 	@Test
-	public void getGeoLocationsHashMap() throws AtlasServerException {
+	public void getGeoLocationsHashMapTest() throws AtlasServerException {
 		assertTrue(Queries.locationsMap.isEmpty());
 		queries.getGeoLocationsHashMap();
 		assertFalse(Queries.locationsMap.isEmpty());
+	}
+	
+	@Test
+	public void getCategoriesTest() throws AtlasServerException {
+		List<String> cat = queries.getAllCategoriesNames();
+		assertFalse(cat.isEmpty());
+		System.out.println(cat.toString());
 	}
 
 }

@@ -48,8 +48,9 @@ public interface Queries {
 		
 	/**
 	 * @return A list of all the categories in the database
+	 * @throws AtlasServerException 
 	 */
-	public List<String> getAllCategoriesNames();
+	public List<String> getAllCategoriesNames() throws AtlasServerException;
 	
 	/**
 	 * @return The amount of results found in the last results query

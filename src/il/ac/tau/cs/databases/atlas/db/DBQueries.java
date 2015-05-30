@@ -1,12 +1,12 @@
 package il.ac.tau.cs.databases.atlas.db;
 
+import il.ac.tau.cs.databases.atlas.connector.command.GetCategoriesQuery;
 import il.ac.tau.cs.databases.atlas.connector.command.GetGeoLocationsNamesAndIDsQuery;
 import il.ac.tau.cs.databases.atlas.connector.command.GetUserQuery;
 import il.ac.tau.cs.databases.atlas.connector.command.RegisterUserQuery;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -37,8 +37,8 @@ public class DBQueries implements Queries {
 	public boolean registerUser(User user) throws AtlasServerException {
 		// Initialize DB query
 		RegisterUserQuery query = new RegisterUserQuery(user);
-		logger.info(String.format(
-				"Registering user with username: %s...", user.getUsername()));
+		logger.info(String.format("Registering user with username: %s...",
+				user.getUsername()));
 		// Execute query
 		User newUser = query.execute();
 		if (newUser == null) {
@@ -51,7 +51,7 @@ public class DBQueries implements Queries {
 	 * @return A Hash Map of all geographical locations in the database
 	 */
 	@Override
-	public void getGeoLocationsHashMap() throws AtlasServerException{
+	public void getGeoLocationsHashMap() throws AtlasServerException {
 		// Initialize DB query
 		GetGeoLocationsNamesAndIDsQuery query = new GetGeoLocationsNamesAndIDsQuery();
 		logger.info("Fetching GeoLocations name and Id's...");
@@ -61,7 +61,7 @@ public class DBQueries implements Queries {
 	/**
 	 * @return A list of strings representing the display names of all
 	 *         geographical locations in the database
-	 * @throws AtlasServerException 
+	 * @throws AtlasServerException
 	 */
 	@Override
 	public List<String> getAllGeoLocationsNames() throws AtlasServerException {
@@ -84,7 +84,6 @@ public class DBQueries implements Queries {
 	/**
 	 * @return True if the server is connected and online
 	 */
-	// TODO
 	@Override
 	public boolean isConnectedToDB() {
 		return true;
@@ -92,16 +91,18 @@ public class DBQueries implements Queries {
 
 	/**
 	 * @return A list of all the categories in the database
+	 * @throws AtlasServerException 
 	 */
 	// TODO
 	@Override
-	public List<String> getAllCategoriesNames() {
-		List<String> categories = new ArrayList<>();
-		categories.add("Scientists");
-		categories.add("Philosophers");
-		categories.add("Kings And Queens");
-		categories.add("Favorites");
+	public List<String> getAllCategoriesNames() throws AtlasServerException {
+		// Initialize DB query
+		GetCategoriesQuery query = new GetCategoriesQuery();
+		logger.info("Fetching category names...");
+		// Execute query
+		ArrayList<String> categories= query.execute();
 		return categories;
+
 	}
 
 	/**
