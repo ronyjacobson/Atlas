@@ -49,9 +49,17 @@ public interface Queries {
 	public int getStatsOfLatestResults();
 
 	/**
-	 * Update the DB with the Yago files in the given full path directoty
+	 * Update the DB with the Yago files in the given full path directory
 	 */
 	public void update(String fullPathDirectory);
 
+	/**
+	 * Get the user from the database
+	 */
 	public User fetchUser(User user) throws AtlasServerException;
+
+	/**
+	 * Add a new entry to the database
+	 */
+	public boolean addNew(String name, String category, String birthDate, String birthPlace, String deathDate, String deatePlace, String wikiLink);
 }

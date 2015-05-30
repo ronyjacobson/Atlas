@@ -110,5 +110,14 @@ public class MockQueries implements Queries {
 		return null;
 	}
 
+	/**
+	 * Add a new entry to the database
+	 */
+	@Override
+	public boolean addNew(String name, String category, String birthDate, String birthPlace, String deathDate, String deatePlace,
+			String wikiLink) {
+		return true;
+	}
+
 
 }

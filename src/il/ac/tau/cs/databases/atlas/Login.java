@@ -48,6 +48,7 @@ public class Login extends JFrame {
 	private static final int GAP_BETWEEN_COMPONENTS = 16;
 	private static final String DEFAULT_LOCATION = "Choose birth place...";
 
+	private User fetchedUser = null;
 	private JLabel label;
 	private JTextField username;
 	private JPasswordField password;
@@ -216,12 +217,11 @@ public class Login extends JFrame {
 
 				// Log in or sign up
 				// Check if user already registered
-				User fetchedUser = null;
 				try {
 					fetchedUser = Main.queries.fetchUser(user);
 				} catch (AtlasServerException e){
+					// Server error
 					JOptionPane.showMessageDialog(null, e.getMessage() , GrapicUtils.PROJECT_NAME, JOptionPane.INFORMATION_MESSAGE);
-					// TODO- SERVER ERROR - what to do here???
 				}
 				if (fetchedUser != null) {
 					// Check password validity
@@ -252,6 +252,10 @@ public class Login extends JFrame {
 	}
 
 	private void LoginSuccesful() {
+		
+		// Store User
+		Main.user = fetchedUser;
+		
 		// Close login screen
 		setVisible(false);
 		dispose();

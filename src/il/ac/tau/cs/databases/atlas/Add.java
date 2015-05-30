@@ -1,7 +1,5 @@
 package il.ac.tau.cs.databases.atlas;
 
-import il.ac.tau.cs.databases.atlas.db.User;
-import il.ac.tau.cs.databases.atlas.graphics.map.MapBrowser;
 import il.ac.tau.cs.databases.atlas.utils.DateUtils;
 import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
 
@@ -29,35 +27,41 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import com.toedter.calendar.JDateChooser;
 
 /**
- * Create and show a login screen.
+ * Create and show a add screen.
  * 
  * @throws IOException
  */
 public class Add extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private static final int NUM_OF_COMPONENTS = 9;
+	private static final int NUM_OF_COMPONENTS = 10;
 	private static final int GAP_BETWEEN_COMPONENTS = 16;
-	private static final String DEFAULT_LOCATION = "Choose birth place...";
+	private static final String DEFAULT_CATEGORY = "Choose a category...";
+	private static final String DEFAULT_BIRTH_LOCATION = "Choose birth place...";
+	private static final String DEFAULT_DEATH_LOCATION = "Choose death place...";
 
 	private JLabel label;
-	private JTextField username;
-	private JPasswordField password;
+	private JTextField name;
+	private JComboBox<String> category;
+	private JPanel datesPanel;
 	private JDateChooser wasBornOn;
+	private JDateChooser hasDiedOn;
+	private JPanel locationsPanel;
 	private JComboBox<String> wasBornIn;
+	private JComboBox<String> hasDiedIn;
+	private JTextField wikiLink;
 	private JButton addYourselfButton;
 	private JButton addButton;
-	private boolean wereCredentialsEntered = false;
+	private boolean wereDetailsEntered = false;
 
 	public Add() throws IOException {
 
-		String addImagePath = GrapicUtils.getSkin() + "SecondaryScreen.jpg";
+		String addImagePath = GrapicUtils.getSkin() + "SecondaryScreen.png";
 
 		// Get graphics attributes
 		InputStream imageStream = getClass().getResourceAsStream(addImagePath);
@@ -110,52 +114,114 @@ public class Add extends JFrame {
 		Font labelFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_LABEL);
 		Font fieldFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_FIELD);
 
-		label = new JLabel("Log in or sign up:");
-		label.setForeground(Color.WHITE);
+		addYourselfButton = new JButton("Add yourself to " + GrapicUtils.PROJECT_NAME + "!");
+		addYourselfButton.addActionListener(new AddYourselfAction());
+		addYourselfButton.setFont(fieldFont);
+
+		label = new JLabel(" or add a new person:");
+		label.setForeground(Color.DARK_GRAY);
 		label.setFont(labelFont);
 
-		username = new JTextField("Username");
-		username.addMouseListener(clearTextBoxListner);
-		username.setFont(fieldFont);
+		name = new JTextField("Full Name");
+		name.addMouseListener(clearTextBoxListner);
+		name.setFont(fieldFont);
 
-		password = new JPasswordField("Password", 20);
-		password.addMouseListener(clearTextBoxListner);
-		password.setFont(fieldFont);
+		List<String> categories = Main.queries.getAllCategoriesNames();
+		categories.add(0, DEFAULT_CATEGORY);
+		category = new JComboBox<String>(categories.toArray(new String[categories.size()]));
+		category.setFont(fieldFont);
 
+		createDatesPanel();
+		
+		createLocationsPanel();
+
+		wikiLink = new JTextField("Link to wikipedia...");
+		wikiLink.addMouseListener(clearTextBoxListner);
+		wikiLink.setFont(fieldFont);
+		
+		addButton = new JButton("Add to ATLAS!");
+		addButton.addActionListener(new AddAction());
+		addButton.setFont(fieldFont);
+
+		// Pad panel with blank labels
+		JLabel paddingLabel1 = new JLabel(" ");
+		JLabel paddingLabel2 = new JLabel(" ");
+		paddingLabel1.setFont(labelFont);
+		paddingLabel2.setFont(labelFont);
+
+		// Add buttons and text boxes
+		panel.add(paddingLabel1); // Pad
+		panel.add(addYourselfButton);
+		panel.add(label);
+		panel.add(name);
+		panel.add(category);
+		panel.add(datesPanel);
+		panel.add(locationsPanel);
+		panel.add(wikiLink);
+		panel.add(addButton);
+	}
+
+	private void createDatesPanel() {
+
+		GridLayout panelLayout = new GridLayout(1, 2);
+		panelLayout.setHgap(GAP_BETWEEN_COMPONENTS);
+		datesPanel = new JPanel(panelLayout);
+
+		// Make panel transparent
+		datesPanel.setOpaque(false);
+
+		// Define buttons attributes
+		Font fieldFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_FIELD);
+
+		// Create dates
 		Date today = new Date();
+		ClearTextBox clearTextBoxListner = new ClearTextBox();
+
 		wasBornOn = new JDateChooser();
 		wasBornOn.setDate(today);
 		wasBornOn.setMaxSelectableDate(today);
 		wasBornOn.addMouseListener(clearTextBoxListner);
 		wasBornOn.setFont(fieldFont);
 
-		List<String> options = Main.queries.getAllGeoLocationsNames();
-		options.add(0, DEFAULT_LOCATION);
-		wasBornIn = new JComboBox<String>(options.toArray(new String[options.size()]));
+		hasDiedOn = new JDateChooser();
+		hasDiedOn.setDate(today);
+		hasDiedOn.setMaxSelectableDate(today);
+		hasDiedOn.addMouseListener(clearTextBoxListner);
+		hasDiedOn.setFont(fieldFont);
+
+		// Add to panel
+		datesPanel.add(wasBornOn);
+		datesPanel.add(hasDiedOn);
+
+	}
+	
+	private void createLocationsPanel() {
+
+		GridLayout panelLayout = new GridLayout(1, 2);
+		panelLayout.setHgap(GAP_BETWEEN_COMPONENTS);
+		locationsPanel = new JPanel(panelLayout);
+
+		// Make panel transparent
+		locationsPanel.setOpaque(false);
+
+		// Define buttons attributes
+		Font fieldFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_FIELD);
+
+		// Create location pickers
+		List<String> locations = Main.queries.getAllGeoLocationsNames();
+		
+		locations.add(0, DEFAULT_BIRTH_LOCATION);
+		wasBornIn = new JComboBox<String>(locations.toArray(new String[locations.size()]));
 		wasBornIn.setFont(fieldFont);
 
-		addButton = new JButton("Glimpse into the past!");
-		addButton.addActionListener(new AddAction());
-		addButton.setFont(fieldFont);
+		locations.add(0, DEFAULT_DEATH_LOCATION);
+		hasDiedIn = new JComboBox<String>(locations.toArray(new String[locations.size()]));
+		hasDiedIn.setFont(fieldFont);
 
-		// Pad panel with blank label
-		JLabel paddingLabel1 = new JLabel(" ");
-		JLabel paddingLabel2 = new JLabel(" ");
-		JLabel paddingLabel3 = new JLabel(" ");
-		paddingLabel1.setFont(labelFont);
-		paddingLabel2.setFont(labelFont);
-		paddingLabel3.setFont(labelFont);
-		panel.add(paddingLabel1);
-		panel.add(paddingLabel2);
-		panel.add(paddingLabel3);
+		// Add to panel
+		locationsPanel.add(wasBornIn);
+		locationsPanel.add(hasDiedIn);
 
-		// Add buttons and text boxes
-		panel.add(label);
-		panel.add(username);
-		panel.add(password);
-		panel.add(wasBornOn);
-		panel.add(wasBornIn);
-		panel.add(addButton);
 	}
 
 	/**
@@ -165,10 +231,10 @@ public class Add extends JFrame {
 
 		@Override
 		public void mouseClicked(MouseEvent arg0) {
-			if (!wereCredentialsEntered) {
-				username.setText("");
-				password.setText("");
-				wereCredentialsEntered = true;
+			if (!wereDetailsEntered) {
+				name.setText("");
+				wikiLink.setText("");
+				wereDetailsEntered = true;
 			}
 		}
 
@@ -190,7 +256,7 @@ public class Add extends JFrame {
 	}
 
 	/**
-	 * Log in or sign up to the system using the data base
+	 * Add an entry to the data base
 	 */
 	private class AddAction implements ActionListener {
 
@@ -198,68 +264,46 @@ public class Add extends JFrame {
 		public void actionPerformed(ActionEvent arg0) {
 
 			// Validate input
-			if (!wereCredentialsEntered) {
-				JOptionPane.showMessageDialog(null, "Please enter login credentials.", GrapicUtils.PROJECT_NAME, 1);
-			} else if (username.getText().equalsIgnoreCase("")) {
-				JOptionPane.showMessageDialog(null, "Username can not be blank.", GrapicUtils.PROJECT_NAME, 1);
-			} else if (password.getPassword().length == 0) {
-				JOptionPane.showMessageDialog(null, "Password can not be blank.", GrapicUtils.PROJECT_NAME, 1);
-			} else if (DateUtils.isToday(wasBornOn.getCalendar())) {
-				JOptionPane.showMessageDialog(null, "No way you were born today, enter a valid birthday.", GrapicUtils.PROJECT_NAME, 1);
-			} else if (wasBornIn.getSelectedItem().toString().equals(DEFAULT_LOCATION)) {
+			if (!wereDetailsEntered) {
+				JOptionPane.showMessageDialog(null, "Please enter the needed details.", GrapicUtils.PROJECT_NAME, 1);
+			} else if (name.getText().equalsIgnoreCase("")) {
+				JOptionPane.showMessageDialog(null, "Name can not be blank.", GrapicUtils.PROJECT_NAME, 1);
+			} else if (category.getSelectedItem().toString().equals(DEFAULT_CATEGORY)) {
+				JOptionPane.showMessageDialog(null, "Please choose a category place from the list.", GrapicUtils.PROJECT_NAME, 1);
+			} else if (DateUtils.isSameDay(wasBornOn.getCalendar(), hasDiedOn.getCalendar())) {
+				JOptionPane.showMessageDialog(null, "No way that the birth and death dates are the same.", GrapicUtils.PROJECT_NAME, 1);
+			} else if (DateUtils.isAfterDay(wasBornOn.getCalendar(), hasDiedOn.getCalendar())) {
+				JOptionPane.showMessageDialog(null, "No way that the birth date is after the death date.", GrapicUtils.PROJECT_NAME, 1);
+			} else if (wasBornIn.getSelectedItem().toString().equals(DEFAULT_BIRTH_LOCATION)) {
 				JOptionPane.showMessageDialog(null, "Please choose a birth place from the list.", GrapicUtils.PROJECT_NAME, 1);
+			} else if (hasDiedIn.getSelectedItem().toString().equals(DEFAULT_DEATH_LOCATION)) {
+				JOptionPane.showMessageDialog(null, "Please choose a death place from the list.", GrapicUtils.PROJECT_NAME, 1);
+			} else if (wikiLink.getText().equalsIgnoreCase("")) {
+				JOptionPane.showMessageDialog(null, "Wikipedia link can not be blank.", GrapicUtils.PROJECT_NAME, 1);
 			} else {
-				// Create user
-				User user = new User(username.getText(), String.copyValueOf(password.getPassword()), wasBornOn.getDate(), wasBornIn
-						.getSelectedItem().toString());
-
-				// Log in or sign up
-				// Check if user already registered
-				if (Main.queries.isRegisteredUser(user)) {
-					// Check password validity
-					if (Main.queries.areUsernamePasswordCorrect(user)) {
-						// Login
-						LoginSuccesful();
-					} else {
-						// Error
-						JOptionPane.showMessageDialog(null, "Wrong username and password combination.", GrapicUtils.PROJECT_NAME, JOptionPane.INFORMATION_MESSAGE);
-					}
+				boolean status = Main.queries.addNew(name.getText(), category.getSelectedItem().toString(), wasBornOn.getDate().toString(), wasBornIn.getSelectedItem().toString(), hasDiedOn.getDate().toString(), hasDiedIn.getSelectedItem().toString(), wikiLink.getText());
+				if (status) {
+					JOptionPane.showMessageDialog(null, "New entry added to the data base.", GrapicUtils.PROJECT_NAME, JOptionPane.INFORMATION_MESSAGE);
 				} else {
-					// Suggest to sing up
-					int reply = JOptionPane.showConfirmDialog(null, "Unregistered user. Would you like to register?", GrapicUtils.PROJECT_NAME,
-							JOptionPane.YES_NO_OPTION);
-					if (reply == JOptionPane.YES_OPTION) {
-						if (Main.queries.registerUser(user)) {
-							JOptionPane.showMessageDialog(null, "You are now registered!");
-							// Login
-							LoginSuccesful();
-						} else {
-							// TODO Throw exception?
-							JOptionPane.showMessageDialog(null, "Failed to register.", GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
-						}
-					}
+					JOptionPane.showMessageDialog(null, "Failed to add new entry.", GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
 	}
+	
+	/**
+	 * Add yourself to the data base
+	 */
+	private class AddYourselfAction implements ActionListener {
 
-	private void LoginSuccesful() {
-		// Close login screen
-		setVisible(false);
-		dispose();
-		
-		// Show map
-		try {
-			new Map();
-		} catch (IOException e) {
-			// TODO Handle Exception
-			e.printStackTrace();
-		} catch (MapBrowser.BrowserException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			boolean status = Main.queries.addNew(Main.user.getUsername(), "Favorites", Main.user.getDateOfBirth().toString(), Main.user.getLocation().toString(), "", "", "");
+			if (status) {
+				JOptionPane.showMessageDialog(null, "You were added to the data base.", GrapicUtils.PROJECT_NAME, JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				JOptionPane.showMessageDialog(null, "Failed to add new entry.", GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
+			}
 		}
 	}
 }

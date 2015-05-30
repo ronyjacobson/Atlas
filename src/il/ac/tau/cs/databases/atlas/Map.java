@@ -210,7 +210,6 @@ public class Map extends JFrame {
 		buttonAudio.setFont(fieldFont);
 		buttonsPanel.add(buttonAudio);
 		
-
 		// Add listeners
 		buttonCategory1.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(timeline, buttonCategory1.getText()));
 		buttonCategory2.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(timeline, buttonCategory2.getText()));
