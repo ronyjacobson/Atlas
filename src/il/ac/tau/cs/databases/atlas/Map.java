@@ -1,5 +1,6 @@
 package il.ac.tau.cs.databases.atlas;
 
+import il.ac.tau.cs.databases.atlas.db.DBFilesUplaodListner;
 import il.ac.tau.cs.databases.atlas.graphics.map.MapBrowser;
 import il.ac.tau.cs.databases.atlas.graphics.map.MapBrowserListeners;
 import il.ac.tau.cs.databases.atlas.utils.AudioUtils;
@@ -12,9 +13,12 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
@@ -24,13 +28,14 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 
 public class Map extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private static final int GAP_BETWEEN_BUTTONS = 30;
+	private static final int GAP_BETWEEN_BUTTONS = 24;
 	private static final int GAP_BETWEEN_COMPONENTS = 10;
 	private static final int TIMELINE_MAX = 2015;
 	private static final int TIMELINE_MIN = 1000;
@@ -48,6 +53,7 @@ public class Map extends JFrame {
 	private static JButton buttonStats;
 	private static JButton buttonAdd;
 	private static JButton buttonSearch;
+	private static JButton buttonUpdate;
 	private static JButton buttonAudio;
 	private static JScrollBar timeline = new JScrollBar(JScrollBar.HORIZONTAL, TIMELINE_INITIAL_VALUE, TIMELINE_EXTENT, TIMELINE_MIN, TIMELINE_MAX);;
 
@@ -191,9 +197,15 @@ public class Map extends JFrame {
 		buttonSearch.setPreferredSize(dimensionOther);
 		buttonSearch.setFont(fieldFont);
 		buttonsPanel.add(buttonSearch);
+		// Add a button for update
+		buttonUpdate = new JButton("");
+		buttonUpdate.setIcon(new ImageIcon(getClass().getResource(GrapicUtils.getSkin() + "Update.png")));
+		buttonUpdate.setPreferredSize(dimensionOther);
+		buttonUpdate.setFont(fieldFont);
+		buttonsPanel.add(buttonUpdate);
 		// Add a button for audio
 		buttonAudio = new JButton("");
-		buttonAudio.setIcon(new ImageIcon(getClass().getResource(GrapicUtils.getSkin() + "Speaker.png")));
+		buttonAudio.setIcon(new ImageIcon(getClass().getResource(GrapicUtils.getSkin() + "Audio.png")));
 		buttonAudio.setPreferredSize(dimensionOther);
 		buttonAudio.setFont(fieldFont);
 		buttonsPanel.add(buttonAudio);
@@ -205,8 +217,27 @@ public class Map extends JFrame {
 		buttonCategory3.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(timeline, buttonCategory3.getText()));
 		buttonCategory4.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(timeline, buttonCategory4.getText()));
 		buttonStats.addActionListener(new MapBrowserListeners.BrowserMessageActionListener(" Showing " + Main.queries.getAmountOfLatestResults() +  " results:\\n\\n " + Main.queries.getStatsOfLatestResults() + " Males\\n " + (Main.queries.getAmountOfLatestResults() - Main.queries.getStatsOfLatestResults()) + " Females"));
-		buttonAdd.addActionListener(new MapBrowserListeners.BrowserDeleteMarkersActionListener());
-		buttonSearch.addActionListener(new MapBrowserListeners.BrowserMessageActionListener());
+		buttonAdd.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					new Add();
+				} catch (IOException e) {
+					JOptionPane.showMessageDialog(null, "Exception occured while using the add screen.", GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		buttonSearch.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					new Add();
+				} catch (IOException e) {
+					JOptionPane.showMessageDialog(null, "Exception occured while using the search screen.", GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		buttonUpdate.addActionListener(new DBFilesUplaodListner());
 		buttonAudio.addActionListener(new AudioUtils.AudioToggleActionListener());
 
 		// Return the panel
