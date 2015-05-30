@@ -102,7 +102,7 @@ public class MockQueries implements Queries {
 	}
 	
 	/**
-	 * @return a User from the DB that matches the user param
+	 * @returns a User from the DB that matches the user param
 	 */
 	@Override
 	public User fetchUser(User user) throws AtlasServerException {

@@ -54,7 +54,7 @@ public interface Queries {
 	public void update(String fullPathDirectory);
 
 	/**
-	 * Get the user from the database
+	 * @return a User from the DB that matches the user given
 	 */
 	public User fetchUser(User user) throws AtlasServerException;
 
