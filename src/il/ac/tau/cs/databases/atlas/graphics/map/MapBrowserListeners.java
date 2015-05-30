@@ -5,6 +5,10 @@ import il.ac.tau.cs.databases.atlas.db.Result;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+
+import javax.swing.JScrollBar;
 
 import org.eclipse.swt.widgets.Display;
 
@@ -44,13 +48,11 @@ public class MapBrowserListeners {
 
 	public static class BrowserAddMarkerActionListener implements ActionListener {
 		
-		int startYear;
-		int endYear;
+		JScrollBar timeline;
 		String category;
 		
-		public BrowserAddMarkerActionListener(int startYear, int endYear, String category) {
-			this.startYear = startYear;
-			this.endYear = endYear;
+		public BrowserAddMarkerActionListener(JScrollBar timeline, String category) {
+			this.timeline = timeline;
 			this.category = category;
 		}
 		
@@ -60,6 +62,8 @@ public class MapBrowserListeners {
 				public void run() {
 					if (map != null) {
 						map.getBrowser().execute("deleteMarkers();");
+						int startYear = timeline.getModel().getValue();
+						int endYear =  timeline.getModel().getValue() + timeline.getModel().getExtent();
 						for (Result result : Main.queries.getResults(startYear, endYear, category)) {
 							String imageIcon;
 							if (result.isBirth()){
@@ -89,6 +93,26 @@ public class MapBrowserListeners {
 					}
 				}
 			});
+		}
+	}
+
+	public static class BrowserTimespanAdjustmentListener implements AdjustmentListener {
+
+		@Override
+		public void adjustmentValueChanged(final AdjustmentEvent e) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					if (map != null) {
+						JScrollBar timeline = (JScrollBar) e.getAdjustable();
+						int start = timeline.getValue();
+						int end =  timeline.getValue() + timeline.getModel().getExtent();
+						map.getBrowser().execute("setTimespan(" + start + "," + end + ");");
+					} else {
+						// TODO Show message?
+					}
+				}
+			});
+			
 		}
 	}
 }
