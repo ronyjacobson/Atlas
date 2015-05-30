@@ -13,7 +13,7 @@ public class DBQueries implements Queries {
 
 	@Override
 	/**
-	 * @return User from DB that matches user param
+	 * @returns a User from the DB that matches the user parameter
 	 */
 	public User fetchUser(User user) throws AtlasServerException {
 		// Initialize DB query
