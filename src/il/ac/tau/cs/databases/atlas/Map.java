@@ -90,7 +90,8 @@ public class Map extends JFrame {
 		gBC.gridy = 2;
 		pane.add(map, gBC);
 
-		JScrollBar timeline = new JScrollBar(JScrollBar.HORIZONTAL, 0, 1, 0, 100);
+		// Add Timeline
+		JScrollBar timeline = new JScrollBar(JScrollBar.HORIZONTAL, 0, 100, 0, 2015);
 		gBC.ipady = 0;
 		gBC.gridx = 0;
 		gBC.gridwidth = 2;
@@ -134,6 +135,7 @@ public class Map extends JFrame {
 		JButton buttonStats;
 		JButton buttonAdd;
 		JButton buttonSearch;
+		JButton buttonAudio;
 
 		// Make panel transparent
 		buttonsPanel.setOpaque(false);
@@ -167,36 +169,40 @@ public class Map extends JFrame {
 		buttonCategory4.setFont(fieldFont);
 		buttonsPanel.add(buttonCategory4);
 		// Add a button for statistics
-		buttonStats = new JButton("Stats");
+		buttonStats = new JButton("");
+		buttonStats.setIcon(new ImageIcon(getClass().getResource(GrapicUtils.getSkin() + "Stats.png")));
 		buttonStats.setPreferredSize(dimensionStats);
 		buttonStats.setFont(fieldFont);
 		buttonsPanel.add(buttonStats);
 		// Add a button for adding values
-		buttonAdd = new JButton("Add");
+		buttonAdd = new JButton("");
+		buttonAdd.setIcon(new ImageIcon(getClass().getResource(GrapicUtils.getSkin() + "Add.png")));
 		buttonAdd.setPreferredSize(dimensionOther);
 		buttonAdd.setFont(fieldFont);
 		buttonsPanel.add(buttonAdd);
 		// Add a button for search
-		buttonSearch = new JButton("Find");
+		buttonSearch = new JButton("");
+		buttonSearch.setIcon(new ImageIcon(getClass().getResource(GrapicUtils.getSkin() + "Search.png")));
 		buttonSearch.setPreferredSize(dimensionOther);
 		buttonSearch.setFont(fieldFont);
 		buttonsPanel.add(buttonSearch);
 		// Add a button for audio
-		buttonSearch = new JButton("Audio");
-		buttonSearch.setPreferredSize(dimensionOther);
-		buttonSearch.setFont(fieldFont);
-		buttonsPanel.add(buttonSearch);
+		buttonAudio = new JButton("");
+		buttonAudio.setIcon(new ImageIcon(getClass().getResource(GrapicUtils.getSkin() + "Speaker.png")));
+		buttonAudio.setPreferredSize(dimensionOther);
+		buttonAudio.setFont(fieldFont);
+		buttonsPanel.add(buttonAudio);
 		
 
 		// Add listeners
-		buttonCategory1.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(1));
-		buttonCategory2.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(2));
-		buttonCategory3.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(3));
-		buttonCategory4.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(4));
-		buttonStats.addActionListener(new MapBrowserListeners.BrowserMessageActionListener("Showing 10 results. 10 Males and 10 Females."));
+		buttonCategory1.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(1, 2, buttonCategory1.getText()));
+		buttonCategory2.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(2, 3, buttonCategory2.getText()));
+		buttonCategory3.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(3, 4, buttonCategory3.getText()));
+		buttonCategory4.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(4, 5, buttonCategory4.getText()));
+		buttonStats.addActionListener(new MapBrowserListeners.BrowserMessageActionListener(" Showing " + Main.queries.getAmountOfLatestResults() +  " results:\\n\\n " + Main.queries.getStatsOfLatestResults() + " Males\\n " + (Main.queries.getAmountOfLatestResults() - Main.queries.getStatsOfLatestResults()) + " Females"));
 		buttonAdd.addActionListener(new MapBrowserListeners.BrowserDeleteMarkersActionListener());
-		buttonSearch.addActionListener(new AudioUtils.AudioToggleActionListener());
-		//buttonSearch.addActionListener(new MapBrowserListeners.BrowserErrorActionListener());
+		buttonSearch.addActionListener(new MapBrowserListeners.BrowserMessageActionListener());
+		buttonAudio.addActionListener(new AudioUtils.AudioToggleActionListener());
 
 		// Return the panel
 		return buttonsPanel;
