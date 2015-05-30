@@ -1,8 +1,8 @@
 package il.ac.tau.cs.databases.atlas.db;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import il.ac.tau.cs.databases.atlas.connector.DynamicConnectionPool;
+import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
 import java.util.Date;
 
@@ -24,11 +24,11 @@ public class DBQueriesTest {
 	}
 	
 	@Test
-	public void isRegisteredUserTest() {
+	public void isRegisteredUserTest() throws AtlasServerException {
 		User existingUser = new User("rony", "", new Date(), "");
 		User nonExistingUser = new User("johnDo", "", new Date(), "");
-		assertTrue(queries.isRegisteredUser(existingUser));
-		assertFalse(queries.isRegisteredUser(nonExistingUser));
+		assertEquals("User Nae",queries.fetchUser(existingUser).getUsername(), existingUser.getUsername());
+		assertNull(queries.fetchUser(nonExistingUser));
 	}
 
 }

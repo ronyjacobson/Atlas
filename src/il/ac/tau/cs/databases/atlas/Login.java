@@ -1,6 +1,7 @@
 package il.ac.tau.cs.databases.atlas;
 
 import il.ac.tau.cs.databases.atlas.db.User;
+import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 import il.ac.tau.cs.databases.atlas.graphics.map.MapBrowser;
 import il.ac.tau.cs.databases.atlas.utils.AudioUtils;
 import il.ac.tau.cs.databases.atlas.utils.DateUtils;
@@ -215,9 +216,16 @@ public class Login extends JFrame {
 
 				// Log in or sign up
 				// Check if user already registered
-				if (Main.queries.isRegisteredUser(user)) {
+				User fetchedUser = null;
+				try {
+					fetchedUser = Main.queries.fetchUser(user);
+				} catch (AtlasServerException e){
+					JOptionPane.showMessageDialog(null, e.getMessage() , GrapicUtils.PROJECT_NAME, JOptionPane.INFORMATION_MESSAGE);
+					// TODO- SERVER ERROR - what to do here???
+				}
+				if (fetchedUser != null) {
 					// Check password validity
-					if (Main.queries.areUsernamePasswordCorrect(user)) {
+					if (fetchedUser.getPassword().equals(user.getPassword())) {
 						// Login
 						LoginSuccesful();
 					} else {
@@ -225,7 +233,7 @@ public class Login extends JFrame {
 						JOptionPane.showMessageDialog(null, "Wrong username and password combination.", GrapicUtils.PROJECT_NAME, JOptionPane.INFORMATION_MESSAGE);
 					}
 				} else {
-					// Suggest to sing up
+					// Suggest to sign up
 					int reply = JOptionPane.showConfirmDialog(null, "Unregistered user. Would you like to register?", GrapicUtils.PROJECT_NAME,
 							JOptionPane.YES_NO_OPTION);
 					if (reply == JOptionPane.YES_OPTION) {

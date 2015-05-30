@@ -1,26 +1,11 @@
 package il.ac.tau.cs.databases.atlas.db;
 
+import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class MockQueries implements Queries {
-
-	@Override
-	/**
-	 * @return true if the user is already registered in the system
-	 */
-	public boolean isRegisteredUser(User user) {
-		return (new Random().nextInt(2) == 0) ? true : false;
-	}
-
-	@Override
-	/**
-	 * @return true if the user's user name and password match
-	 */
-	public boolean areUsernamePasswordCorrect(User user) {
-		return true;
-	}
 
 	@Override
 	/**
@@ -114,6 +99,15 @@ public class MockQueries implements Queries {
 	@Override
 	public void update(String fullPathDirectory) {
 		System.out.println(fullPathDirectory);
+	}
+	
+	/**
+	 * @return a User from the DB that matches the user param
+	 */
+	@Override
+	public User fetchUser(User user) throws AtlasServerException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

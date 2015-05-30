@@ -1,5 +1,7 @@
 package il.ac.tau.cs.databases.atlas.db;
 
+import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
+
 import java.util.List;
 
 public interface Queries {
@@ -8,16 +10,6 @@ public interface Queries {
 	 * @return True if the server is connected and online
 	 */
 	public boolean isConnectedToDB();
-	
-	/**
-	 * @return true if the user is already registered in the system
-	 */
-	public boolean isRegisteredUser(User user);
-	
-	/**
-	 * @return true if the user's user name and password match
-	 */
-	public boolean areUsernamePasswordCorrect(User user);
 	
 	/**
 	 * Register the user to the system
@@ -60,4 +52,6 @@ public interface Queries {
 	 * Update the DB with the Yago files in the given full path directoty
 	 */
 	public void update(String fullPathDirectory);
+
+	public User fetchUser(User user) throws AtlasServerException;
 }

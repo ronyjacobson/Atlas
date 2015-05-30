@@ -5,6 +5,7 @@ package il.ac.tau.cs.databases.atlas.exception;
  */
 public class AtlasServerException extends Exception {
     public AtlasServerException(String msg) {
+    	// TODO - log message?
         super(msg);
     }
 }

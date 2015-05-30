@@ -10,38 +10,19 @@ import org.apache.log4j.Logger;
 
 public class DBQueries implements Queries {
 	protected final Logger logger = Logger.getLogger(this.getClass().getName());
-	
+
 	@Override
 	/**
-	 * @return true if the user is already registered in the system
+	 * @return User from DB that matches user param
 	 */
-	public boolean isRegisteredUser(User user) {
-		
+	public User fetchUser(User user) throws AtlasServerException {
+		// Initialize DB query
 		GetUserQuery query = new GetUserQuery(user);
-		List<User> users;
-		logger.info(String.format("Checking for regitered user with username: %s...", user.getUsername()));
-		try {
-			users = query.execute();
-			if (users.isEmpty()) {
-				logger.info(String.format("Did not find a regitered user with username: %s.", user.getUsername()));
-				return false;				
-			} else {
-				logger.info(String.format("Found a regitered user with username: %s.", user.getUsername()));
-				return true;
-			}
-		} catch (AtlasServerException e) {
-			// TODO[verify this] - when a Server Error is thrown return true so that the user will try to re-register
-			return true;
-		}
-	}
-
-
-	@Override
-	/**
-	 * @return true if the user's user name and password match
-	 */
-	public boolean areUsernamePasswordCorrect(User user) {
-		return true;
+		logger.info(String.format(
+				"Checking for regitered user with username: %s...",
+				user.getUsername()));
+		// Execute query
+		return query.execute();
 	}
 
 	@Override
@@ -52,7 +33,6 @@ public class DBQueries implements Queries {
 	public boolean registerUser(User user) {
 		return true;
 	}
-
 
 	/**
 	 * @return A list of all geographical locations in the database
@@ -74,7 +54,7 @@ public class DBQueries implements Queries {
 	public List<String> getAllGeoLocationsNames() {
 		List<Location> geoLocations = getAllGeoLocations();
 		ArrayList<String> geoLocationsNames = new ArrayList<>();
-		for (Location location : geoLocations){
+		for (Location location : geoLocations) {
 			geoLocationsNames.add(location.getName());
 		}
 		return geoLocationsNames;
@@ -84,15 +64,21 @@ public class DBQueries implements Queries {
 	 * @return A list of results of all the matching entries in the database
 	 */
 	@Override
-	public ArrayList<Result> getResults(int startYear, int endYear, String category) {
+	public ArrayList<Result> getResults(int startYear, int endYear,
+			String category) {
 		List<Location> geoLocations = getAllGeoLocations();
 		ArrayList<Result> results = new ArrayList<>();
-		if (startYear % 3 != 0 )results.add(new Result("a", geoLocations.get(0), null, true, "summary a", "https://en.wikipedia.org/w/index.php?title=A"));
-		results.add(new Result("b", geoLocations.get(1), null, false, "summary b", "https://en.wikipedia.org/w/index.php?title=B"));
-		if (startYear % 2 != 0 ) results.add(new Result("c", geoLocations.get(2), null, true, "summary c", "https://en.wikipedia.org/w/index.php?title=C"));
+		if (startYear % 3 != 0)
+			results.add(new Result("a", geoLocations.get(0), null, true,
+					"summary a", "https://en.wikipedia.org/w/index.php?title=A"));
+		results.add(new Result("b", geoLocations.get(1), null, false,
+				"summary b", "https://en.wikipedia.org/w/index.php?title=B"));
+		if (startYear % 2 != 0)
+			results.add(new Result("c", geoLocations.get(2), null, true,
+					"summary c", "https://en.wikipedia.org/w/index.php?title=C"));
 		return results;
 	}
-	
+
 	/**
 	 * @return True if the server is connected and online
 	 */
@@ -123,12 +109,18 @@ public class DBQueries implements Queries {
 	}
 
 	/**
-	 * @return The male/females statistics of the results found in the last results query
+	 * @return The male/females statistics of the results found in the last
+	 *         results query
 	 */
 	@Override
 	public int getStatsOfLatestResults() {
 		return 6;
 	}
 
+	@Override
+	public void update(String fullPathDirectory) {
+		// TODO Auto-generated method stub
+
+	}
 
 }

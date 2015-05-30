@@ -10,24 +10,23 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by user on 22/05/2015.
  */
-public class GetUserQuery extends BaseDBCommand<List<User>> {
+public class GetUserQuery extends BaseDBCommand<User> {
     private User user;
 
     public GetUserQuery(User user) {
         this.user = user;
     }
 
-    @Override
-    protected List<User> innerExecute(Connection con) throws AtlasServerException {
+    @SuppressWarnings("resource")
+	@Override
+    protected User innerExecute(Connection con) throws AtlasServerException {
     	PreparedStatement statement = null;
         ResultSet resultSet = null;
-        List<User> users = new ArrayList<User>();
+        User FetchedUser = null;
         try {
         	statement = con.prepareStatement(
         			"SELECT * FROM "+ DBConstants.User.TABLE_NAME+
@@ -37,11 +36,17 @@ public class GetUserQuery extends BaseDBCommand<List<User>> {
         	resultSet = statement.executeQuery();
             
             while (resultSet.next()) {
+            	
+            	// Validate that no more then 1 users with that UserName exists
+            	if (FetchedUser != null) {
+            		throw new AtlasServerException(String.format("Error: Found more then 1 user with the username: %s", user.getUsername()));
+            	}
+            	
+            	// Create fetched User
             	String username = resultSet.getString(DBConstants.User.USERNAME);
             	String password = resultSet.getString(DBConstants.User.PASSWORD);
             	Date dateOfBirth = resultSet.getDate(DBConstants.User.BORN_ON_DATE);
-                User newUser = new User(username, password, dateOfBirth, null);
-                users.add(newUser);
+                FetchedUser = new User(username, password, dateOfBirth, null);
             }
 
         } catch (SQLException e) {
@@ -51,12 +56,8 @@ public class GetUserQuery extends BaseDBCommand<List<User>> {
             safelyClose(statement, resultSet);
         }
         
-        // Validate that no more then 1 users with that username exists
-        if (users.size() > 1) {
-        	throw new AtlasServerException("[DB ERROR] - Found more then 1 user with the username: "+ user.getUsername() +"!");
-        }
         logger.info(String.format("Query executed properly.", statement.toString()));
-        return users;
+        return FetchedUser;
     }
 
 }
