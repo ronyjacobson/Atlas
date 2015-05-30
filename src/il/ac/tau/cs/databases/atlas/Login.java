@@ -241,14 +241,15 @@ public class Login extends JFrame {
 					int reply = JOptionPane.showConfirmDialog(null, "Unregistered user. Would you like to register?", GrapicUtils.PROJECT_NAME,
 							JOptionPane.YES_NO_OPTION);
 					if (reply == JOptionPane.YES_OPTION) {
-						if (Main.queries.registerUser(user)) {
+						 try {
+							Main.queries.registerUser(user);
 							JOptionPane.showMessageDialog(null, "You are now registered!");
 							// Login
 							LoginSuccesful();
-						} else {
-							// TODO Throw exception?
+						 } catch (Exception e) {
+							// TODO Throw exception? add Msg?
 							JOptionPane.showMessageDialog(null, "Failed to register.", GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
-						}
+						 }
 					}
 				}
 			}

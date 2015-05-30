@@ -10,8 +10,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.mysql.jdbc.Statement;
-
 /**
  * Created by user on 22/05/2015.
  */
@@ -40,31 +38,29 @@ public class RegisterUserQuery extends BaseDBCommand<User> {
 			statement.setInt(3, user.getLocationID());
 			statement.setDate(4, new java.sql.Date(user.getDateOfBirth().getTime()));
 
-			System.out.println(String.format("Executing DB query: %s.", statement.toString()));
+			logger.info(String.format("Executing DB query: %s.", statement.toString()));
 			
 			statement.executeUpdate();
 			resultSet = statement.getGeneratedKeys();
 			resultSet.next();
             int genID = resultSet.getInt(1);
             user.setUserID(genID);
-            System.out.println("User added successfully - The generated user ID is: "+ genID);
+            logger.info("User added successfully - The generated user ID is: "+ genID);
 
 		} catch (SQLException e) {
 			Integer errorCode = e.getErrorCode();
 			if (errorCode.equals(1062)) {
 				// This error code represents that there is already a username with the desired value
 				String msg = String.format("Error - Duplicate values where found when trying to reguter username %s", user.getUsername());
-				System.out.println(msg);
-				return null;
+				throw new AtlasServerException(msg);
 			} else {
 				//TODO- handle Exception?
 				e.printStackTrace();
+				throw new AtlasServerException(e.getMessage());
 			}
-			return null;
 		} finally {
 			safelyClose(statement, resultSet);
 		}
-
 		System.out.println(String.format("Query executed properly.",statement.toString()));
 		return user;
 	}
