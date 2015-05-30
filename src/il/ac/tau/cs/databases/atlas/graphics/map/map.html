@@ -22,6 +22,7 @@
       var markers = [];
       var mapCenter = new google.maps.LatLng(31.0000, 0);
       var infowindow;
+      var timespanControlText;
 
       <!-- Error a custom message to the screen -->
       function error(msg) {
@@ -126,6 +127,38 @@
         });
       }
 
+      <!-- Define the timespan -->
+      function TimespanControl(controlDiv, map) {
+        // Set CSS for the control border
+        var controlUI = document.createElement('div');
+        // controlUI.style.backgroundColor = '#fff';
+        // controlUI.style.border = '2px solid #fff';
+        controlUI.style.borderRadius = '3px';
+        // controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+        controlUI.style.cursor = 'pointer';
+        controlUI.style.marginLeft = '20px';
+        controlUI.style.textAlign = 'center';
+        controlUI.title = 'Currnet timespan';
+        controlDiv.appendChild(controlUI);
+
+        // Set CSS for the control interior
+        timespanControlText = document.createElement('div');
+        timespanControlText.style.color = 'rgb(255,255,255)';
+        timespanControlText.style.fontFamily = 'Century Gothic';
+        timespanControlText.style.fontSize = '40px';
+        timespanControlText.style.lineHeight = '38px';
+        timespanControlText.style.paddingLeft = '5px';
+        timespanControlText.style.paddingRight = '5px';
+        timespanControlText.style.paddingBottom = '5px';
+        timespanControlText.innerHTML = '1000-1100';
+        controlUI.appendChild(timespanControlText);
+      }
+
+      <!-- Set timespan to new range -->
+      function setTimespan(start,end) {
+            timespanControlText.innerHTML = start + '-' + end;
+      }
+
       <!-- The map initilatization function -->
       function initialize() {
 	// Define the map properties
@@ -148,6 +181,12 @@
         var centerControl = new CenterControl(centerControlDiv, map);
         centerControlDiv.index = 1;
         map.controls[google.maps.ControlPosition.LEFT].push(centerControlDiv);
+
+        // Add timespan
+        var timespanControlDiv = document.createElement('div');
+        var timespanControl = new TimespanControl(timespanControlDiv, map);
+        timespanControlDiv.index = 1;
+        map.controls[google.maps.ControlPosition.BOTTOM].push(timespanControlDiv);
       }
 
       <!-- Main -->

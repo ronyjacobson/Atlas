@@ -32,9 +32,24 @@ public class Map extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private static final int GAP_BETWEEN_BUTTONS = 30;
 	private static final int GAP_BETWEEN_COMPONENTS = 10;
+	private static final int TIMELINE_MAX = 2015;
+	private static final int TIMELINE_MIN = 1000;
+	private static final int TIMELINE_EXTENT = 100;
+	private static final int TIMELINE_INITIAL_VALUE = 1000;
 	private static int width;
 	private static int height;
+	
+	// Define Buttons, Map and Timeline
 	private static final MapBrowser map = new MapBrowser();
+	private static JButton buttonCategory1;
+	private static JButton buttonCategory2;
+	private static JButton buttonCategory3;
+	private static JButton buttonCategory4;
+	private static JButton buttonStats;
+	private static JButton buttonAdd;
+	private static JButton buttonSearch;
+	private static JButton buttonAudio;
+	private static JScrollBar timeline = new JScrollBar(JScrollBar.HORIZONTAL, TIMELINE_INITIAL_VALUE, TIMELINE_EXTENT, TIMELINE_MIN, TIMELINE_MAX);;
 
 	/**
 	 * Creates and shows the map screen.
@@ -78,7 +93,7 @@ public class Map extends JFrame {
 		// Add Buttons
 		gBC.gridx = 0;
 		gBC.gridy = 1;
-		pane.add(createButtonsPanel());
+		pane.add(createButtonsPanel(), gBC);
 
 		// Add Map
 		gBC.fill = GridBagConstraints.HORIZONTAL;
@@ -91,7 +106,7 @@ public class Map extends JFrame {
 		pane.add(map, gBC);
 
 		// Add Timeline
-		JScrollBar timeline = new JScrollBar(JScrollBar.HORIZONTAL, 0, 100, 0, 2015);
+		timeline.addAdjustmentListener(new MapBrowserListeners.BrowserTimespanAdjustmentListener());
 		gBC.ipady = 0;
 		gBC.gridx = 0;
 		gBC.gridwidth = 2;
@@ -126,16 +141,6 @@ public class Map extends JFrame {
 		// Create buttons panel
 		FlowLayout buttonsPanelLayout = new FlowLayout(FlowLayout.CENTER, GAP_BETWEEN_BUTTONS, GAP_BETWEEN_COMPONENTS);
 		JPanel buttonsPanel = new JPanel(buttonsPanelLayout);
-
-		// Define Buttons
-		JButton buttonCategory1;
-		JButton buttonCategory2;
-		JButton buttonCategory3;
-		JButton buttonCategory4;
-		JButton buttonStats;
-		JButton buttonAdd;
-		JButton buttonSearch;
-		JButton buttonAudio;
 
 		// Make panel transparent
 		buttonsPanel.setOpaque(false);
@@ -195,10 +200,10 @@ public class Map extends JFrame {
 		
 
 		// Add listeners
-		buttonCategory1.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(1, 2, buttonCategory1.getText()));
-		buttonCategory2.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(2, 3, buttonCategory2.getText()));
-		buttonCategory3.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(3, 4, buttonCategory3.getText()));
-		buttonCategory4.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(4, 5, buttonCategory4.getText()));
+		buttonCategory1.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(timeline, buttonCategory1.getText()));
+		buttonCategory2.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(timeline, buttonCategory2.getText()));
+		buttonCategory3.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(timeline, buttonCategory3.getText()));
+		buttonCategory4.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(timeline, buttonCategory4.getText()));
 		buttonStats.addActionListener(new MapBrowserListeners.BrowserMessageActionListener(" Showing " + Main.queries.getAmountOfLatestResults() +  " results:\\n\\n " + Main.queries.getStatsOfLatestResults() + " Males\\n " + (Main.queries.getAmountOfLatestResults() - Main.queries.getStatsOfLatestResults()) + " Females"));
 		buttonAdd.addActionListener(new MapBrowserListeners.BrowserDeleteMarkersActionListener());
 		buttonSearch.addActionListener(new MapBrowserListeners.BrowserMessageActionListener());
