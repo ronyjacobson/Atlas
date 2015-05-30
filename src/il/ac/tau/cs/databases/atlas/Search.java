@@ -17,12 +17,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Date;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -41,36 +39,29 @@ public class Search extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private static final int NUM_OF_COMPONENTS = 10;
 	private static final int GAP_BETWEEN_COMPONENTS = 16;
-	private static final String DEFAULT_CATEGORY = "Choose a category...";
-	private static final String DEFAULT_BIRTH_LOCATION = "Choose birth place...";
-	private static final String DEFAULT_DEATH_LOCATION = "Choose death place...";
 
-	private JLabel label;
+	private JLabel nameLabel;
 	private JTextField name;
-	private JComboBox<String> category;
+	private JButton searchNameButton;
+	private JLabel datesLabel;
 	private JPanel datesPanel;
-	private JDateChooser wasBornOn;
-	private JDateChooser hasDiedOn;
-	private JPanel locationsPanel;
-	private JComboBox<String> wasBornIn;
-	private JComboBox<String> hasDiedIn;
-	private JTextField wikiLink;
-	private JButton addYourselfButton;
-	private JButton addButton;
-	private boolean wereDetailsEntered = false;
+	private JDateChooser fromDate;
+	private JDateChooser untilDate;
+	private JButton searchDatesButton;
+	private boolean wasNameEntered = false;
 
 	public Search() throws IOException {
 
-		String addImagePath = GrapicUtils.getSkin() + "SecondaryScreen.png";
+		String searchImagePath = GrapicUtils.getSkin() + "SecondaryScreen.png";
 
 		// Get graphics attributes
-		InputStream imageStream = getClass().getResourceAsStream(addImagePath);
+		InputStream imageStream = getClass().getResourceAsStream(searchImagePath);
 		BufferedImage image = ImageIO.read(imageStream);
 		int width = image.getWidth();
 		int height = image.getHeight();
 
 		// Set graphics
-		URL imageURL = getClass().getResource(addImagePath);
+		URL imageURL = getClass().getResource(searchImagePath);
 		setContentPane(new JLabel(new ImageIcon(imageURL)));
 		setSize(width, height);
 		setTitle(GrapicUtils.PROJECT_NAME);
@@ -80,13 +71,13 @@ public class Search extends JFrame {
 		setResizable(false);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-		// Add add panel
+		// Add search panel
 		setLayout(new BorderLayout());
 		setLayout(new FlowLayout());
 		GridLayout panelLayout = new GridLayout(NUM_OF_COMPONENTS, 1);
 		panelLayout.setVgap(GAP_BETWEEN_COMPONENTS);
 		JPanel panel = new JPanel(panelLayout);
-		createAddPanel(panel, width, height);
+		createSearchPanel(panel, width, height);
 		add(panel);
 
 		// Show add screen
@@ -95,7 +86,7 @@ public class Search extends JFrame {
 	}
 
 	/**
-	 * Create and fill the add panel
+	 * Create and fill the search panel
 	 * 
 	 * @param panel
 	 *            The panel to fill
@@ -104,7 +95,7 @@ public class Search extends JFrame {
 	 * @param height
 	 *            The parent window height
 	 */
-	private void createAddPanel(JPanel panel, int width, int height) {
+	private void createSearchPanel(JPanel panel, int width, int height) {
 
 		// Make panel transparent
 		panel.setOpaque(false);
@@ -114,34 +105,28 @@ public class Search extends JFrame {
 		Font labelFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_LABEL);
 		Font fieldFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_FIELD);
 
-		addYourselfButton = new JButton("Add yourself to " + GrapicUtils.PROJECT_NAME + "!");
-		addYourselfButton.addActionListener(new AddYourselfAction());
-		addYourselfButton.setFont(fieldFont);
-
-		label = new JLabel(" or add a new person:");
-		label.setForeground(Color.DARK_GRAY);
-		label.setFont(labelFont);
+		nameLabel = new JLabel("Search by name:");
+		nameLabel.setForeground(Color.DARK_GRAY);
+		nameLabel.setFont(labelFont);
 
 		name = new JTextField("Full Name");
 		name.addMouseListener(clearTextBoxListner);
 		name.setFont(fieldFont);
 
-		List<String> categories = Main.queries.getAllCategoriesNames();
-		categories.add(0, DEFAULT_CATEGORY);
-		category = new JComboBox<String>(categories.toArray(new String[categories.size()]));
-		category.setFont(fieldFont);
+		searchNameButton = new JButton("Search ATLAS");
+		searchNameButton.addActionListener(new SearchNameAction());
+		searchNameButton.setFont(fieldFont);
+		
+		datesLabel = new JLabel("Search by dates:");
+		datesLabel.setForeground(Color.DARK_GRAY);
+		datesLabel.setFont(labelFont);
 
+		
 		createDatesPanel();
 		
-		createLocationsPanel();
-
-		wikiLink = new JTextField("Link to wikipedia...");
-		wikiLink.addMouseListener(clearTextBoxListner);
-		wikiLink.setFont(fieldFont);
-		
-		addButton = new JButton("Add to ATLAS!");
-		addButton.addActionListener(new AddAction());
-		addButton.setFont(fieldFont);
+		searchDatesButton = new JButton("Search ATLAS");
+		searchDatesButton.addActionListener(new SearchDatesAction());
+		searchDatesButton.setFont(fieldFont);
 
 		// Pad panel with blank labels
 		JLabel paddingLabel1 = new JLabel(" ");
@@ -151,14 +136,13 @@ public class Search extends JFrame {
 
 		// Add buttons and text boxes
 		panel.add(paddingLabel1); // Pad
-		panel.add(addYourselfButton);
-		panel.add(label);
+		panel.add(nameLabel);
 		panel.add(name);
-		panel.add(category);
+		panel.add(searchNameButton);
+		panel.add(paddingLabel2);
+		panel.add(datesLabel);
 		panel.add(datesPanel);
-		panel.add(locationsPanel);
-		panel.add(wikiLink);
-		panel.add(addButton);
+		panel.add(searchDatesButton);
 	}
 
 	private void createDatesPanel() {
@@ -177,53 +161,23 @@ public class Search extends JFrame {
 		Date today = new Date();
 		ClearTextBox clearTextBoxListner = new ClearTextBox();
 
-		wasBornOn = new JDateChooser();
-		wasBornOn.setDate(today);
-		wasBornOn.setMaxSelectableDate(today);
-		wasBornOn.addMouseListener(clearTextBoxListner);
-		wasBornOn.setFont(fieldFont);
+		fromDate = new JDateChooser();
+		fromDate.setDate(today);
+		fromDate.setMaxSelectableDate(today);
+		fromDate.addMouseListener(clearTextBoxListner);
+		fromDate.setFont(fieldFont);
 
-		hasDiedOn = new JDateChooser();
-		hasDiedOn.setDate(today);
-		hasDiedOn.setMaxSelectableDate(today);
-		hasDiedOn.addMouseListener(clearTextBoxListner);
-		hasDiedOn.setFont(fieldFont);
-
-		// Add to panel
-		datesPanel.add(wasBornOn);
-		datesPanel.add(hasDiedOn);
-
-	}
-	
-	private void createLocationsPanel() {
-
-		GridLayout panelLayout = new GridLayout(1, 2);
-		panelLayout.setHgap(GAP_BETWEEN_COMPONENTS);
-		locationsPanel = new JPanel(panelLayout);
-
-		// Make panel transparent
-		locationsPanel.setOpaque(false);
-
-		// Define buttons attributes
-		Font fieldFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_FIELD);
-
-		// Create location pickers
-		List<String> locations = Main.queries.getAllGeoLocationsNames();
-		
-		locations.add(0, DEFAULT_BIRTH_LOCATION);
-		wasBornIn = new JComboBox<String>(locations.toArray(new String[locations.size()]));
-		wasBornIn.setFont(fieldFont);
-
-		locations.add(0, DEFAULT_DEATH_LOCATION);
-		hasDiedIn = new JComboBox<String>(locations.toArray(new String[locations.size()]));
-		hasDiedIn.setFont(fieldFont);
+		untilDate = new JDateChooser();
+		untilDate.setDate(today);
+		untilDate.setMaxSelectableDate(today);
+		untilDate.addMouseListener(clearTextBoxListner);
+		untilDate.setFont(fieldFont);
 
 		// Add to panel
-		locationsPanel.add(wasBornIn);
-		locationsPanel.add(hasDiedIn);
+		datesPanel.add(fromDate);
+		datesPanel.add(untilDate);
 
 	}
-
 	/**
 	 * Clear text boxes
 	 */
@@ -231,10 +185,9 @@ public class Search extends JFrame {
 
 		@Override
 		public void mouseClicked(MouseEvent arg0) {
-			if (!wereDetailsEntered) {
+			if (!wasNameEntered) {
 				name.setText("");
-				wikiLink.setText("");
-				wereDetailsEntered = true;
+				wasNameEntered = true;
 			}
 		}
 
@@ -256,59 +209,39 @@ public class Search extends JFrame {
 	}
 
 	/**
-	 * Add an entry to the data base
+	 * Search an entry in the database by name
 	 */
-	private class AddAction implements ActionListener {
+	private class SearchNameAction implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 
 			// Validate input
-			if (!wereDetailsEntered) {
-				JOptionPane.showMessageDialog(null, "Please enter the needed details.", GrapicUtils.PROJECT_NAME, 1);
+			if (!wasNameEntered) {
+				JOptionPane.showMessageDialog(null, "Please enter a full name.", GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
 			} else if (name.getText().equalsIgnoreCase("")) {
 				JOptionPane.showMessageDialog(null, "Name can not be blank.", GrapicUtils.PROJECT_NAME, 1);
-			} else if (category.getSelectedItem().toString().equals(DEFAULT_CATEGORY)) {
-				JOptionPane.showMessageDialog(null, "Please choose a category place from the list.", GrapicUtils.PROJECT_NAME, 1);
-			} else if (DateUtils.isSameDay(wasBornOn.getCalendar(), hasDiedOn.getCalendar())) {
-				JOptionPane.showMessageDialog(null, "No way that the birth and death dates are the same.", GrapicUtils.PROJECT_NAME, 1);
-			} else if (DateUtils.isAfterDay(wasBornOn.getCalendar(), hasDiedOn.getCalendar())) {
-				JOptionPane.showMessageDialog(null, "No way that the birth date is after the death date.", GrapicUtils.PROJECT_NAME, 1);
-			} else if (wasBornIn.getSelectedItem().toString().equals(DEFAULT_BIRTH_LOCATION)) {
-				JOptionPane.showMessageDialog(null, "Please choose a birth place from the list.", GrapicUtils.PROJECT_NAME, 1);
-			} else if (hasDiedIn.getSelectedItem().toString().equals(DEFAULT_DEATH_LOCATION)) {
-				JOptionPane.showMessageDialog(null, "Please choose a death place from the list.", GrapicUtils.PROJECT_NAME, 1);
-			} else if (wikiLink.getText().equalsIgnoreCase("")) {
-				JOptionPane.showMessageDialog(null, "Wikipedia link can not be blank.", GrapicUtils.PROJECT_NAME, 1);
 			} else {
-				boolean status = Main.queries.addNew(name.getText(), category.getSelectedItem().toString(), wasBornOn.getDate().toString(), wasBornIn.getSelectedItem().toString(), hasDiedOn.getDate().toString(), hasDiedIn.getSelectedItem().toString(), wikiLink.getText());
-				if (status) {
-					JOptionPane.showMessageDialog(null, "New entry added to the data base.", GrapicUtils.PROJECT_NAME, JOptionPane.INFORMATION_MESSAGE);
-					
-					// Close the windows
-					dispose();
-				} else {
-					JOptionPane.showMessageDialog(null, "Failed to add new entry.", GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
-				}
+				
+				dispose();
 			}
 		}
 	}
 	
 	/**
-	 * Add yourself to the data base
+	 * Search an entry in the database by dates
 	 */
-	private class AddYourselfAction implements ActionListener {
+	private class SearchDatesAction implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			boolean status = Main.queries.addNew(Main.user.getUsername(), "Favorites", Main.user.getDateOfBirth().toString(), Main.user.getLocation().toString(), "", "", "");
-			if (status) {
-				JOptionPane.showMessageDialog(null, "You were added to the data base.", GrapicUtils.PROJECT_NAME, JOptionPane.INFORMATION_MESSAGE);
-				
-				// Close the windows
-				dispose();
+
+			// Validate input
+			if (DateUtils.isAfterDay(fromDate.getCalendar(), untilDate.getCalendar())) {
+				JOptionPane.showMessageDialog(null, "Please select a valid date range.", GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
 			} else {
-				JOptionPane.showMessageDialog(null, "Failed to add new entry.", GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
+				// TODO Get results
+				dispose();
 			}
 		}
 	}
