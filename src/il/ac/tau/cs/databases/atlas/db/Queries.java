@@ -39,10 +39,20 @@ public interface Queries {
 	/**
 	 * @return A list of results of all the matching entries in the database
 	 */
-	public List<Result> getResults(int timeSlot);
+	public List<Result> getResults(int startYear, int endYear, String category);
 		
 	/**
 	 * @return A list of all the categories in the database
 	 */
 	public List<String> getAllCategoriesNames();
+	
+	/**
+	 * @return The amount of results found in the last results query
+	 */
+	public int getAmountOfLatestResults();
+	
+	/**
+	 * @return The male/females statistics of the results found in the last results query
+	 */
+	public int getStatsOfLatestResults();
 }

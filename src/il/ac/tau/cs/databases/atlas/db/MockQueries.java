@@ -62,12 +62,12 @@ public class MockQueries implements Queries {
 	 * @return A list of results of all the matching entries in the database
 	 */
 	@Override
-	public ArrayList<Result> getResults(int timeSlot) {
+	public ArrayList<Result> getResults(int startYear, int endYear, String category) {
 		List<Location> geoLocations = getAllGeoLocations();
 		ArrayList<Result> results = new ArrayList<>();
-		if (timeSlot % 3 != 0 )results.add(new Result("a", geoLocations.get(0), null, true, "summary a", "https://en.wikipedia.org/w/index.php?title=A"));
+		if (startYear % 3 != 0 )results.add(new Result("a", geoLocations.get(0), null, true, "summary a", "https://en.wikipedia.org/w/index.php?title=A"));
 		results.add(new Result("b", geoLocations.get(1), null, false, "summary b", "https://en.wikipedia.org/w/index.php?title=B"));
-		if (timeSlot % 2 != 0 ) results.add(new Result("c", geoLocations.get(2), null, true, "summary c", "https://en.wikipedia.org/w/index.php?title=C"));
+		if (startYear % 2 != 0 ) results.add(new Result("c", geoLocations.get(2), null, true, "summary c", "https://en.wikipedia.org/w/index.php?title=C"));
 		return results;
 	}
 	
@@ -90,6 +90,22 @@ public class MockQueries implements Queries {
 		categories.add("Kings And Queens");
 		categories.add("Favorites");
 		return categories;
+	}
+
+	/**
+	 * @return The amount of results found in the last results query
+	 */
+	@Override
+	public int getAmountOfLatestResults() {
+		return 10;
+	}
+
+	/**
+	 * @return The male/females statistics of the results found in the last results query
+	 */
+	@Override
+	public int getStatsOfLatestResults() {
+		return 6;
 	}
 
 

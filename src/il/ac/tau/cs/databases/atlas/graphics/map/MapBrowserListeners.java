@@ -1,7 +1,6 @@
 package il.ac.tau.cs.databases.atlas.graphics.map;
 
-import il.ac.tau.cs.databases.atlas.db.MockQueries;
-import il.ac.tau.cs.databases.atlas.db.Queries;
+import il.ac.tau.cs.databases.atlas.Main;
 import il.ac.tau.cs.databases.atlas.db.Result;
 
 import java.awt.event.ActionEvent;
@@ -12,8 +11,6 @@ import org.eclipse.swt.widgets.Display;
 public class MapBrowserListeners {
 
 	private static MapBrowser map = null;
-
-	private static final Queries queries = new MockQueries();
 
 	public static void setMap(MapBrowser map) {
 		MapBrowserListeners.map = map;
@@ -47,10 +44,14 @@ public class MapBrowserListeners {
 
 	public static class BrowserAddMarkerActionListener implements ActionListener {
 		
-		int timeSlot;
+		int startYear;
+		int endYear;
+		String category;
 		
-		public BrowserAddMarkerActionListener(int timeSlot) {
-			this.timeSlot = timeSlot;
+		public BrowserAddMarkerActionListener(int startYear, int endYear, String category) {
+			this.startYear = startYear;
+			this.endYear = endYear;
+			this.category = category;
 		}
 		
 		@Override
@@ -59,7 +60,7 @@ public class MapBrowserListeners {
 				public void run() {
 					if (map != null) {
 						map.getBrowser().execute("deleteMarkers();");
-						for (Result result : queries.getResults(timeSlot)) {
+						for (Result result : Main.queries.getResults(startYear, endYear, category)) {
 							String imageIcon;
 							if (result.isBirth()){
 								imageIcon = "./flag-birth.png";
