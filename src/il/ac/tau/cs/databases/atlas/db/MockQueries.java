@@ -106,8 +106,7 @@ public class MockQueries implements Queries {
 	 */
 	@Override
 	public User fetchUser(User user) throws AtlasServerException {
-		// TODO Auto-generated method stub
-		return null;
+		return user;
 	}
 
 	/**

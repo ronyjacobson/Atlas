@@ -284,6 +284,9 @@ public class Add extends JFrame {
 				boolean status = Main.queries.addNew(name.getText(), category.getSelectedItem().toString(), wasBornOn.getDate().toString(), wasBornIn.getSelectedItem().toString(), hasDiedOn.getDate().toString(), hasDiedIn.getSelectedItem().toString(), wikiLink.getText());
 				if (status) {
 					JOptionPane.showMessageDialog(null, "New entry added to the data base.", GrapicUtils.PROJECT_NAME, JOptionPane.INFORMATION_MESSAGE);
+					
+					// Close the windows
+					dispose();
 				} else {
 					JOptionPane.showMessageDialog(null, "Failed to add new entry.", GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
 				}
@@ -301,6 +304,9 @@ public class Add extends JFrame {
 			boolean status = Main.queries.addNew(Main.user.getUsername(), "Favorites", Main.user.getDateOfBirth().toString(), Main.user.getLocation().toString(), "", "", "");
 			if (status) {
 				JOptionPane.showMessageDialog(null, "You were added to the data base.", GrapicUtils.PROJECT_NAME, JOptionPane.INFORMATION_MESSAGE);
+				
+				// Close the windows
+				dispose();
 			} else {
 				JOptionPane.showMessageDialog(null, "Failed to add new entry.", GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
 			}
