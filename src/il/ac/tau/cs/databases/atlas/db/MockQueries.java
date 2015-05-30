@@ -108,5 +108,13 @@ public class MockQueries implements Queries {
 		return 6;
 	}
 
+	/**
+	 * Update the DB with the Yago files in the given full path directoty
+	 */
+	@Override
+	public void update(String fullPathDirectory) {
+		System.out.println(fullPathDirectory);
+	}
+
 
 }

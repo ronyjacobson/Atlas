@@ -55,4 +55,9 @@ public interface Queries {
 	 * @return The male/females statistics of the results found in the last results query
 	 */
 	public int getStatsOfLatestResults();
+
+	/**
+	 * Update the DB with the Yago files in the given full path directoty
+	 */
+	public void update(String fullPathDirectory);
 }
