@@ -1,5 +1,6 @@
 package il.ac.tau.cs.databases.atlas.db;
 
+import il.ac.tau.cs.databases.atlas.connector.command.GetGeoLocationsNamesAndIDsQuery;
 import il.ac.tau.cs.databases.atlas.connector.command.GetUserQuery;
 import il.ac.tau.cs.databases.atlas.connector.command.RegisterUserQuery;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
@@ -36,35 +37,38 @@ public class DBQueries implements Queries {
 	public boolean registerUser(User user) throws AtlasServerException {
 		// Initialize DB query
 		RegisterUserQuery query = new RegisterUserQuery(user);
-		System.out.println(String.format(
-				"Registering user with username: %s...",
-				user.getUsername()));
+		logger.info(String.format(
+				"Registering user with username: %s...", user.getUsername()));
 		// Execute query
 		User newUser = query.execute();
 		if (newUser == null) {
 			return false;
-		} else return true;
+		} else
+			return true;
 	}
 
 	/**
-	 * @return A list of all geographical locations in the database
+	 * @return A Hash Map of all geographical locations in the database
 	 */
 	@Override
-	public HashMap<String, Integer> getGeoLocationsHashMap() {
-		HashMap<String, Integer> geoLocations = new HashMap<String, Integer>();
-		// TODO
-		return geoLocations;
+	public void getGeoLocationsHashMap() throws AtlasServerException{
+		// Initialize DB query
+		GetGeoLocationsNamesAndIDsQuery query = new GetGeoLocationsNamesAndIDsQuery();
+		logger.info("Fetching GeoLocations name and Id's...");
+		query.execute();
 	}
 
 	/**
 	 * @return A list of strings representing the display names of all
 	 *         geographical locations in the database
+	 * @throws AtlasServerException 
 	 */
 	@Override
-	public List<String> getAllGeoLocationsNames() {
-		ArrayList<String> geoLocationsNames = new ArrayList<>();
-		// TODO
-		return geoLocationsNames;
+	public List<String> getAllGeoLocationsNames() throws AtlasServerException {
+		if (locationsNames.isEmpty()) {
+			getGeoLocationsHashMap();
+		}
+		return locationsNames;
 	}
 
 	/**
@@ -128,8 +132,8 @@ public class DBQueries implements Queries {
 
 	@Override
 	public Integer getLocationId(String locationName) {
-		if (locationsList != null) {
-			return locationsList.get(locationName);
+		if (locationsMap != null) {
+			return locationsMap.get(locationName);
 		} else {
 			return null;
 		}

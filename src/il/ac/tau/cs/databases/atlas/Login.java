@@ -217,7 +217,7 @@ public class Login extends JFrame {
 						username.getText(), 
 						String.copyValueOf(password.getPassword()), 
 						wasBornOn.getDate(), 
-						Queries.locationsList.get(wasBornIn.getSelectedItem().toString()));
+						Queries.locationsMap.get(wasBornIn.getSelectedItem().toString()));
 
 				// Log in or sign up
 				// Check if user already registered

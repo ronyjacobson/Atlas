@@ -286,9 +286,9 @@ public class Add extends JFrame {
 						name.getText(), 
 						category.getSelectedItem().toString(),
 						wasBornOn.getDate().toString(), 
-						Queries.locationsList.get(wasBornIn.getSelectedItem().toString()), 
+						Queries.locationsMap.get(wasBornIn.getSelectedItem().toString()), 
 						hasDiedOn.getDate().toString(),
-						Queries.locationsList.get(wasBornIn.getSelectedItem().toString()), 
+						Queries.locationsMap.get(wasBornIn.getSelectedItem().toString()), 
 						wikiLink.getText());
 				if (status) {
 					JOptionPane.showMessageDialog(null, "New entry added to the data base.", GrapicUtils.PROJECT_NAME, JOptionPane.INFORMATION_MESSAGE);

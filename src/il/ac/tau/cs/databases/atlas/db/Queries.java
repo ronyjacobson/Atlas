@@ -2,12 +2,14 @@ package il.ac.tau.cs.databases.atlas.db;
 
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public interface Queries {
 
-	public HashMap<String, Integer> locationsList= null;
+	public static HashMap<String, Integer> locationsMap= new HashMap<String, Integer>();
+	public static ArrayList<String> locationsNames= new ArrayList<String>();
 	
 	/**
 	 * @return True if the server is connected and online
@@ -23,14 +25,16 @@ public interface Queries {
 	
 	/**
 	 * @return A list of all geographical locations in the database
+	 * @throws AtlasServerException 
 	 */
-	public HashMap<String, Integer> getGeoLocationsHashMap();
+	public void getGeoLocationsHashMap() throws AtlasServerException;
 	
 	/**
 	 * @return A list of strings representing the display names of all
 	 *         geographical locations in the database
+	 * @throws AtlasServerException 
 	 */
-	public List<String> getAllGeoLocationsNames();
+	public List<String> getAllGeoLocationsNames() throws AtlasServerException;
 	
 	/**
 	 * @return A list of results of all the matching entries in the database

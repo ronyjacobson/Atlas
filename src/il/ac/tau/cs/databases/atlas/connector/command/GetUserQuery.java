@@ -21,7 +21,6 @@ public class GetUserQuery extends BaseDBCommand<User> {
         this.user = user;
     }
 
-    @SuppressWarnings("resource")
 	@Override
     protected User innerExecute(Connection con) throws AtlasServerException {
     	PreparedStatement statement = null;
