@@ -281,7 +281,13 @@ public class Add extends JFrame {
 			} else if (wikiLink.getText().equalsIgnoreCase("")) {
 				JOptionPane.showMessageDialog(null, "Wikipedia link can not be blank.", GrapicUtils.PROJECT_NAME, 1);
 			} else {
-				boolean status = Main.queries.addNew(name.getText(), category.getSelectedItem().toString(), wasBornOn.getDate().toString(), wasBornIn.getSelectedItem().toString(), hasDiedOn.getDate().toString(), hasDiedIn.getSelectedItem().toString(), wikiLink.getText());
+				boolean status = Main.queries.addNew(name.getText(), category
+						.getSelectedItem().toString(), wasBornOn.getDate()
+						.toString(), 
+						/*TODO- return IDwasBornIn.getSelectedItem().getID() */-1, 
+						hasDiedOn.getDate().toString(),
+						/*TODO- return IDwasBornIn.getSelectedItem().getID() */-1, 
+						wikiLink.getText());
 				if (status) {
 					JOptionPane.showMessageDialog(null, "New entry added to the data base.", GrapicUtils.PROJECT_NAME, JOptionPane.INFORMATION_MESSAGE);
 					
@@ -301,7 +307,7 @@ public class Add extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			boolean status = Main.queries.addNew(Main.user.getUsername(), "Favorites", Main.user.getDateOfBirth().toString(), Main.user.getLocation().toString(), "", "", "");
+			boolean status = Main.queries.addNew(Main.user.getUsername(), "Favorites", Main.user.getDateOfBirth().toString(), Main.user.getLocationID(), "", -1 , "");
 			if (status) {
 				JOptionPane.showMessageDialog(null, "You were added to the data base.", GrapicUtils.PROJECT_NAME, JOptionPane.INFORMATION_MESSAGE);
 				

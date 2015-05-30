@@ -61,5 +61,5 @@ public interface Queries {
 	/**
 	 * Add a new entry to the database
 	 */
-	public boolean addNew(String name, String category, String birthDate, String birthPlace, String deathDate, String deatePlace, String wikiLink);
+	public boolean addNew(String name, String category, String birthDate, int birthPlace, String deathDate, int deatePlace, String wikiLink);
 }

@@ -46,10 +46,13 @@ public class GetUserQuery extends BaseDBCommand<User> {
             	String username = resultSet.getString(DBConstants.User.USERNAME);
             	String password = resultSet.getString(DBConstants.User.PASSWORD);
             	Date dateOfBirth = resultSet.getDate(DBConstants.User.BORN_ON_DATE);
-                FetchedUser = new User(username, password, dateOfBirth, null);
+            	int locationID = resultSet.getInt(DBConstants.User.BORN_IN_LOCATION);
+            	int userID = resultSet.getInt(DBConstants.User.USER_ID);
+                FetchedUser = new User(userID, username, password, dateOfBirth, locationID);
             }
 
         } catch (SQLException e) {
+        	// TODO -  handle Exception??
             e.printStackTrace();
         }
         finally {

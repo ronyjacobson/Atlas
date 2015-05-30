@@ -9,6 +9,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 public class DBQueries implements Queries {
+	
 	protected final Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@Override
@@ -31,7 +32,8 @@ public class DBQueries implements Queries {
 	 * @return true if the user was successfully registered in the system
 	 */
 	public boolean registerUser(User user) {
-		return true;
+		return false;
+		//TODO
 	}
 
 	/**
@@ -40,9 +42,7 @@ public class DBQueries implements Queries {
 	@Override
 	public List<Location> getAllGeoLocations() {
 		ArrayList<Location> geoLocations = new ArrayList<>();
-		geoLocations.add(new Location("Tel-Aviv", 32.0667, 34.8000));
-		geoLocations.add(new Location("New-York", 40.748817, -73.985428));
-		geoLocations.add(new Location("Paris", 48.8567, 2.3508));
+		//TODO
 		return geoLocations;
 	}
 
@@ -52,17 +52,15 @@ public class DBQueries implements Queries {
 	 */
 	@Override
 	public List<String> getAllGeoLocationsNames() {
-		List<Location> geoLocations = getAllGeoLocations();
 		ArrayList<String> geoLocationsNames = new ArrayList<>();
-		for (Location location : geoLocations) {
-			geoLocationsNames.add(location.getName());
-		}
+		//TODO
 		return geoLocationsNames;
 	}
 
 	/**
 	 * @return A list of results of all the matching entries in the database
 	 */
+	//TODO
 	@Override
 	public ArrayList<Result> getResults(int startYear, int endYear,
 			String category) {
@@ -82,6 +80,7 @@ public class DBQueries implements Queries {
 	/**
 	 * @return True if the server is connected and online
 	 */
+	//TODO
 	@Override
 	public boolean isConnectedToDB() {
 		return true;
@@ -90,6 +89,7 @@ public class DBQueries implements Queries {
 	/**
 	 * @return A list of all the categories in the database
 	 */
+	//TODO
 	@Override
 	public List<String> getAllCategoriesNames() {
 		List<String> categories = new ArrayList<>();
@@ -103,6 +103,7 @@ public class DBQueries implements Queries {
 	/**
 	 * @return The amount of results found in the last results query
 	 */
+	//TODO
 	@Override
 	public int getAmountOfLatestResults() {
 		return 10;
@@ -112,15 +113,25 @@ public class DBQueries implements Queries {
 	 * @return The male/females statistics of the results found in the last
 	 *         results query
 	 */
+	//TODO
 	@Override
 	public int getStatsOfLatestResults() {
 		return 6;
 	}
-
+	
+	//TODO
 	@Override
 	public void update(String fullPathDirectory) {
 		// TODO Auto-generated method stub
 
+	}
+
+
+	@Override
+	public boolean addNew(String name, String category, String birthDate,
+			int birthPlace, String deathDate, int deatePlace, String wikiLink) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

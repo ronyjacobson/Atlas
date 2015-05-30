@@ -23,9 +23,9 @@ public class MockQueries implements Queries {
 	@Override
 	public List<Location> getAllGeoLocations() {
 		ArrayList<Location> geoLocations = new ArrayList<>();
-		geoLocations.add(new Location("Tel-Aviv", 32.0667, 34.8000));
-		geoLocations.add(new Location("New-York", 40.748817, -73.985428));
-		geoLocations.add(new Location("Paris", 48.8567, 2.3508));
+		geoLocations.add(new Location(1,"Tel-Aviv", 32.0667, 34.8000));
+		geoLocations.add(new Location(2,"New-York", 40.748817, -73.985428));
+		geoLocations.add(new Location(3, "Paris", 48.8567, 2.3508));
 		return geoLocations;
 	}
 
@@ -109,12 +109,10 @@ public class MockQueries implements Queries {
 		return user;
 	}
 
-	/**
-	 * Add a new entry to the database
-	 */
+
 	@Override
-	public boolean addNew(String name, String category, String birthDate, String birthPlace, String deathDate, String deatePlace,
-			String wikiLink) {
+	public boolean addNew(String name, String category, String birthDate,
+			int birthPlace, String deathDate, int deatePlace, String wikiLink) {
 		return true;
 	}
 

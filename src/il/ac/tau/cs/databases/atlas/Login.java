@@ -212,8 +212,11 @@ public class Login extends JFrame {
 				JOptionPane.showMessageDialog(null, "Please choose a birth place from the list.", GrapicUtils.PROJECT_NAME, 1);
 			} else {
 				// Create user
-				User user = new User(username.getText(), String.copyValueOf(password.getPassword()), wasBornOn.getDate(), wasBornIn
-						.getSelectedItem().toString());
+				User user = new User(
+						username.getText(), 
+						String.copyValueOf(password.getPassword()), 
+						wasBornOn.getDate(), 
+						/* TODO - retun ID wasBornIn.getSelectedItem().toString()*/ -1);
 
 				// Log in or sign up
 				// Check if user already registered

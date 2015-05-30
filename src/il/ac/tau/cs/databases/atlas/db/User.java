@@ -7,18 +7,43 @@ import java.util.Date;
  */
 public class User {
 	
+	private int userID;
 	private String username;
 	private String password;
 	private Date dateOfBirth;
-	private String location;
+	private int locationID;
 	
-	public User(String username, String password, Date dateOfBirth, String location) {
+	public User(String username, String password, Date dateOfBirth, int locationID) {
 		this.username = username;
 		this.password = password;
 		this.dateOfBirth = dateOfBirth;
-		this.location = location;
+		this.locationID = locationID;
 	}
 	
+	public User(int ID, String username, String password, Date dateOfBirth, int locationID) {
+		this.userID = ID;
+		this.username = username;
+		this.password = password;
+		this.dateOfBirth = dateOfBirth;
+		this.locationID = locationID;
+	}
+	
+	public int getUserID() {
+		return userID;
+	}
+
+	public void setUserID(int userID) {
+		this.userID = userID;
+	}
+
+	public int getLocationID() {
+		return locationID;
+	}
+
+	public void setLocationID(int locationID) {
+		this.locationID = locationID;
+	}
+
 	public String getUsername() {
 		return username;
 	}
@@ -43,12 +68,5 @@ public class User {
 		this.dateOfBirth = dateOfBirth;
 	}
 	
-	public String getLocation() {
-		return location;
-	}
-	
-	public void setLocation(String location) {
-		this.location = location;
-	}
 
 }
