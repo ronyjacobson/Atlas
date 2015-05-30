@@ -16,6 +16,7 @@ public class DBQueriesTest {
 	
 	@Before
 	public void setUp() throws Exception {
+		// Initialize connection according to debugger
 		if (Tester == "Rony") {
 			DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06","127.0.0.1", "3306", "dbmysql06");
 		}

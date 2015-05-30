@@ -6,8 +6,11 @@ import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DBQueries implements Queries {
+import org.apache.log4j.Logger;
 
+public class DBQueries implements Queries {
+	protected final Logger logger = Logger.getLogger(this.getClass().getName());
+	
 	@Override
 	/**
 	 * @return true if the user is already registered in the system
@@ -16,11 +19,16 @@ public class DBQueries implements Queries {
 		
 		GetUserQuery query = new GetUserQuery(user);
 		List<User> users;
+		logger.info(String.format("Checking for regitered user with username: %s...", user.getUsername()));
 		try {
 			users = query.execute();
 			if (users.isEmpty()) {
-				return false;		
-			} else return true;
+				logger.info(String.format("Did not find a regitered user with username: %s.", user.getUsername()));
+				return false;				
+			} else {
+				logger.info(String.format("Found a regitered user with username: %s.", user.getUsername()));
+				return true;
+			}
 		} catch (AtlasServerException e) {
 			// TODO[verify this] - when a Server Error is thrown return true so that the user will try to re-register
 			return true;
