@@ -2,10 +2,13 @@ package il.ac.tau.cs.databases.atlas.db;
 
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface Queries {
 
+	public HashMap<String, Integer> locationsList= null;
+	
 	/**
 	 * @return True if the server is connected and online
 	 */
@@ -14,13 +17,14 @@ public interface Queries {
 	/**
 	 * Register the user to the system
 	 * @return true if the user was successfully registered in the system
+	 * @throws AtlasServerException 
 	 */
-	public boolean registerUser(User user);
+	public boolean registerUser(User user) throws AtlasServerException;
 	
 	/**
 	 * @return A list of all geographical locations in the database
 	 */
-	public List<Location> getAllGeoLocations();
+	public HashMap<String, Integer> getGeoLocationsHashMap();
 	
 	/**
 	 * @return A list of strings representing the display names of all
@@ -61,5 +65,10 @@ public interface Queries {
 	/**
 	 * Add a new entry to the database
 	 */
-	public boolean addNew(String name, String category, String birthDate, int birthPlace, String deathDate, int deatePlace, String wikiLink);
+	public boolean addNew(String name, String category, String birthDate, int birthlocationID, String deathDate, int deathlocationID, String wikiLink);
+	
+	/**
+	 * TODO
+	 */
+	public Integer getLocationId(String locationName);
 }

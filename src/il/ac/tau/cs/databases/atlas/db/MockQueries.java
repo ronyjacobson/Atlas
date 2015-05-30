@@ -3,6 +3,7 @@ package il.ac.tau.cs.databases.atlas.db;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class MockQueries implements Queries {
@@ -20,7 +21,6 @@ public class MockQueries implements Queries {
 	/**
 	 * @return A list of all geographical locations in the database
 	 */
-	@Override
 	public List<Location> getAllGeoLocations() {
 		ArrayList<Location> geoLocations = new ArrayList<>();
 		geoLocations.add(new Location(1,"Tel-Aviv", 32.0667, 34.8000));
@@ -112,8 +112,22 @@ public class MockQueries implements Queries {
 
 	@Override
 	public boolean addNew(String name, String category, String birthDate,
-			int birthPlace, String deathDate, int deatePlace, String wikiLink) {
+			String birthPlace, String deathDate, String deatePlace, String wikiLink) {
 		return true;
+	}
+
+
+	@Override
+	public HashMap<String, Integer> getGeoLocationsHashMap() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Integer getLocationId(String locationName) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

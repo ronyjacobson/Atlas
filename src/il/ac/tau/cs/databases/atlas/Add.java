@@ -1,5 +1,6 @@
 package il.ac.tau.cs.databases.atlas;
 
+import il.ac.tau.cs.databases.atlas.db.Queries;
 import il.ac.tau.cs.databases.atlas.utils.DateUtils;
 import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
 
@@ -281,12 +282,13 @@ public class Add extends JFrame {
 			} else if (wikiLink.getText().equalsIgnoreCase("")) {
 				JOptionPane.showMessageDialog(null, "Wikipedia link can not be blank.", GrapicUtils.PROJECT_NAME, 1);
 			} else {
-				boolean status = Main.queries.addNew(name.getText(), category
-						.getSelectedItem().toString(), wasBornOn.getDate()
-						.toString(), 
-						/*TODO- return IDwasBornIn.getSelectedItem().getID() */-1, 
+				boolean status = Main.queries.addNew(
+						name.getText(), 
+						category.getSelectedItem().toString(),
+						wasBornOn.getDate().toString(), 
+						Queries.locationsList.get(wasBornIn.getSelectedItem().toString()), 
 						hasDiedOn.getDate().toString(),
-						/*TODO- return IDwasBornIn.getSelectedItem().getID() */-1, 
+						Queries.locationsList.get(wasBornIn.getSelectedItem().toString()), 
 						wikiLink.getText());
 				if (status) {
 					JOptionPane.showMessageDialog(null, "New entry added to the data base.", GrapicUtils.PROJECT_NAME, JOptionPane.INFORMATION_MESSAGE);
@@ -307,7 +309,11 @@ public class Add extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			boolean status = Main.queries.addNew(Main.user.getUsername(), "Favorites", Main.user.getDateOfBirth().toString(), Main.user.getLocationID(), "", -1 , "");
+			boolean status = Main.queries.addNew(
+					Main.user.getUsername(),
+					"Favorites",
+					Main.user.getDateOfBirth().toString(),
+					Main.user.getLocationID(), "", -1 , "");
 			if (status) {
 				JOptionPane.showMessageDialog(null, "You were added to the data base.", GrapicUtils.PROJECT_NAME, JOptionPane.INFORMATION_MESSAGE);
 				

@@ -1,5 +1,6 @@
 package il.ac.tau.cs.databases.atlas;
 
+import il.ac.tau.cs.databases.atlas.db.Queries;
 import il.ac.tau.cs.databases.atlas.db.User;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 import il.ac.tau.cs.databases.atlas.graphics.map.MapBrowser;
@@ -216,7 +217,7 @@ public class Login extends JFrame {
 						username.getText(), 
 						String.copyValueOf(password.getPassword()), 
 						wasBornOn.getDate(), 
-						/* TODO - retun ID wasBornIn.getSelectedItem().toString()*/ -1);
+						Queries.locationsList.get(wasBornIn.getSelectedItem().toString()));
 
 				// Log in or sign up
 				// Check if user already registered

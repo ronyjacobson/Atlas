@@ -33,38 +33,39 @@ public class RegisterUserQuery extends BaseDBCommand<User> {
 					+ DBConstants.User.USERNAME + "`, `"
 					+ DBConstants.User.PASSWORD + "`, `"
 					+ DBConstants.User.BORN_IN_LOCATION + "`, `"
-					+ DBConstants.User.BORN_ON_DATE + "`) VALUES (?, ?, ?, ?)",
-					Statement.RETURN_GENERATED_KEYS);
-
+					+ DBConstants.User.BORN_ON_DATE + "`) VALUES (?, ?, ?, ?)", new String[]{DBConstants.User.USER_ID});
+			
 			statement.setString(1, user.getUsername());
-			statement.setString(2, user.getUsername());
+			statement.setString(2, user.getPassword());
 			statement.setInt(3, user.getLocationID());
 			statement.setDate(4, new java.sql.Date(user.getDateOfBirth().getTime()));
 
-			logger.info(String.format("Executing DB query: %s.", statement.toString()));
+			System.out.println(String.format("Executing DB query: %s.", statement.toString()));
 			
+			statement.executeUpdate();
 			resultSet = statement.getGeneratedKeys();
-			
 			resultSet.next();
             int genID = resultSet.getInt(1);
             user.setUserID(genID);
-            logger.info("User added successfully - The generated user ID is: "+ genID);
+            System.out.println("User added successfully - The generated user ID is: "+ genID);
 
 		} catch (SQLException e) {
 			Integer errorCode = e.getErrorCode();
 			if (errorCode.equals(1062)) {
 				// This error code represents that there is already a username with the desired value
-				String msg = "Duplicate values where found for unique username has been catched. Changes did not save.";
-				throw new AtlasServerException(msg);
+				String msg = String.format("Error - Duplicate values where found when trying to reguter username %s", user.getUsername());
+				System.out.println(msg);
+				return null;
 			} else {
 				//TODO- handle Exception?
+				e.printStackTrace();
 			}
 			return null;
 		} finally {
 			safelyClose(statement, resultSet);
 		}
 
-		logger.info(String.format("Query executed properly.",statement.toString()));
+		System.out.println(String.format("Query executed properly.",statement.toString()));
 		return user;
 	}
 
