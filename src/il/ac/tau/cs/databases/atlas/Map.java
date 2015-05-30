@@ -230,7 +230,7 @@ public class Map extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					new Add();
+					new Search();
 				} catch (IOException e) {
 					JOptionPane.showMessageDialog(null, "Exception occured while using the search screen.", GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
 				}
