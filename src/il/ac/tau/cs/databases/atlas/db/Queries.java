@@ -31,6 +31,11 @@ public interface Queries {
 	/**
 	 * @return A list of results of all the matching entries in the database
 	 */
+	public List<Result> getResults(String name);
+	
+	/**
+	 * @return A list of results of all the matching entries in the database
+	 */
 	public List<Result> getResults(int startYear, int endYear, String category);
 		
 	/**

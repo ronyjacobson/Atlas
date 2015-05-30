@@ -134,4 +134,10 @@ public class DBQueries implements Queries {
 		return false;
 	}
 
+	@Override
+	public List<Result> getResults(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

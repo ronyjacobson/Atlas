@@ -46,6 +46,13 @@ public class MockQueries implements Queries {
 	/**
 	 * @return A list of results of all the matching entries in the database
 	 */
+	public List<Result> getResults(String name) {
+		return getResults(1000, 2015, "");
+	}
+	
+	/**
+	 * @return A list of results of all the matching entries in the database
+	 */
 	@Override
 	public ArrayList<Result> getResults(int startYear, int endYear, String category) {
 		List<Location> geoLocations = getAllGeoLocations();
@@ -115,6 +122,4 @@ public class MockQueries implements Queries {
 			int birthPlace, String deathDate, int deatePlace, String wikiLink) {
 		return true;
 	}
-
-
 }

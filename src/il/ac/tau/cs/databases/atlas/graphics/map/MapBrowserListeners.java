@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.util.List;
 
 import javax.swing.JScrollBar;
 
@@ -14,7 +15,7 @@ import org.eclipse.swt.widgets.Display;
 
 public class MapBrowserListeners {
 
-	private static MapBrowser map = null;
+	public volatile static MapBrowser map = null;
 
 	public static void setMap(MapBrowser map) {
 		MapBrowserListeners.map = map;
@@ -61,23 +62,27 @@ public class MapBrowserListeners {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
 					if (map != null) {
-						map.getBrowser().execute("deleteMarkers();");
 						int startYear = timeline.getModel().getValue();
 						int endYear =  timeline.getModel().getValue() + timeline.getModel().getExtent();
-						for (Result result : Main.queries.getResults(startYear, endYear, category)) {
-							String imageIcon;
-							if (result.isBirth()){
-								imageIcon = "./flag-birth.png";
-							} else {
-								imageIcon = "./flag-death.png";
-							}
-							map.getBrowser().execute("addMarker(" + result.getLocation().getLat() + "," + result.getLocation().getLng() + ",\"" + result.getName() + "\",\"" + imageIcon + "\",\"" + result.getSummary() + "\",\"" + result.getWikiLink() + "\");");
-						}
+						showResultsOnMap(Main.queries.getResults(startYear, endYear, category));
 					} else {
 						// TODO Show message?
 					}
 				}
 			});
+		}
+	}
+	
+	public static void showResultsOnMap(List<Result> results){
+		map.getBrowser().execute("deleteMarkers();");
+		for (Result result : results) {
+			String imageIcon;
+			if (result.isBirth()){
+				imageIcon = "./flag-birth.png";
+			} else {
+				imageIcon = "./flag-death.png";
+			}
+			map.getBrowser().execute("addMarker(" + result.getLocation().getLat() + "," + result.getLocation().getLng() + ",\"" + result.getName() + "\",\"" + imageIcon + "\",\"" + result.getSummary() + "\",\"" + result.getWikiLink() + "\");");
 		}
 	}
 	

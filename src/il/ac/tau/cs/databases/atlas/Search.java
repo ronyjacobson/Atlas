@@ -1,5 +1,6 @@
 package il.ac.tau.cs.databases.atlas;
 
+import il.ac.tau.cs.databases.atlas.graphics.map.MapBrowserListeners;
 import il.ac.tau.cs.databases.atlas.utils.DateUtils;
 import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
 
@@ -16,6 +17,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.imageio.ImageIO;
@@ -26,6 +28,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import org.eclipse.swt.widgets.Display;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -120,7 +124,6 @@ public class Search extends JFrame {
 		datesLabel = new JLabel("Search by dates:");
 		datesLabel.setForeground(Color.DARK_GRAY);
 		datesLabel.setFont(labelFont);
-
 		
 		createDatesPanel();
 		
@@ -207,7 +210,7 @@ public class Search extends JFrame {
 		public void mouseReleased(MouseEvent arg0) {
 		}
 	}
-
+	
 	/**
 	 * Search an entry in the database by name
 	 */
@@ -217,12 +220,14 @@ public class Search extends JFrame {
 		public void actionPerformed(ActionEvent arg0) {
 
 			// Validate input
-			if (!wasNameEntered) {
-				JOptionPane.showMessageDialog(null, "Please enter a full name.", GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
-			} else if (name.getText().equalsIgnoreCase("")) {
-				JOptionPane.showMessageDialog(null, "Name can not be blank.", GrapicUtils.PROJECT_NAME, 1);
+			if (!wasNameEntered || name.getText().equalsIgnoreCase("")) {
+				JOptionPane.showMessageDialog(null, "Please enter the needed details.", GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
 			} else {
-				
+				Display.getDefault().syncExec(new Runnable() {
+				    public void run() {
+				    	MapBrowserListeners.showResultsOnMap(Main.queries.getResults(fromDate.getCalendar().get(Calendar.YEAR), untilDate.getCalendar().get(Calendar.YEAR), "All"));
+				    }
+				});
 				dispose();
 			}
 		}
@@ -238,9 +243,13 @@ public class Search extends JFrame {
 
 			// Validate input
 			if (DateUtils.isAfterDay(fromDate.getCalendar(), untilDate.getCalendar())) {
-				JOptionPane.showMessageDialog(null, "Please select a valid date range.", GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Please enter a valid dates range.", GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
 			} else {
-				// TODO Get results
+				Display.getDefault().syncExec(new Runnable() {
+				    public void run() {
+				    	MapBrowserListeners.showResultsOnMap(Main.queries.getResults(name.getText()));
+				    }
+				});
 				dispose();
 			}
 		}
