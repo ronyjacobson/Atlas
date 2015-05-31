@@ -1,6 +1,7 @@
 package il.ac.tau.cs.databases.atlas;
 
 import il.ac.tau.cs.databases.atlas.db.DBFilesUplaodListner;
+import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 import il.ac.tau.cs.databases.atlas.graphics.map.MapBrowser;
 import il.ac.tau.cs.databases.atlas.graphics.map.MapBrowserListeners;
 import il.ac.tau.cs.databases.atlas.utils.AudioUtils;
@@ -43,7 +44,7 @@ public class Map extends JFrame {
 	private static final int TIMELINE_INITIAL_VALUE = 1000;
 	private static int width;
 	private static int height;
-	
+
 	// Define Buttons, Map and Timeline
 	private static final MapBrowser map = new MapBrowser();
 	private static JButton buttonCategory1;
@@ -55,7 +56,8 @@ public class Map extends JFrame {
 	private static JButton buttonSearch;
 	private static JButton buttonUpdate;
 	private static JButton buttonAudio;
-	private static JScrollBar timeline = new JScrollBar(JScrollBar.HORIZONTAL, TIMELINE_INITIAL_VALUE, TIMELINE_EXTENT, TIMELINE_MIN, TIMELINE_MAX);;
+	private static JScrollBar timeline = new JScrollBar(JScrollBar.HORIZONTAL,
+			TIMELINE_INITIAL_VALUE, TIMELINE_EXTENT, TIMELINE_MIN, TIMELINE_MAX);;
 
 	/**
 	 * Creates and shows the map screen.
@@ -145,84 +147,121 @@ public class Map extends JFrame {
 
 	private JPanel createButtonsPanel() {
 		// Create buttons panel
-		FlowLayout buttonsPanelLayout = new FlowLayout(FlowLayout.CENTER, GAP_BETWEEN_BUTTONS, GAP_BETWEEN_COMPONENTS);
+		FlowLayout buttonsPanelLayout = new FlowLayout(FlowLayout.CENTER,
+				GAP_BETWEEN_BUTTONS, GAP_BETWEEN_COMPONENTS);
 		JPanel buttonsPanel = new JPanel(buttonsPanelLayout);
 
 		// Make panel transparent
 		buttonsPanel.setOpaque(false);
 
 		// Define buttons attributes
-		Font fieldFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_FIELD);
+		Font fieldFont = new Font("Century Gothic", Font.PLAIN,
+				GrapicUtils.FONT_SIZE_FIELD);
 		Dimension dimensionCategory = new Dimension(width / 7, height / 13);
-		Dimension dimensionStats = new Dimension((int) dimensionCategory.getWidth() / 3, (int) dimensionCategory.getHeight());
-		Dimension dimensionOther = new Dimension((int) dimensionCategory.getWidth() / 3, (int) dimensionCategory.getHeight() / 2);
+		Dimension dimensionStats = new Dimension(
+				(int) dimensionCategory.getWidth() / 3,
+				(int) dimensionCategory.getHeight());
+		Dimension dimensionOther = new Dimension(
+				(int) dimensionCategory.getWidth() / 3,
+				(int) dimensionCategory.getHeight() / 2);
 
 		// Create buttons
-		List<String> categories = Main.queries.getAllCategoriesNames();
-		// Add a button for Category1
-		buttonCategory1 = new JButton(categories.get(0));
-		buttonCategory1.setPreferredSize(dimensionCategory);
-		buttonCategory1.setFont(fieldFont);
-		buttonsPanel.add(buttonCategory1);
-		// Add a button for Category2
-		buttonCategory2 = new JButton(categories.get(1));
-		buttonCategory2.setPreferredSize(dimensionCategory);
-		buttonCategory2.setFont(fieldFont);
-		buttonsPanel.add(buttonCategory2);
-		// Add a button for Category3
-		buttonCategory3 = new JButton(categories.get(2));
-		buttonCategory3.setPreferredSize(dimensionCategory);
-		buttonCategory3.setFont(fieldFont);
-		buttonsPanel.add(buttonCategory3);
-		// Add a button for Category4
-		buttonCategory4 = new JButton(categories.get(3));
-		buttonCategory4.setPreferredSize(dimensionCategory);
-		buttonCategory4.setFont(fieldFont);
-		buttonsPanel.add(buttonCategory4);
+		try {
+			List<String> categories = Main.queries.getAllCategoriesNames();
+			// Add a button for Category1
+			buttonCategory1 = new JButton(categories.get(0));
+			buttonCategory1.setPreferredSize(dimensionCategory);
+			buttonCategory1.setFont(fieldFont);
+			buttonsPanel.add(buttonCategory1);
+			// Add a button for Category2
+			buttonCategory2 = new JButton(categories.get(1));
+			buttonCategory2.setPreferredSize(dimensionCategory);
+			buttonCategory2.setFont(fieldFont);
+			buttonsPanel.add(buttonCategory2);
+			// Add a button for Category3
+			buttonCategory3 = new JButton(categories.get(2));
+			buttonCategory3.setPreferredSize(dimensionCategory);
+			buttonCategory3.setFont(fieldFont);
+			buttonsPanel.add(buttonCategory3);
+			// Add a button for Category4
+			buttonCategory4 = new JButton(categories.get(3));
+			buttonCategory4.setPreferredSize(dimensionCategory);
+			buttonCategory4.setFont(fieldFont);
+			buttonsPanel.add(buttonCategory4);
+		} catch (AtlasServerException e) {
+			// TODO handle exception
+		}
 		// Add a button for statistics
 		buttonStats = new JButton("");
-		buttonStats.setIcon(new ImageIcon(getClass().getResource(GrapicUtils.getSkin() + "Stats.png")));
+		buttonStats.setIcon(new ImageIcon(getClass().getResource(
+				GrapicUtils.getSkin() + "Stats.png")));
 		buttonStats.setPreferredSize(dimensionStats);
 		buttonStats.setFont(fieldFont);
 		buttonsPanel.add(buttonStats);
 		// Add a button for adding values
 		buttonAdd = new JButton("");
-		buttonAdd.setIcon(new ImageIcon(getClass().getResource(GrapicUtils.getSkin() + "Add.png")));
+		buttonAdd.setIcon(new ImageIcon(getClass().getResource(
+				GrapicUtils.getSkin() + "Add.png")));
 		buttonAdd.setPreferredSize(dimensionOther);
 		buttonAdd.setFont(fieldFont);
 		buttonsPanel.add(buttonAdd);
 		// Add a button for search
 		buttonSearch = new JButton("");
-		buttonSearch.setIcon(new ImageIcon(getClass().getResource(GrapicUtils.getSkin() + "Search.png")));
+		buttonSearch.setIcon(new ImageIcon(getClass().getResource(
+				GrapicUtils.getSkin() + "Search.png")));
 		buttonSearch.setPreferredSize(dimensionOther);
 		buttonSearch.setFont(fieldFont);
 		buttonsPanel.add(buttonSearch);
 		// Add a button for update
 		buttonUpdate = new JButton("");
-		buttonUpdate.setIcon(new ImageIcon(getClass().getResource(GrapicUtils.getSkin() + "Update.png")));
+		buttonUpdate.setIcon(new ImageIcon(getClass().getResource(
+				GrapicUtils.getSkin() + "Update.png")));
 		buttonUpdate.setPreferredSize(dimensionOther);
 		buttonUpdate.setFont(fieldFont);
 		buttonsPanel.add(buttonUpdate);
 		// Add a button for audio
 		buttonAudio = new JButton("");
-		buttonAudio.setIcon(new ImageIcon(getClass().getResource(GrapicUtils.getSkin() + "Audio.png")));
+		buttonAudio.setIcon(new ImageIcon(getClass().getResource(
+				GrapicUtils.getSkin() + "Audio.png")));
 		buttonAudio.setPreferredSize(dimensionOther);
 		buttonAudio.setFont(fieldFont);
 		buttonsPanel.add(buttonAudio);
-		
+
 		// Add listeners
-		buttonCategory1.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(timeline, buttonCategory1.getText()));
-		buttonCategory2.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(timeline, buttonCategory2.getText()));
-		buttonCategory3.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(timeline, buttonCategory3.getText()));
-		buttonCategory4.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(timeline, buttonCategory4.getText()));
-		buttonStats.addActionListener(new MapBrowserListeners.BrowserMessageActionListener(" Showing " + Main.queries.getAmountOfLatestResults() +  " results:\\n\\n " + Main.queries.getStatsOfLatestResults() + " Males\\n " + (Main.queries.getAmountOfLatestResults() - Main.queries.getStatsOfLatestResults()) + " Females"));
+		buttonCategory1
+				.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(
+						timeline, buttonCategory1.getText()));
+		buttonCategory2
+				.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(
+						timeline, buttonCategory2.getText()));
+		buttonCategory3
+				.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(
+						timeline, buttonCategory3.getText()));
+		buttonCategory4
+				.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(
+						timeline, buttonCategory4.getText()));
+		buttonStats
+				.addActionListener(new MapBrowserListeners.BrowserMessageActionListener(
+						" Showing "
+								+ Main.queries.getAmountOfLatestResults()
+								+ " results:\\n\\n "
+								+ Main.queries.getStatsOfLatestResults()
+								+ " Males\\n "
+								+ (Main.queries.getAmountOfLatestResults() - Main.queries
+										.getStatsOfLatestResults())
+								+ " Females"));
 		buttonAdd.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					new Add();
 				} catch (IOException e) {
-					JOptionPane.showMessageDialog(null, "Exception occured while using the add screen.", GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
+					JOptionPane
+							.showMessageDialog(
+									null,
+									"Exception occured while using the add screen.",
+									GrapicUtils.PROJECT_NAME,
+									JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -232,12 +271,18 @@ public class Map extends JFrame {
 				try {
 					new Search();
 				} catch (IOException e) {
-					JOptionPane.showMessageDialog(null, "Exception occured while using the search screen.", GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
+					JOptionPane
+							.showMessageDialog(
+									null,
+									"Exception occured while using the search screen.",
+									GrapicUtils.PROJECT_NAME,
+									JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
 		buttonUpdate.addActionListener(new DBFilesUplaodListner());
-		buttonAudio.addActionListener(new AudioUtils.AudioToggleActionListener());
+		buttonAudio
+				.addActionListener(new AudioUtils.AudioToggleActionListener());
 
 		// Return the panel
 		return buttonsPanel;

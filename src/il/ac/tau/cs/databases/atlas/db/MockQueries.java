@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class MockQueries implements Queries {
-
+	
 	@Override
 	/**
 	 * Register the user to the system
@@ -24,8 +24,11 @@ public class MockQueries implements Queries {
 	public List<Location> getAllGeoLocations() {
 		ArrayList<Location> geoLocations = new ArrayList<>();
 		geoLocations.add(new Location(1,"Tel-Aviv", 32.0667, 34.8000));
+		locationsMap.put("Tel-Aviv", 0);
 		geoLocations.add(new Location(2,"New-York", 40.748817, -73.985428));
+		locationsMap.put("New-York", 1);
 		geoLocations.add(new Location(3, "Paris", 48.8567, 2.3508));
+		locationsMap.put("Paris", 2);
 		return geoLocations;
 	}
 
@@ -40,6 +43,7 @@ public class MockQueries implements Queries {
 		for (Location location : geoLocations){
 			geoLocationsNames.add(location.getName());
 		}
+		locationsNames.addAll(geoLocationsNames);
 		return geoLocationsNames;
 	}
 

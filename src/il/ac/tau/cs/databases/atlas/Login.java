@@ -63,7 +63,8 @@ public class Login extends JFrame {
 		String loginImagePath = GrapicUtils.getSkin() + "Login.png";
 
 		// Get graphics attributes
-		InputStream imageStream = getClass().getResourceAsStream(loginImagePath);
+		InputStream imageStream = getClass()
+				.getResourceAsStream(loginImagePath);
 		BufferedImage image = ImageIO.read(imageStream);
 		int width = image.getWidth();
 		int height = image.getHeight();
@@ -110,8 +111,10 @@ public class Login extends JFrame {
 
 		// Create buttons and text boxes
 		ClearTextBox clearTextBoxListner = new ClearTextBox();
-		Font labelFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_LABEL);
-		Font fieldFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_FIELD);
+		Font labelFont = new Font("Century Gothic", Font.PLAIN,
+				GrapicUtils.FONT_SIZE_LABEL);
+		Font fieldFont = new Font("Century Gothic", Font.PLAIN,
+				GrapicUtils.FONT_SIZE_FIELD);
 
 		label = new JLabel("Log in or sign up:");
 		label.setForeground(Color.WHITE);
@@ -132,10 +135,15 @@ public class Login extends JFrame {
 		wasBornOn.addMouseListener(clearTextBoxListner);
 		wasBornOn.setFont(fieldFont);
 
-		List<String> options = Main.queries.getAllGeoLocationsNames();
-		options.add(0, DEFAULT_LOCATION);
-		wasBornIn = new JComboBox<String>(options.toArray(new String[options.size()]));
-		wasBornIn.setFont(fieldFont);
+		try {
+			List<String> options = Main.queries.getAllGeoLocationsNames();
+			options.add(0, DEFAULT_LOCATION);
+			wasBornIn = new JComboBox<String>(
+					options.toArray(new String[options.size()]));
+			wasBornIn.setFont(fieldFont);
+		} catch (AtlasServerException e) {
+			// TODO handle exception
+		}
 
 		loginButton = new JButton("Glimpse into the past!");
 		loginButton.addActionListener(new LoginAction());
@@ -202,30 +210,43 @@ public class Login extends JFrame {
 
 			// Validate input
 			if (!wereCredentialsEntered) {
-				JOptionPane.showMessageDialog(null, "Please enter login credentials.", GrapicUtils.PROJECT_NAME, 1);
+				JOptionPane.showMessageDialog(null,
+						"Please enter login credentials.",
+						GrapicUtils.PROJECT_NAME, 1);
 			} else if (username.getText().equalsIgnoreCase("")) {
-				JOptionPane.showMessageDialog(null, "Username can not be blank.", GrapicUtils.PROJECT_NAME, 1);
+				JOptionPane.showMessageDialog(null,
+						"Username can not be blank.", GrapicUtils.PROJECT_NAME,
+						1);
 			} else if (password.getPassword().length == 0) {
-				JOptionPane.showMessageDialog(null, "Password can not be blank.", GrapicUtils.PROJECT_NAME, 1);
+				JOptionPane.showMessageDialog(null,
+						"Password can not be blank.", GrapicUtils.PROJECT_NAME,
+						1);
 			} else if (DateUtils.isToday(wasBornOn.getCalendar())) {
-				JOptionPane.showMessageDialog(null, "No way you were born today, enter a valid birthday.", GrapicUtils.PROJECT_NAME, 1);
-			} else if (wasBornIn.getSelectedItem().toString().equals(DEFAULT_LOCATION)) {
-				JOptionPane.showMessageDialog(null, "Please choose a birth place from the list.", GrapicUtils.PROJECT_NAME, 1);
+				JOptionPane.showMessageDialog(null,
+						"No way you were born today, enter a valid birthday.",
+						GrapicUtils.PROJECT_NAME, 1);
+			} else if (wasBornIn.getSelectedItem().toString()
+					.equals(DEFAULT_LOCATION)) {
+				JOptionPane.showMessageDialog(null,
+						"Please choose a birth place from the list.",
+						GrapicUtils.PROJECT_NAME, 1);
 			} else {
 				// Create user
 				User user = new User(
-						username.getText(), 
-						String.copyValueOf(password.getPassword()), 
-						wasBornOn.getDate(), 
+						username.getText(),
+						String.copyValueOf(password.getPassword()),
+						wasBornOn.getDate(),
 						Queries.locationsMap.get(wasBornIn.getSelectedItem().toString()));
 
 				// Log in or sign up
 				// Check if user already registered
 				try {
 					fetchedUser = Main.queries.fetchUser(user);
-				} catch (AtlasServerException e){
+				} catch (AtlasServerException e) {
 					// Server error
-					JOptionPane.showMessageDialog(null, e.getMessage() , GrapicUtils.PROJECT_NAME, JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null, e.getMessage(),
+							GrapicUtils.PROJECT_NAME,
+							JOptionPane.INFORMATION_MESSAGE);
 				}
 				if (fetchedUser != null) {
 					// Check password validity
@@ -234,22 +255,33 @@ public class Login extends JFrame {
 						LoginSuccesful();
 					} else {
 						// Error
-						JOptionPane.showMessageDialog(null, "Wrong username and password combination.", GrapicUtils.PROJECT_NAME, JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(null,
+								"Wrong username and password combination.",
+								GrapicUtils.PROJECT_NAME,
+								JOptionPane.INFORMATION_MESSAGE);
 					}
 				} else {
 					// Suggest to sign up
-					int reply = JOptionPane.showConfirmDialog(null, "Unregistered user. Would you like to register?", GrapicUtils.PROJECT_NAME,
-							JOptionPane.YES_NO_OPTION);
+					int reply = JOptionPane
+							.showConfirmDialog(
+									null,
+									"Unregistered user. Would you like to register?",
+									GrapicUtils.PROJECT_NAME,
+									JOptionPane.YES_NO_OPTION);
 					if (reply == JOptionPane.YES_OPTION) {
-						 try {
+						try {
 							Main.queries.registerUser(user);
-							JOptionPane.showMessageDialog(null, "You are now registered!");
+							JOptionPane.showMessageDialog(null,
+									"You are now registered!");
 							// Login
 							LoginSuccesful();
-						 } catch (Exception e) {
+						} catch (Exception e) {
 							// TODO Throw exception? add Msg?
-							JOptionPane.showMessageDialog(null, "Failed to register.", GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
-						 }
+							JOptionPane.showMessageDialog(null,
+									"Failed to register.",
+									GrapicUtils.PROJECT_NAME,
+									JOptionPane.ERROR_MESSAGE);
+						}
 					}
 				}
 			}
@@ -257,10 +289,10 @@ public class Login extends JFrame {
 	}
 
 	private void LoginSuccesful() {
-		
+
 		// Store User
 		Main.user = fetchedUser;
-		
+
 		// Close login screen
 		setVisible(false);
 		dispose();
@@ -268,7 +300,9 @@ public class Login extends JFrame {
 		// Play audio
 		Runnable r = new Runnable() {
 			public void run() {
-				String loginAudioPath = getClass().getResource(GrapicUtils.getSkin() + AudioUtils.AUDIO_FILE_NAME).getPath();
+				String loginAudioPath = getClass().getResource(
+						GrapicUtils.getSkin() + AudioUtils.AUDIO_FILE_NAME)
+						.getPath();
 				new AudioUtils().playSound(loginAudioPath);
 			}
 		};

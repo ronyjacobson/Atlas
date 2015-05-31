@@ -56,15 +56,6 @@ public class GetResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 			resultSet = statement.executeQuery();
 
 			while (resultSet.next()) {
-
-				// Validate that no more then 1 users with that UserName exists
-				if (FetchedUser != null) {
-					throw new AtlasServerException(
-							String.format(
-									"Error: Found more then 1 user with the username: %s",
-									user.getUsername()));
-				}
-
 				// Create fetched User
 				String username = resultSet
 						.getString(DBConstants.User.USERNAME);
@@ -75,8 +66,7 @@ public class GetResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 				int locationID = resultSet
 						.getInt(DBConstants.User.BORN_IN_LOCATION);
 				int userID = resultSet.getInt(DBConstants.User.USER_ID);
-				FetchedUser = new User(userID, username, password, dateOfBirth,
-						locationID);
+
 			}
 
 		} catch (SQLException e) {
@@ -91,24 +81,29 @@ public class GetResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 		return null;
 	}
 
-	private void buildNormalStmt(Connection con, PreparedStatement statement) {
-		statement = con.prepareStatement(
-		"SELECT * FROM " + DBConstants.User.TABLE_NAME + " where "
+	private void buildNormalStmt(Connection con, PreparedStatement statement)
+			throws SQLException {
+		statement = con.prepareStatement("SELECT * FROM "
+				+ DBConstants.User.TABLE_NAME + " where "
 				+ DBConstants.User.USERNAME + " = ?");
-		statement.setString(1, user.getUsername());
+		statement.setString(1, name);
 
 	}
 
-	private void buildNameStmt(Connection con, PreparedStatement statement) {
-		//String name, Location location, Date date, boolean isBirth, String summary, String wikiLink
-		//LOCATION: int id, String name, double lat, double lng
-		statement = con.prepareStatement(
-		"SELECT "+ DBConstants.Category.CATEGORY_NAME + "," + DBConstants.Location.TABLE_NAME + "," + 
-		" FROM " + DBConstants.Category.TABLE_NAME + "," + DBConstants.Location.TABLE_NAME + "," + DBConstants.Person.TABLE_NAME + "," + 
-		" WHERE "
-						+ DBConstants.User.USERNAME + " = ?");
-				statement.setString(1, user.getUsername());
-				
+	private void buildNameStmt(Connection con, PreparedStatement statement)
+			throws SQLException {
+		// String name, Location location, Date date, boolean isBirth, String
+		// summary, String wikiLink
+		// LOCATION: int id, String name, double lat, double lng
+		statement = con.prepareStatement("SELECT "
+				+ DBConstants.Category.CATEGORY_NAME + ","
+				+ DBConstants.Location.TABLE_NAME + "," + " FROM "
+				+ DBConstants.Category.TABLE_NAME + ","
+				+ DBConstants.Location.TABLE_NAME + ","
+				+ DBConstants.Person.TABLE_NAME + "," + " WHERE "
+				+ DBConstants.User.USERNAME + " = ?");
+		statement.setString(1, name);
+
 	}
 
 }
