@@ -127,6 +127,39 @@
         });
       }
 
+      <!-- Define the clear button -->
+      function ClearControl(controlDiv, map) {
+        // Set CSS for the control border
+        var controlUI = document.createElement('div');
+        controlUI.style.backgroundColor = '#fff';
+        controlUI.style.border = '2px solid #fff';
+        controlUI.style.borderRadius = '3px';
+        controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+        controlUI.style.cursor = 'pointer';
+        controlUI.style.marginTop = '15px';
+        controlUI.style.marginLeft = '24px';
+        controlUI.style.textAlign = 'center';
+        controlUI.title = 'Click to clear the map';
+        controlDiv.appendChild(controlUI);
+
+        // Set CSS for the control interior
+        var controlText = document.createElement('div');
+        controlText.style.color = 'rgb(25,25,25)';
+        controlText.style.fontFamily = 'Century Gothic';
+        controlText.style.fontSize = '10px';
+        controlText.style.lineHeight = '38px';
+        controlText.style.paddingLeft = '5px';
+        controlText.style.paddingRight = '5px';
+        controlText.innerHTML = 'Clear';
+        controlUI.appendChild(controlText);
+
+        // Setup the click event listeners
+        google.maps.event.addDomListener(controlUI, 'click', function() {
+          deleteMarkers()
+        });
+      }
+
+
       <!-- Define the timespan -->
       function TimespanControl(controlDiv, map) {
         // Set CSS for the control border
@@ -181,6 +214,12 @@
         var centerControl = new CenterControl(centerControlDiv, map);
         centerControlDiv.index = 1;
         map.controls[google.maps.ControlPosition.LEFT].push(centerControlDiv);
+
+        // Add the clear button
+        var clearControlDiv = document.createElement('div');
+        var clearControl = new ClearControl(clearControlDiv, map);
+        clearControlDiv.index = 1;
+        map.controls[google.maps.ControlPosition.LEFT].push(clearControlDiv);
 
         // Add timespan
         var timespanControlDiv = document.createElement('div');
