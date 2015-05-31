@@ -3,7 +3,6 @@ package il.ac.tau.cs.databases.atlas.db;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class MockQueries implements Queries {
@@ -61,9 +60,9 @@ public class MockQueries implements Queries {
 	public ArrayList<Result> getResults(int startYear, int endYear, String category) {
 		List<Location> geoLocations = getAllGeoLocations();
 		ArrayList<Result> results = new ArrayList<>();
-		if (startYear % 1000 == 0 )results.add(new Result("a", geoLocations.get(0), null, true, "summary a", "https://en.wikipedia.org/w/index.php?title=A"));
-		results.add(new Result("b", geoLocations.get(1), null, false, "summary b", "https://en.wikipedia.org/w/index.php?title=B"));
-		if (startYear == 1300) results.add(new Result("c", geoLocations.get(2), null, true, "summary c", "https://en.wikipedia.org/w/index.php?title=C"));
+		if (startYear % 1000 == 0 )results.add(new Result("1", "a", geoLocations.get(0), null, true, "summary a", "https://en.wikipedia.org/w/index.php?title=A"));
+		results.add(new Result("2", "b", geoLocations.get(1), null, false, "summary b", "https://en.wikipedia.org/w/index.php?title=B"));
+		if (startYear == 1300) results.add(new Result("3", "c", geoLocations.get(2), null, true, "summary c", "https://en.wikipedia.org/w/index.php?title=C"));
 		return results;
 	}
 	

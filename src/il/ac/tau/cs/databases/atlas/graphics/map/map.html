@@ -20,6 +20,7 @@
       <!-- Define main parameters -->
       var map;
       var markers = [];
+      var favorites = [];
       var mapCenter = new google.maps.LatLng(31.0000, 0);
       var infowindow;
       var timespanControlText;
@@ -35,7 +36,7 @@
       <!-- The marker's icon will be img -->
       <!-- Pressing the marker will show an info screen with the name as -->
       <!-- a title, summery as the content and a link to wikipedia which is wikilink -->
-      function addMarker(lat,lng,name,img,summery,wikilink) {
+      function addMarker(resultid, lat,lng,name,img,summery,wikilink) {
             // Define the icon of the marker
             var image = img;
             // Define the content to be shown in the info screen
@@ -48,7 +49,8 @@
                  '<p>Wikipedia link: ' + name + ', <a href="' + wikilink +'">'+
                  wikilink + '</a> '+
                  '</p>'+
-                 '<button onclick="myFunction()" style="font: 11px Century Gothic; color: transparent; background-color: transparent; border-color: transparent; cursor: default; padding: 0px 0px;">' +
+                 '<button onclick="toggleFavorites(' + resultid + ')" ' +
+                 'style="font: 11px Century Gothic; color: transparent; background-color: transparent; border-color: transparent; cursor: default; padding: 0px 0px;">' +
                  '<img src="favorite.png"/>' +
                  '</button>' +
                  '</div>'+
@@ -71,6 +73,22 @@
                   })
                   infowindow.open(map,marker);
             });
+      }
+
+      <!-- Add id to favorites -->
+      function toggleFavorites(resultid) {
+            var i = favorites.indexOf(resultid);
+            if (i != -1) {
+                  // Remove
+                  favorites.splice(i, 1);
+                  alert("was removed from favorites.");
+
+            } else {
+                  // ADD
+                  favorites.push(resultid);
+                  alert("was added to favorites.");
+            }
+                  alert(favorites);
       }
 
       <!-- Set the map for all markers -->

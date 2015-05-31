@@ -7,6 +7,7 @@ public class Result {
 	/**
 	 *  A class representing a query result
 	 */
+	private String id;
 	private String name;
 	private Location location;
 	private Date date;
@@ -14,7 +15,8 @@ public class Result {
 	private String summary;
 	private String wikiLink;
 	
-	public Result(String name, Location location, Date date, boolean isBirth, String summary, String wikiLink) {
+	public Result(String id, String name, Location location, Date date, boolean isBirth, String summary, String wikiLink) {
+		this.id = id;
 		this.name = name;
 		this.location = location;
 		this.isBirth = isBirth;
@@ -23,6 +25,14 @@ public class Result {
 		this.wikiLink = wikiLink;
 	}
 
+	public String getID() {
+		return id;
+	}
+
+	public void setID(String id) {
+		this.id = id;
+	}
+	
 	public String getName() {
 		return name;
 	}
