@@ -36,7 +36,7 @@
       <!-- The marker's icon will be img -->
       <!-- Pressing the marker will show an info screen with the name as -->
       <!-- a title, summery as the content and a link to wikipedia which is wikilink -->
-      function addMarker(resultid, lat,lng,name,img,summery,wikilink) {
+      function addMarker(resultid,lat,lng,name,img,summery,wikilink) {
             // Define the icon of the marker
             var image = img;
             // Define the content to be shown in the info screen
@@ -81,14 +81,18 @@
             if (i != -1) {
                   // Remove
                   favorites.splice(i, 1);
-                  alert("was removed from favorites.");
+                  alert("Removed from favorites.");
 
             } else {
                   // ADD
                   favorites.push(resultid);
-                  alert("was added to favorites.");
+                  alert("Added to favorites.");
             }
-                  alert(favorites);
+      }
+
+      <!-- Returns favorites array -->
+      function getFavorites() {
+            return favorites.join();
       }
 
       <!-- Set the map for all markers -->

@@ -3,6 +3,7 @@ package il.ac.tau.cs.databases.atlas.db;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MockQueries implements Queries {
@@ -118,6 +119,15 @@ public class MockQueries implements Queries {
 	public User fetchUser(User user) throws AtlasServerException {
 		return user;
 	}
+	
+	/**
+	 * Store all the chosen favorite IDs to the database
+	 * @param favoritesList
+	 */
+	@Override
+	public void storeFavoriteIDs(List<String> favoritesList) {
+		System.out.println(Arrays.toString(favoritesList.toArray()));
+	}
 
 
 	@Override
@@ -141,5 +151,7 @@ public class MockQueries implements Queries {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+
 
 }
