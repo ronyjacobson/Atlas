@@ -155,4 +155,10 @@ public class DBQueries implements Queries {
 		return null;
 	}
 
+	@Override
+	public boolean storeFavoriteIDs(List<String> favoritesList) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
