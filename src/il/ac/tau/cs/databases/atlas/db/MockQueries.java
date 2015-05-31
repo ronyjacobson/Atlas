@@ -123,10 +123,12 @@ public class MockQueries implements Queries {
 	/**
 	 * Store all the chosen favorite IDs to the database
 	 * @param favoritesList
+	 * @return True if the favorites were stored successfully
 	 */
 	@Override
-	public void storeFavoriteIDs(List<String> favoritesList) {
+	public boolean storeFavoriteIDs(List<String> favoritesList) {
 		System.out.println(Arrays.toString(favoritesList.toArray()));
+		return true;
 	}
 
 

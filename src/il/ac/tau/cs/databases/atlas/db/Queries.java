@@ -81,8 +81,9 @@ public interface Queries {
 	/**
 	 * Store all the chosen favorite IDs to the database
 	 * @param favoritesList
+	 * @return True if the favorites were stored successfully
 	 */
-	public void storeFavoriteIDs(List<String> favoritesList);
+	public boolean storeFavoriteIDs(List<String> favoritesList);
 	
 	/**
 	 * TODO

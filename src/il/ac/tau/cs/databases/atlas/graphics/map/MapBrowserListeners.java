@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -104,6 +103,7 @@ public class MapBrowserListeners {
 	}
 	
 	public static class BrowserSyncFavoritesActionListener implements ActionListener {
+	
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Display.getDefault().asyncExec(new Runnable() {
@@ -111,7 +111,12 @@ public class MapBrowserListeners {
 					if (map != null) {
 						String favorites = ((String) map.getBrowser().evaluate("return getFavorites()"));
 						List<String> favoritesList = Arrays.asList(favorites.split(","));
-						Main.queries.storeFavoriteIDs(favoritesList);
+						boolean status = Main.queries.storeFavoriteIDs(favoritesList);
+						String msg = "Favorites synced to database successfully.";
+						if (!status){
+							 msg = "Favorites failed to synced to database.";
+						}
+						map.getBrowser().execute("error(\"" + msg + "\");");
 					} else {
 						// TODO Show message?
 					}
