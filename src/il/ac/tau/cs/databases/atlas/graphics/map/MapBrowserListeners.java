@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JScrollBar;
@@ -82,7 +83,7 @@ public class MapBrowserListeners {
 			} else {
 				imageIcon = "./flag-death.png";
 			}
-			map.getBrowser().execute("addMarker(" + result.getLocation().getLat() + "," + result.getLocation().getLng() + ",\"" + result.getName() + "\",\"" + imageIcon + "\",\"" + result.getSummary() + "\",\"" + result.getWikiLink() + "\");");
+			map.getBrowser().execute("addMarker(" + result.getID() + "," + result.getLocation().getLat() + "," + result.getLocation().getLng() + ",\"" + result.getName() + "\",\"" + imageIcon + "\",\"" + result.getSummary() + "\",\"" + result.getWikiLink() + "\");");
 		}
 	}
 	
@@ -93,6 +94,29 @@ public class MapBrowserListeners {
 				public void run() {
 					if (map != null) {
 						map.getBrowser().execute("deleteMarkers();");
+					} else {
+						// TODO Show message?
+					}
+				}
+			});
+		}
+	}
+	
+	public static class BrowserSyncFavoritesActionListener implements ActionListener {
+	
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					if (map != null) {
+						String favorites = ((String) map.getBrowser().evaluate("return getFavorites()"));
+						List<String> favoritesList = Arrays.asList(favorites.split(","));
+						boolean status = Main.queries.storeFavoriteIDs(favoritesList);
+						String msg = "Favorites synced to database successfully.";
+						if (!status){
+							 msg = "Favorites failed to synced to database.";
+						}
+						map.getBrowser().execute("error(\"" + msg + "\");");
 					} else {
 						// TODO Show message?
 					}

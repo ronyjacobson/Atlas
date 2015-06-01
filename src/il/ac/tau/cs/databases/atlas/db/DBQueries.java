@@ -7,7 +7,6 @@ import il.ac.tau.cs.databases.atlas.connector.command.RegisterUserQuery;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -15,8 +14,7 @@ import org.apache.log4j.Logger;
 public class DBQueries implements Queries {
 
 	protected final Logger logger = Logger.getLogger(this.getClass().getName());
-	public static HashMap<String, Integer> locationsMap= new HashMap<String, Integer>();
-	public static ArrayList<String> locationsNames= new ArrayList<String>();
+	
 	public int amountOfLatestResults = 0;
 	public int amountOfFemaleResults = 0;
 
@@ -156,6 +154,12 @@ public class DBQueries implements Queries {
 		amountOfLatestResults = 30;
 		amountOfFemaleResults = 40;
 		return null;
+	}
+
+	@Override
+	public boolean storeFavoriteIDs(List<String> favoritesList) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

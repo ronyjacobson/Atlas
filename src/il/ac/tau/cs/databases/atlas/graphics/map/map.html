@@ -20,7 +20,8 @@
       <!-- Define main parameters -->
       var map;
       var markers = [];
-      var mapCenter = new google.maps.LatLng(31.0000, 0);
+      var favorites = [];
+      var mapCenter = new google.maps.LatLng(31.0000, 35.0000);
       var infowindow;
       var timespanControlText;
 
@@ -35,7 +36,7 @@
       <!-- The marker's icon will be img -->
       <!-- Pressing the marker will show an info screen with the name as -->
       <!-- a title, summery as the content and a link to wikipedia which is wikilink -->
-      function addMarker(lat,lng,name,img,summery,wikilink) {
+      function addMarker(resultid,lat,lng,name,img,summery,wikilink) {
             // Define the icon of the marker
             var image = img;
             // Define the content to be shown in the info screen
@@ -48,6 +49,10 @@
                  '<p>Wikipedia link: ' + name + ', <a href="' + wikilink +'">'+
                  wikilink + '</a> '+
                  '</p>'+
+                 '<button onclick="toggleFavorites(' + resultid + ')" ' +
+                 'style="font: 11px Century Gothic; color: transparent; background-color: transparent; border-color: transparent; cursor: default; padding: 0px 0px;">' +
+                 '<img src="favorite.png"/>' +
+                 '</button>' +
                  '</div>'+
                  '</div>';
             // Define the marker and it's properties
@@ -68,6 +73,26 @@
                   })
                   infowindow.open(map,marker);
             });
+      }
+
+      <!-- Add id to favorites -->
+      function toggleFavorites(resultid) {
+            var i = favorites.indexOf(resultid);
+            if (i != -1) {
+                  // Remove
+                  favorites.splice(i, 1);
+                  alert("Removed from favorites.");
+
+            } else {
+                  // ADD
+                  favorites.push(resultid);
+                  alert("Added to favorites.");
+            }
+      }
+
+      <!-- Returns favorites array -->
+      function getFavorites() {
+            return favorites.join();
       }
 
       <!-- Set the map for all markers -->
@@ -127,6 +152,39 @@
         });
       }
 
+      <!-- Define the clear button -->
+      function ClearControl(controlDiv, map) {
+        // Set CSS for the control border
+        var controlUI = document.createElement('div');
+        controlUI.style.backgroundColor = '#fff';
+        controlUI.style.border = '2px solid #fff';
+        controlUI.style.borderRadius = '3px';
+        controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+        controlUI.style.cursor = 'pointer';
+        controlUI.style.marginTop = '15px';
+        controlUI.style.marginLeft = '24px';
+        controlUI.style.textAlign = 'center';
+        controlUI.title = 'Click to clear the map';
+        controlDiv.appendChild(controlUI);
+
+        // Set CSS for the control interior
+        var controlText = document.createElement('div');
+        controlText.style.color = 'rgb(25,25,25)';
+        controlText.style.fontFamily = 'Century Gothic';
+        controlText.style.fontSize = '10px';
+        controlText.style.lineHeight = '38px';
+        controlText.style.paddingLeft = '5px';
+        controlText.style.paddingRight = '5px';
+        controlText.innerHTML = 'Clear';
+        controlUI.appendChild(controlText);
+
+        // Setup the click event listeners
+        google.maps.event.addDomListener(controlUI, 'click', function() {
+          deleteMarkers()
+        });
+      }
+
+
       <!-- Define the timespan -->
       function TimespanControl(controlDiv, map) {
         // Set CSS for the control border
@@ -181,6 +239,12 @@
         var centerControl = new CenterControl(centerControlDiv, map);
         centerControlDiv.index = 1;
         map.controls[google.maps.ControlPosition.LEFT].push(centerControlDiv);
+
+        // Add the clear button
+        var clearControlDiv = document.createElement('div');
+        var clearControl = new ClearControl(clearControlDiv, map);
+        clearControlDiv.index = 1;
+        map.controls[google.maps.ControlPosition.LEFT].push(clearControlDiv);
 
         // Add timespan
         var timespanControlDiv = document.createElement('div');

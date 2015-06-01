@@ -79,7 +79,15 @@ public interface Queries {
 	public boolean addNew(String name, String category, String birthDate, int birthlocationID, String deathDate, int deathlocationID, String wikiLink);
 	
 	/**
+	 * Store all the chosen favorite IDs to the database
+	 * @param favoritesList
+	 * @return True if the favorites were stored successfully
+	 */
+	public boolean storeFavoriteIDs(List<String> favoritesList);
+	
+	/**
 	 * TODO
 	 */
 	public Integer getLocationId(String locationName);
+
 }

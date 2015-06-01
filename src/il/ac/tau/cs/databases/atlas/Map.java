@@ -36,7 +36,7 @@ import javax.swing.JScrollBar;
 public class Map extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private static final int GAP_BETWEEN_BUTTONS = 24;
+	private static final int GAP_BETWEEN_BUTTONS = 15;
 	private static final int GAP_BETWEEN_COMPONENTS = 10;
 	private static final int TIMELINE_MAX = 2015;
 	private static final int TIMELINE_MIN = 1000;
@@ -54,7 +54,8 @@ public class Map extends JFrame {
 	private static JButton buttonStats;
 	private static JButton buttonAdd;
 	private static JButton buttonSearch;
-	private static JButton buttonUpdate;
+	private static JButton buttonUpdateFavorites;
+	private static JButton buttonUpdateDBFiles;
 	private static JButton buttonAudio;
 	private static JScrollBar timeline = new JScrollBar(JScrollBar.HORIZONTAL,
 			TIMELINE_INITIAL_VALUE, TIMELINE_EXTENT, TIMELINE_MIN, TIMELINE_MAX);;
@@ -212,13 +213,20 @@ public class Map extends JFrame {
 		buttonSearch.setPreferredSize(dimensionOther);
 		buttonSearch.setFont(fieldFont);
 		buttonsPanel.add(buttonSearch);
-		// Add a button for update
-		buttonUpdate = new JButton("");
-		buttonUpdate.setIcon(new ImageIcon(getClass().getResource(
+		// Add a button for favorites update
+		buttonUpdateFavorites = new JButton("");
+		buttonUpdateFavorites.setIcon(new ImageIcon(getClass().getResource(
 				GrapicUtils.getSkin() + "Update.png")));
-		buttonUpdate.setPreferredSize(dimensionOther);
-		buttonUpdate.setFont(fieldFont);
-		buttonsPanel.add(buttonUpdate);
+		buttonUpdateFavorites.setPreferredSize(dimensionOther);
+		buttonUpdateFavorites.setFont(fieldFont);
+		buttonsPanel.add(buttonUpdateFavorites);
+		// Add a button for db files update
+		buttonUpdateDBFiles = new JButton("");
+		buttonUpdateDBFiles.setIcon(new ImageIcon(getClass().getResource(
+				GrapicUtils.getSkin() + "Upload.png")));
+		buttonUpdateDBFiles.setPreferredSize(dimensionOther);
+		buttonUpdateDBFiles.setFont(fieldFont);
+		buttonsPanel.add(buttonUpdateDBFiles);
 		// Add a button for audio
 		buttonAudio = new JButton("");
 		buttonAudio.setIcon(new ImageIcon(getClass().getResource(
@@ -280,9 +288,9 @@ public class Map extends JFrame {
 				}
 			}
 		});
-		buttonUpdate.addActionListener(new DBFilesUplaodListner());
-		buttonAudio
-				.addActionListener(new AudioUtils.AudioToggleActionListener());
+		buttonUpdateFavorites.addActionListener(new MapBrowserListeners.BrowserSyncFavoritesActionListener());
+		buttonUpdateDBFiles.addActionListener(new DBFilesUplaodListner());
+		buttonAudio.addActionListener(new AudioUtils.AudioToggleActionListener());
 
 		// Return the panel
 		return buttonsPanel;
