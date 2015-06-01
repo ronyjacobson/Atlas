@@ -3,7 +3,6 @@ package il.ac.tau.cs.databases.atlas.db;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class MockQueries implements Queries {
