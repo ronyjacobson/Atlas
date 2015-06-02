@@ -8,6 +8,7 @@ public class Location {
 	private String name;
 	private double lat = 0;
 	private double lng = 0;
+	private String url = "";
 
 	public Location(int id, String name) {
 		this.id = id;
@@ -19,6 +20,14 @@ public class Location {
 		this.name = name;
 		this.lat = lat;
 		this.lng = lng;
+	}
+	
+	public Location(int id, String name, double lat, double lng, String url) {
+		this.id = id;
+		this.name = name;
+		this.lat = lat;
+		this.lng = lng;
+		this.url = url;
 	}
 
 	public int getId() {
@@ -48,6 +57,14 @@ public class Location {
 
 	public double getLng() {
 		return lng;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
 }

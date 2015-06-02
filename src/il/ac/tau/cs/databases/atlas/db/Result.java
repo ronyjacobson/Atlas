@@ -14,6 +14,7 @@ public class Result {
 	private boolean isBirth;
 	private String summary;
 	private String wikiLink;
+	private boolean isFemale;
 	
 	public Result(String id, String name, Location location, Date date, boolean isBirth, String summary, String wikiLink) {
 		this.id = id;
@@ -23,6 +24,17 @@ public class Result {
 		this.date = date;
 		this.summary = summary;
 		this.wikiLink = wikiLink;
+	}
+	
+	public Result(String id, String name, Location location, Date date, boolean isBirth, String wikiLink, boolean isFemale) {
+		this.id = id;
+		this.name = name;
+		this.location = location;
+		this.isBirth = isBirth;
+		this.date = date;
+		this.summary = "A summary";
+		this.wikiLink = wikiLink;
+		this.isFemale = isFemale;
 	}
 
 	public String getID() {
@@ -79,5 +91,13 @@ public class Result {
 
 	public void setWikiLink(String wikiLink) {
 		this.wikiLink = wikiLink;
+	}
+
+	public boolean isFemale() {
+		return isFemale;
+	}
+
+	public void setFemale(boolean isFemale) {
+		this.isFemale = isFemale;
 	}
 }

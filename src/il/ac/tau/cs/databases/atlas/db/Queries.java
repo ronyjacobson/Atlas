@@ -44,8 +44,9 @@ public interface Queries {
 	
 	/**
 	 * @return A list of results of all the matching entries in the database
+	 * @throws AtlasServerException 
 	 */
-	public List<Result> getResults(int startYear, int endYear, String category);
+	public List<Result> getResults(int startYear, int endYear, String category) throws AtlasServerException;
 		
 	/**
 	 * @return A list of all the categories in the database

@@ -2,6 +2,7 @@ package il.ac.tau.cs.databases.atlas.db;
 
 import il.ac.tau.cs.databases.atlas.connector.command.GetCategoriesQuery;
 import il.ac.tau.cs.databases.atlas.connector.command.GetGeoLocationsNamesAndIDsQuery;
+import il.ac.tau.cs.databases.atlas.connector.command.GetResultsQuery;
 import il.ac.tau.cs.databases.atlas.connector.command.GetUserQuery;
 import il.ac.tau.cs.databases.atlas.connector.command.RegisterUserQuery;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
@@ -14,9 +15,9 @@ import org.apache.log4j.Logger;
 public class DBQueries implements Queries {
 
 	protected final Logger logger = Logger.getLogger(this.getClass().getName());
-	
-	public int amountOfLatestResults = 0;
-	public int amountOfFemaleResults = 0;
+
+	public static int amountOfLatestResults = 0;
+	public static int amountOfFemaleResults = 0;
 
 	@Override
 	/**
@@ -141,18 +142,47 @@ public class DBQueries implements Queries {
 
 	@Override
 	public List<Result> getResults(String name) {
-		// TODO Auto-generated method stub
+		amountOfFemaleResults = 0;
+		
+		
+		amountOfLatestResults = 30;
+		amountOfFemaleResults = 40;
 		return null;
 	}
 
 	/**
 	 * @return A list of results of all the matching entries in the database
+	 * @throws AtlasServerException 
 	 */
 	// TODO
 	@Override
-	public List<Result> getResults(int startYear, int endYear, String category) {
-		amountOfLatestResults = 30;
-		amountOfFemaleResults = 40;
+	
+	public List<Result> getResults(int startYear, int endYear, String category) throws AtlasServerException {
+		//GetResultsQuery(startYear, endYear, category, byName, userOriented, isBirth)
+		List<Result> results = new ArrayList<Result>();
+		amountOfFemaleResults = 0;
+		
+		// Get births - user oriented
+		GetResultsQuery query = new GetResultsQuery(startYear, endYear, category, false, true, true);
+		logger.info("Fetching results (Query 1 out of 4...");
+		results.addAll(query.execute());
+		
+		// Get deaths - user oriented
+		query = new GetResultsQuery(startYear, endYear, category, false, true, false);
+		logger.info("Fetching results (Query 2 out of 4...");
+		results.addAll(query.execute());
+		
+		// Get all births
+		query = new GetResultsQuery(startYear, endYear, category, false, false, true);
+		logger.info("Fetching results (Query 3 out of 4...");
+		results.addAll(query.execute());
+		
+		// Get all deaths
+		query = new GetResultsQuery(startYear, endYear, category, false, false, false);
+		logger.info("Fetching results (Query 4 out of 4...");
+		results.addAll(query.execute());
+		
+		amountOfLatestResults = results.size();
 		return null;
 	}
 
