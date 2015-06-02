@@ -57,7 +57,7 @@ public class DBQueries implements Queries {
 	public void getGeoLocationsHashMap() throws AtlasServerException {
 		// Initialize DB query
 		GetGeoLocationsNamesAndIDsQuery query = new GetGeoLocationsNamesAndIDsQuery();
-		logger.info("Fetching GeoLocations name and Id's...");
+		logger.info("Fetching GeoLocations names and Id's...");
 		query.execute();
 	}
 
@@ -118,13 +118,13 @@ public class DBQueries implements Queries {
 	// TODO
 	@Override
 	public void update(String fullPathDirectory) {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub -PAZ
 
 	}
 
 	@Override
 	public Integer getLocationId(String locationName) {
-		if (locationsMap != null) {
+		if (!locationsMap.isEmpty()) {
 			return locationsMap.get(locationName);
 		} else {
 			return null;

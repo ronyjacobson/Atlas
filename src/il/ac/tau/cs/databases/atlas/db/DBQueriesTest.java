@@ -16,12 +16,12 @@ import org.junit.Test;
 public class DBQueriesTest {
 	
 	DBQueries queries = new DBQueries();
-	String Tester = "Rony" ;
+	String tester = "Rony" ;
 	
 	@Before
 	public void setUp() throws Exception {
 		// Initialize connection according to debugger
-		if (Tester == "Rony") {
+		if (tester == "Rony") {
 			DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06","127.0.0.1", "3306", "dbmysql06");
 		}
 		
@@ -29,6 +29,9 @@ public class DBQueriesTest {
 	
 	@Test
 	public void isRegisteredUserTest() throws AtlasServerException {
+		if (tester != "Rony") {
+			return;
+		}
 		User existingUser = new User("rony", "0000", new Date(), 0);
 		User nonExistingUser = new User("johnDo", "", new Date(), 0);
 		User fetchedUser = queries.fetchUser(existingUser);
@@ -39,6 +42,9 @@ public class DBQueriesTest {
 	
 	@Test
 	public void registerUserTest() throws AtlasServerException {
+		if (tester != "Rony") {
+			return;
+		}
 //		User existingUser = new User("rony", "0000", new Date(), 1);
 //		User nonExistingUser = new User("newUser", "password", new Date(), 1);
 //		assertFalse(queries.registerUser(existingUser));
@@ -49,6 +55,9 @@ public class DBQueriesTest {
 	
 	@Test
 	public void getGeoLocationsHashMapTest() throws AtlasServerException {
+		if (tester != "Rony") {
+			return;
+		}
 		assertTrue(Queries.locationsMap.isEmpty());
 		queries.getGeoLocationsHashMap();
 		assertFalse(Queries.locationsMap.isEmpty());
@@ -56,6 +65,9 @@ public class DBQueriesTest {
 	
 	@Test
 	public void getCategoriesTest() throws AtlasServerException {
+		if (tester != "Rony") {
+			return;
+		}
 		List<String> cat = queries.getAllCategoriesNames();
 		assertFalse(cat.isEmpty());
 		System.out.println(cat.toString());
