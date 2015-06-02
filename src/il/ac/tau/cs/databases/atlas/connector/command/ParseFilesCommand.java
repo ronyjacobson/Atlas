@@ -8,9 +8,6 @@ import java.io.*;
 import java.sql.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * Created by user on 24/05/2015.
- */
 public class ParseFilesCommand extends BaseDBCommand<Boolean>{
     private File yagoDateFile;
     private File yagoLocationFile;
@@ -138,6 +135,28 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
             throw new AtlasServerException("Failed to insert locations");
         } finally{
             safelyClose(br);
+        }
+    }
+
+    private void createTempTable(Connection con, String tableName, String dataFilePath) throws AtlasServerException {
+        PreparedStatement pstmt = null;
+        System.out.println("creating temp table " + tableName);
+        try {
+            pstmt = con.prepareStatement("LOAD DATA INFILE '" + dataFilePath +
+                    "' REPLACE INTO TABLE " + tableName + " FIELDS TERMINATED BY '\\t'");
+            pstmt.executeUpdate();
+            /*
+            pstmt = con.prepareStatement("LOAD DATA INFILE '?' REPLACE INTO TABLE ? FIELDS TERMINATED BY '\\t'");
+            pstmt.setString(1, dataFilePath);
+            pstmt.setString(2, tableName);
+            pstmt.executeUpdate();
+            */
+            // TODO: Etan - which should we use?
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new AtlasServerException("Failed to create temp table '" + tableName + "'");
+        } finally {
+            safelyClose(pstmt);
         }
     }
 
