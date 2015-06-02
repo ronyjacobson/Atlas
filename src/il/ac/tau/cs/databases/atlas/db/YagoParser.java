@@ -3,6 +3,7 @@ package il.ac.tau.cs.databases.atlas.db;
 import java.io.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,9 +12,10 @@ public class YagoParser {
     public static final String GEO_CITIES_INFO_OUT_NAME = "geo_cities_info.tsv";
     public static final String GEO_INFO_OUT_NAME = "geo_info.tsv";
     public static final String WIKI_INFO_OUT_NAME = "wiki_info.tsv";
-    public static final String LABELS_INFO_OUT_NAME = "labels_info.tsv";
+    public static final String CATEGORIES_INFO_OUT_NAME = "categories_info.tsv";
     public static final String GEONAMES_URL_REGEX = "http://sws.geonames.org/([0-9]+)";
     public static final String DATE_REGEX = "[0-9][0-9][0-9][0-9]-[#0-9][#0-9]-[#0-9][#0-9]";
+    public static final String CATEGORY_REGEX = "<wordnet_(.+)_[0-9]+>";
 
     private final File yagoDateFile;
     private final File yagoLocationFile;
@@ -68,8 +70,10 @@ public class YagoParser {
 
         labelTypes = new HashSet<>();
         labelTypes.add("skos:prefLabel");
+        labelTypes.add("rdfs:label");
     }
 
+    // handles yagoDateFacts
     public void parseYagoDateFile(File yagoDateFile) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(yagoDateFile));
         Pattern p = Pattern.compile(DATE_REGEX);
@@ -82,7 +86,7 @@ public class YagoParser {
                 PrintWriter pw = new PrintWriter(fw, true);
                 Matcher m = p.matcher(cols[3]);
                 if (m.find()) {
-                    pw.println(cols[0] + "\t" + cols[1] + "\t" + m.group());
+                    pw.println(cols[1] + "\t" + m.group());
                 }
                 pw.close();
             }
@@ -90,38 +94,55 @@ public class YagoParser {
         br.close();
     }
 
+    // handles yagoFacts
     public void parseYagoLocationFile(File yagoLocationFile) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(yagoLocationFile));
         String line;
+        String currentValue;
         while ((line = br.readLine()) != null) {
             String[] cols = line.trim().split("\\t");
             if (locationTypes.contains(cols[2])) {
                 File outfile = new File(concatToOutPath("location_" + cols[2] + ".tsv"));
                 FileWriter fw = new FileWriter(outfile, true);
                 PrintWriter pw = new PrintWriter(fw, true);
-                pw.println(cols[0] + "\t" + cols[1] + "\t" + cols[3]);
+                if (cols[2].equals("<hasGender>")) {
+                    if (cols[3].equals("<female>")) {
+                        currentValue = "true";
+                    } else {
+                        currentValue = "false";
+                    }
+                } else {
+                    currentValue = cols[3];
+                }
+                pw.println(cols[1] + "\t" + currentValue);
                 pw.close();
             }
         }
         br.close();
     }
 
+    // handles yagoTransitiveType
     public void parseYagoCategoryFile(File yagoCategoryFile) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(yagoCategoryFile));
+        Pattern p = Pattern.compile(CATEGORY_REGEX);
         String line;
         while ((line = br.readLine()) != null) {
             String[] cols = line.trim().split("\\t");
             if (categoryTypes.contains(cols[3])) {
-                File outfile = new File(concatToOutPath("category_" + cols[3] + ".tsv"));
+                File outfile = new File(concatToOutPath(CATEGORIES_INFO_OUT_NAME));
                 FileWriter fw = new FileWriter(outfile, true);
                 PrintWriter pw = new PrintWriter(fw, true);
-                pw.println(cols[0] + "\t" + cols[1]);
+                Matcher m = p.matcher(cols[3]);
+                if (m.find()) {
+                    pw.println(cols[1] + "\t" + m.group(1));
+                }
                 pw.close();
             }
         }
         br.close();
     }
 
+    // handles yagoWikipediaInfo
     public void parseYagoWikiFile(File yagoWiKiFile) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(yagoWiKiFile));
         String line;
@@ -139,6 +160,7 @@ public class YagoParser {
     }
 
 
+    // handles yagoGeonamesEntityIds
     public void parseYagoGeonamesFile(File yagoGeonamesFile) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(yagoGeonamesFile));
         Pattern p = Pattern.compile(GEONAMES_URL_REGEX);
@@ -157,6 +179,7 @@ public class YagoParser {
         br.close();
     }
 
+    // handles cities1000
     public void parseGeonamesCitiesFile(File geoCitiesFile) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(geoCitiesFile));
         String line;
@@ -175,6 +198,7 @@ public class YagoParser {
         br.close();
     }
 
+    // handles yagoLabels
     public void parseYagoLabelsFile(File yagoLabelsFile) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(yagoLabelsFile));
         Pattern p = Pattern.compile("\"(.*)\"@eng");
@@ -182,7 +206,7 @@ public class YagoParser {
         while ((line = br.readLine()) != null) {
             String[] cols = line.trim().split("\\t");
             if (labelTypes.contains(cols[2])) {
-                File outfile = new File(LABELS_INFO_OUT_NAME);
+                File outfile = new File("labels_" + cols[2] + "_info.tsv");
                 FileWriter fw = new FileWriter(outfile, true);
                 PrintWriter pw = new PrintWriter(fw, true);
                 Matcher m = p.matcher(cols[3]);
@@ -196,12 +220,11 @@ public class YagoParser {
     }
 
     public void parseFiles() throws IOException {
-        if (!validateFiles()) {
-            System.out.println("Terminating..");
-            throw new IOException("Bad input file");
-        }
-
         System.out.println("Parser started");
+        if (!validateFiles()) {
+            System.out.println("Terminating parser");
+//            throw new IOException("Bad input file");
+        }
         System.out.print("Parsing dates..");
         //parseYagoDateFile(yagoDateFile);
         System.out.println("   Done");
@@ -209,7 +232,7 @@ public class YagoParser {
         //parseYagoLocationFile(yagoLocationFile);
         System.out.println("   Done");
         System.out.print("Parsing YAGO categories..");
-        //parseYagoCategoryFile(yagoCategoryFile);
+        parseYagoCategoryFile(yagoCategoryFile);
         System.out.println("   Done");
         System.out.print("Parsing YAGO labels..");
         //parseYagoLabelsFile(yagoLabelsFile);
@@ -246,7 +269,6 @@ public class YagoParser {
         && validateFile(yagoWikiFile)
         && validateFile(yagoGeonamesFile)
         && validateFile(geonamesCitiesFile);
-
     }
 
     private boolean validateFile(File datafile) {
