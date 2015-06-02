@@ -183,7 +183,7 @@ public class DBQueries implements Queries {
 		results.addAll(query.execute());
 		
 		amountOfLatestResults = results.size();
-		return null;
+		return results;
 	}
 
 	@Override

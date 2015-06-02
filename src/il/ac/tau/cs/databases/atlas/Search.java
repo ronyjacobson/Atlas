@@ -1,5 +1,6 @@
 package il.ac.tau.cs.databases.atlas;
 
+import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 import il.ac.tau.cs.databases.atlas.graphics.map.MapBrowserListeners;
 import il.ac.tau.cs.databases.atlas.utils.DateUtils;
 import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
@@ -225,7 +226,13 @@ public class Search extends JFrame {
 			} else {
 				Display.getDefault().syncExec(new Runnable() {
 				    public void run() {
-				    	MapBrowserListeners.showResultsOnMap(Main.queries.getResults(fromDate.getCalendar().get(Calendar.YEAR), untilDate.getCalendar().get(Calendar.YEAR), "All"));
+				    	try {
+							MapBrowserListeners.showResultsOnMap(Main.queries.getResults(fromDate.getCalendar().get(Calendar.YEAR), untilDate.getCalendar().get(Calendar.YEAR), "All"));
+						} catch (AtlasServerException e) {
+							// TODO Auto-generated catch block
+							JOptionPane.showMessageDialog(null, e.getMessage(), GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
+							e.printStackTrace();
+						}
 				    }
 				});
 				dispose();

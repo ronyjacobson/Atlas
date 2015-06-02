@@ -2,6 +2,7 @@ package il.ac.tau.cs.databases.atlas.graphics.map;
 
 import il.ac.tau.cs.databases.atlas.Main;
 import il.ac.tau.cs.databases.atlas.db.Result;
+import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -65,7 +66,12 @@ public class MapBrowserListeners {
 					if (map != null) {
 						int startYear = timeline.getModel().getValue();
 						int endYear =  timeline.getModel().getValue() + timeline.getModel().getExtent();
-						showResultsOnMap(Main.queries.getResults(startYear, endYear, category));
+						try {
+							showResultsOnMap(Main.queries.getResults(startYear, endYear, category));
+						} catch (AtlasServerException e) {
+							// TODO Auto-generated catch block HANDLE EXCEPTION
+							e.printStackTrace();
+						}
 					} else {
 						// TODO Show message?
 					}
