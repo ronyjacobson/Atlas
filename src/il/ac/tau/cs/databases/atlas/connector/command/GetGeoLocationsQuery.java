@@ -12,9 +12,9 @@ import java.sql.SQLException;
 /**
  * Created by user on 22/05/2015.
  */
-public class GetGeoLocationsNamesAndIDsQuery extends BaseDBCommand<Void> {
+public class GetGeoLocationsQuery extends BaseDBCommand<Void> {
 
-    public GetGeoLocationsNamesAndIDsQuery() {}
+    public GetGeoLocationsQuery() {}
 
     
 	@Override

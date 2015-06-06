@@ -229,11 +229,11 @@ public class Add extends JFrame {
 			locations.set(0, DEFAULT_DEATH_LOCATION);
 			hasDiedIn = new JComboBox<String>(
 					locations.toArray(new String[locations.size()]));
-			
+
 		} catch (AtlasServerException e) {
 			// TODO handle Exception
 		}
-		
+
 		wasBornIn.setFont(fieldFont);
 		hasDiedIn.setFont(fieldFont);
 		// Add to panel
@@ -319,26 +319,29 @@ public class Add extends JFrame {
 						"Wikipedia link can not be blank.",
 						GrapicUtils.PROJECT_NAME, 1);
 			} else {
-				boolean status = Main.queries.addNew(name.getText(), category
-						.getSelectedItem().toString(), wasBornOn.getDate()
-						.toString(), Queries.locationsMap.get(wasBornIn
-						.getSelectedItem().toString()), hasDiedOn.getDate()
-						.toString(), Queries.locationsMap.get(wasBornIn
-						.getSelectedItem().toString()), wikiLink.getText(), 
-						//isFemale 
-						true);
-				if (status) {
+				try {
+					Main.queries.addNew(name.getText(), category
+							.getSelectedItem().toString(), wasBornOn.getDate(),
+							Queries.locationsMap.get(wasBornIn
+									.getSelectedItem().toString()), hasDiedOn
+									.getDate(),
+							Queries.locationsMap.get(wasBornIn
+									.getSelectedItem().toString()), wikiLink
+									.getText(),
+							// isFemale
+							true);
 					JOptionPane.showMessageDialog(null,
 							"New entry added to the data base.",
 							GrapicUtils.PROJECT_NAME,
 							JOptionPane.INFORMATION_MESSAGE);
-
 					// Close the windows
 					dispose();
-				} else {
+				} catch (AtlasServerException e) {
 					JOptionPane
-							.showMessageDialog(null,
-									"Failed to add new entry.",
+							.showMessageDialog(
+									null,
+									"Failed to add new entry: "
+											+ e.getMessage() + ".",
 									GrapicUtils.PROJECT_NAME,
 									JOptionPane.ERROR_MESSAGE);
 				}
@@ -353,12 +356,12 @@ public class Add extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			boolean status = Main.queries.addNew(Main.user.getUsername(),
-					"Favorites", Main.user.getDateOfBirth().toString(),
-					Main.user.getLocationID(), "", -1, "",
-					//isFemale 
-					true);
-			if (status) {
+			try {
+				Main.queries.addNew(Main.user.getUsername(), "Favorites",
+						Main.user.getDateOfBirth(), Main.user.getLocationID(),
+						null, -1, "",
+						// isFemale
+						true);
 				JOptionPane.showMessageDialog(null,
 						"You were added to the data base.",
 						GrapicUtils.PROJECT_NAME,
@@ -366,9 +369,10 @@ public class Add extends JFrame {
 
 				// Close the windows
 				dispose();
-			} else {
-				JOptionPane.showMessageDialog(null, "Failed to add new entry.",
-						GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
+			} catch (AtlasServerException e) {
+				JOptionPane.showMessageDialog(null, "Failed to add new entry: "
+						+ e.getMessage() + ".", GrapicUtils.PROJECT_NAME,
+						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}

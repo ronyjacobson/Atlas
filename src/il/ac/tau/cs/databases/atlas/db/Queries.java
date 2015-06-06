@@ -3,6 +3,7 @@ package il.ac.tau.cs.databases.atlas.db;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -10,6 +11,7 @@ public interface Queries {
 
 	public static HashMap<String, Integer> locationsMap= new HashMap<String, Integer>();
 	public static ArrayList<String> locationsNames= new ArrayList<String>();
+	public static HashMap<String, Integer> categoriesMap= new HashMap<String, Integer>();
 	
 	
 	/**
@@ -77,8 +79,9 @@ public interface Queries {
 
 	/**
 	 * Add a new entry to the database
+	 * @throws AtlasServerException 
 	 */
-	public boolean addNew(String name, String category, String birthDate, int birthlocationID, String deathDate, int deathlocationID, String wikiLink, boolean isFemale);
+	public void addNew(String name, String category, Date birthDate, int birthlocationID, Date deathDate, int deathlocationID, String wikiLink, boolean isFemale) throws AtlasServerException;
 	
 	/**
 	 * Store all the chosen favorite IDs to the database

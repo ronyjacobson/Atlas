@@ -4,6 +4,7 @@ import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class MockQueries implements Queries {
@@ -152,11 +153,11 @@ public class MockQueries implements Queries {
 	}
 		
 	@Override
-	public boolean addNew(String name, String category, String birthDate,
-			int birthlocationID, String deathDate, int deathlocationID,
+	public void addNew(String name, String category, Date birthDate,
+			int birthlocationID, Date deathDate, int deathlocationID,
 			String wikiLink, boolean isFemale) {
 		// TODO Auto-generated method stub
-		return false;
+		return;
 	}
 
 

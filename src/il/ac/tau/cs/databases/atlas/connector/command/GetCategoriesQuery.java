@@ -2,6 +2,7 @@ package il.ac.tau.cs.databases.atlas.connector.command;
 
 import il.ac.tau.cs.databases.atlas.connector.command.base.BaseDBCommand;
 import il.ac.tau.cs.databases.atlas.db.DBConstants;
+import il.ac.tau.cs.databases.atlas.db.Queries;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
 import java.sql.Connection;
@@ -25,13 +26,15 @@ public class GetCategoriesQuery extends BaseDBCommand<ArrayList<String>> {
         ArrayList<String> categories = new ArrayList<String>();
         try {
         	statement = con.prepareStatement(
-        			"SELECT "+ DBConstants.Category.CATEGORY_NAME +
-        			" FROM "+ DBConstants.Category.TABLE_NAME);
+        			"SELECT *"+ " FROM "+ DBConstants.Category.TABLE_NAME);
         	logger.info(String.format("Executing DB query: %s.", statement.toString()));
         	resultSet = statement.executeQuery();
             
             while (resultSet.next()) {
-            	categories.add(resultSet.getString(DBConstants.Category.CATEGORY_NAME));
+            	String name = resultSet.getString(DBConstants.CATEGORY_NAME_L);
+            	int id = resultSet.getInt(DBConstants.CATEGORY_ID_L);
+            	Queries.categoriesMap.put(name, id);
+            	categories.add(name);
             }
 
         } catch (SQLException e) {

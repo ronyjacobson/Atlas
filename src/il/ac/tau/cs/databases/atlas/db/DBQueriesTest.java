@@ -15,20 +15,21 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class DBQueriesTest {
-	
+
 	DBQueries queries = new DBQueries();
-	String tester = "Rony" ;
-	
+	String tester = "Rony";
+
 	@Before
 	public void setUp() throws Exception {
 		// Initialize connection according to debugger
 		if (tester == "Rony") {
-			DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06","127.0.0.1", "3306", "dbmysql06");
+			DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06",
+					"127.0.0.1", "3306", "dbmysql06");
 		}
-		
+
 	}
-	
-	@Test
+
+	//@Test
 	public void isRegisteredUserTest() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
@@ -36,12 +37,14 @@ public class DBQueriesTest {
 		User existingUser = new User("rony", "0000", new Date(), 0);
 		User nonExistingUser = new User("johnDo", "", new Date(), 0);
 		User fetchedUser = queries.fetchUser(existingUser);
-		assertEquals("UserName", fetchedUser.getUsername(), existingUser.getUsername());
-		assertEquals("Password", fetchedUser.getPassword(), existingUser.getPassword());		
+		assertEquals("UserName", fetchedUser.getUsername(),
+				existingUser.getUsername());
+		assertEquals("Password", fetchedUser.getPassword(),
+				existingUser.getPassword());
 		assertNull(queries.fetchUser(nonExistingUser));
 	}
-	
-	//@Test
+
+	// @Test
 	public void registerUserTest() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
@@ -49,16 +52,17 @@ public class DBQueriesTest {
 		User existingUser = new User("rony", "0000", new Date(), 1);
 		User nonExistingUser = new User("newUser3", "password", new Date(), 1);
 		try {
-		assertFalse(queries.registerUser(existingUser));
-		} catch(AtlasServerException e) {
-			
+			assertFalse(queries.registerUser(existingUser));
+		} catch (AtlasServerException e) {
+
 		}
 		assertTrue(queries.registerUser(nonExistingUser));
 		User fetchedUser = queries.fetchUser(nonExistingUser);
-		assertEquals("UserName", fetchedUser.getUsername(), nonExistingUser.getUsername());
+		assertEquals("UserName", fetchedUser.getUsername(),
+				nonExistingUser.getUsername());
 	}
-	
-	@Test
+
+	//@Test
 	public void getGeoLocationsHashMapTest() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
@@ -67,8 +71,8 @@ public class DBQueriesTest {
 		queries.getGeoLocationsHashMap();
 		assertFalse(Queries.locationsMap.isEmpty());
 	}
-	
-	@Test
+
+	//@Test
 	public void getCategoriesTest() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
@@ -78,28 +82,44 @@ public class DBQueriesTest {
 		System.out.println(cat.toString());
 	}
 
-	@Test
+	//@Test
 	public void getResultsTest() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
 		}
 		Main.user = new User(1, "erer", "Sfsf", new Date(), 5);
-		List<Result> res= queries.getResults(1900, 1950, "Actores");
+		List<Result> res = queries.getResults(1900, 1950, "Actores");
 		assertFalse(res.isEmpty());
-		res=queries.getResults(1900, 1950, "Actores","dsd");
+		res = queries.getResults(1900, 1950, "Actores", "dsd");
 		assertFalse(res.isEmpty());
-		System.out.println("Results: \n"+res.toString());
+		System.out.println("Results: \n" + res.toString());
 	}
-	
-	@Test
+
+	//@Test
 	public void SearchResultsOnlyByNameTest() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
 		}
 		Main.user = new User(1, "erer", "Sfsf", new Date(), 5);
-		List<Result> res= queries.getResults("dsd");
+		List<Result> res = queries.getResults("dsd");
 		assertFalse(res.isEmpty());
-		res= queries.getResults("sdsdsdsdsdsdsdsdsd");
+		res = queries.getResults("sdsdsdsdsdsdsdsdsd");
 		assertTrue(res.isEmpty());
+	}
+
+	//@Test
+	public void AddPerson() throws AtlasServerException {
+		if (tester != "Rony") {
+			return;
+		}
+		Queries.categoriesMap.put("Actores", 1);
+		Main.user = new User(1, "erer", "Sfsf", new Date(), 5);
+		try {
+			queries.addNew("NewPersonTest3", "Actores", new Date(), 1,
+					new Date(), 1, "url", true);
+		} catch (AtlasServerException e) {
+		}
+		queries.addNew("NewPersonTest5", "Actores", new Date(), 1, new Date(),
+				1, "url", true);
 	}
 }

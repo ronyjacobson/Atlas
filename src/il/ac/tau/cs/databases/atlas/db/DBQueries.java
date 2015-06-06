@@ -1,14 +1,11 @@
 package il.ac.tau.cs.databases.atlas.db;
 
-import il.ac.tau.cs.databases.atlas.connector.command.GetCategoriesQuery;
-import il.ac.tau.cs.databases.atlas.connector.command.GetGeoLocationsNamesAndIDsQuery;
-import il.ac.tau.cs.databases.atlas.connector.command.GetResultsQuery;
-import il.ac.tau.cs.databases.atlas.connector.command.GetUserQuery;
-import il.ac.tau.cs.databases.atlas.connector.command.RegisterUserQuery;
-import il.ac.tau.cs.databases.atlas.connector.command.SearchResultsByNameQuery;
+import il.ac.tau.cs.databases.atlas.Main;
+import il.ac.tau.cs.databases.atlas.connector.command.*;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -42,14 +39,17 @@ public class DBQueries implements Queries {
 	public boolean registerUser(User user) throws AtlasServerException {
 		// Initialize DB query
 		RegisterUserQuery query = new RegisterUserQuery(user);
-		System.out.println(String.format("Registering user with username: %s...",
-				user.getUsername()));
+		System.out.println(String.format(
+				"Registering user with username: %s...", user.getUsername()));
 		// Execute query
 		User newUser = query.execute();
 		if (newUser == null) {
 			return false;
-		} else
+		} else {
+			Main.user.setUserID(newUser.getUserID());
 			return true;
+		}
+			
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class DBQueries implements Queries {
 	@Override
 	public void getGeoLocationsHashMap() throws AtlasServerException {
 		// Initialize DB query
-		GetGeoLocationsNamesAndIDsQuery query = new GetGeoLocationsNamesAndIDsQuery();
+		GetGeoLocationsQuery query = new GetGeoLocationsQuery();
 		System.out.println("Fetching GeoLocations names and Id's...");
 		query.execute();
 	}
@@ -126,73 +126,86 @@ public class DBQueries implements Queries {
 	}
 
 	@Override
-	public List<Result> getResults(String name) throws AtlasServerException{
+	public List<Result> getResults(String name) throws AtlasServerException {
 		List<Result> results = new ArrayList<Result>();
 		amountOfFemaleResults = 0;
-		
+
 		// Get Births
-		SearchResultsByNameQuery query = new SearchResultsByNameQuery(name, true);
-		System.out.println("Fetching births results by name, category and years");
+		SearchResultsByNameQuery query = new SearchResultsByNameQuery(name,
+				true);
+		System.out
+				.println("Fetching births results by name, category and years");
 		results.addAll(query.execute());
-		
+
 		// Get Deaths
 		query = new SearchResultsByNameQuery(name, false);
-		System.out.println("Fetching death results by name, category and years");
+		System.out
+				.println("Fetching death results by name, category and years");
 		results.addAll(query.execute());
-		
+
 		amountOfLatestResults = results.size();
 		return results;
-		
+
 	}
-		
-	public List<Result> getResults(int startYear, int endYear, String category, String name) throws AtlasServerException{
+
+	public List<Result> getResults(int startYear, int endYear, String category,
+			String name) throws AtlasServerException {
 		List<Result> results = new ArrayList<Result>();
 		amountOfFemaleResults = 0;
-		
+
 		// Get Births
-		GetResultsQuery query = new GetResultsQuery(startYear, endYear, category, name, true);
-		System.out.println("Fetching births results by name, category and years");
+		GetResultsQuery query = new GetResultsQuery(startYear, endYear,
+				category, name, true);
+		System.out
+				.println("Fetching births results by name, category and years");
 		results.addAll(query.execute());
-		
+
 		// Get Deaths
 		query = new GetResultsQuery(startYear, endYear, category, name, false);
-		System.out.println("Fetching death results by name, category and years");
+		System.out
+				.println("Fetching death results by name, category and years");
 		results.addAll(query.execute());
-		
+
 		amountOfLatestResults = results.size();
 		return results;
 	}
 
 	/**
 	 * @return A list of results of all the matching entries in the database
-	 * @throws AtlasServerException 
+	 * @throws AtlasServerException
 	 */
 	@Override
-	
-	public List<Result> getResults(int startYear, int endYear, String category) throws AtlasServerException {
+	public List<Result> getResults(int startYear, int endYear, String category)
+			throws AtlasServerException {
 		List<Result> results = new ArrayList<Result>();
 		amountOfFemaleResults = 0;
-		
+
 		// Get Births
-		GetResultsQuery query = new GetResultsQuery(startYear, endYear, category, null, true);
+		GetResultsQuery query = new GetResultsQuery(startYear, endYear,
+				category, null, true);
 		System.out.println("Fetching births results by category and years");
 		results.addAll(query.execute());
-		
+
 		// Get Deaths
 		query = new GetResultsQuery(startYear, endYear, category, null, false);
 		System.out.println("Fetching deaths results by category and years");
 		results.addAll(query.execute());
-		
+
 		amountOfLatestResults = results.size();
 		return results;
 	}
 
+	/**
+	 * Store all the chosen favorite IDs to the database
+	 * 
+	 * @param favoritesList
+	 * @return True if the favorites were stored successfully
+	 */
 	@Override
 	public boolean storeFavoriteIDs(List<String> favoritesList) {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
 
 	/**
 	 * Update the DB with the Yago files in the given full path directory
@@ -202,15 +215,27 @@ public class DBQueries implements Queries {
 		// TODO PAZ
 
 	}
-	
+
 	/**
 	 * Add a new entry to the database
+	 * @throws AtlasServerException 
 	 */
 	@Override
-	public boolean addNew(String name, String category, String birthDate,
-			int birthlocationID, String deathDate, int deathlocationID, String wikiLink, boolean isFemale) {
-		// TODO Auto-generated method stub
-		return false;
+	public void addNew(String name, String category, Date birthDate,
+			int birthlocationID, Date deathDate, int deathlocationID,
+			String wikiLink, boolean isFemale) throws AtlasServerException {
+		
+		// Initialize DB query
+		int catId = categoriesMap.get(category);
+		AddPersonQuery query = new AddPersonQuery(name, catId, birthDate,
+				birthlocationID, deathDate, deathlocationID,
+				wikiLink, isFemale);
+		
+		System.out.println(String.format(
+				"Adding person: %s...", name));
+		
+		// Execute query
+		query.execute();
 	}
 
 }

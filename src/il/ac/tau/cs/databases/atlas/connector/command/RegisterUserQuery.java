@@ -61,7 +61,7 @@ public class RegisterUserQuery extends BaseDBCommand<User> {
 		} finally {
 			safelyClose(statement, resultSet);
 		}
-		System.out.println(String.format("Query executed properly.",statement.toString()));
+		System.out.println("Query executed properly.");
 		return user;
 	}
 
