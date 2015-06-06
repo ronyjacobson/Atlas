@@ -87,8 +87,9 @@ public interface Queries {
 	 * Store all the chosen favorite IDs to the database
 	 * @param favoritesList
 	 * @return True if the favorites were stored successfully
+	 * @throws AtlasServerException 
 	 */
-	public boolean storeFavoriteIDs(List<String> favoritesList);
+	public void storeFavoriteIDs(List<String> favoritesList) throws AtlasServerException;
 	
 	/**
 	 * TODO

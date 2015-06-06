@@ -8,6 +8,7 @@ import il.ac.tau.cs.databases.atlas.Main;
 import il.ac.tau.cs.databases.atlas.connector.DynamicConnectionPool;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class DBQueriesTest {
 
 	}
 
-	//@Test
+	// @Test
 	public void isRegisteredUserTest() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
@@ -62,7 +63,7 @@ public class DBQueriesTest {
 				nonExistingUser.getUsername());
 	}
 
-	//@Test
+	// @Test
 	public void getGeoLocationsHashMapTest() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
@@ -72,7 +73,7 @@ public class DBQueriesTest {
 		assertFalse(Queries.locationsMap.isEmpty());
 	}
 
-	//@Test
+	// @Test
 	public void getCategoriesTest() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
@@ -82,7 +83,7 @@ public class DBQueriesTest {
 		System.out.println(cat.toString());
 	}
 
-	//@Test
+	// @Test
 	public void getResultsTest() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
@@ -95,7 +96,7 @@ public class DBQueriesTest {
 		System.out.println("Results: \n" + res.toString());
 	}
 
-	//@Test
+	// @Test
 	public void SearchResultsOnlyByNameTest() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
@@ -107,7 +108,7 @@ public class DBQueriesTest {
 		assertTrue(res.isEmpty());
 	}
 
-	//@Test
+	// @Test
 	public void AddPerson() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
@@ -121,5 +122,17 @@ public class DBQueriesTest {
 		}
 		queries.addNew("NewPersonTest5", "Actores", new Date(), 1, new Date(),
 				1, "url", true);
+	}
+
+	@Test
+	public void AddFavorites() throws AtlasServerException {
+		if (tester != "Rony") {
+			return;
+		}
+		Main.user = new User(1, "erer", "Sfsf", new Date(), 5);
+		List<String> fav= new ArrayList<String>();
+		fav.add("2");
+		fav.add("4");
+		queries.storeFavoriteIDs(fav);
 	}
 }

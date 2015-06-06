@@ -49,7 +49,7 @@ public class DBQueries implements Queries {
 			Main.user.setUserID(newUser.getUserID());
 			return true;
 		}
-			
+
 	}
 
 	/**
@@ -199,12 +199,16 @@ public class DBQueries implements Queries {
 	 * Store all the chosen favorite IDs to the database
 	 * 
 	 * @param favoritesList
-	 * @return True if the favorites were stored successfully
+	 * @throws AtlasServerException 
 	 */
 	@Override
-	public boolean storeFavoriteIDs(List<String> favoritesList) {
-		// TODO Auto-generated method stub
-		return false;
+	public void storeFavoriteIDs(List<String> favoritesList) throws AtlasServerException {
+		// Initialize DB query
+		UpdateFavoritesQuery query = new UpdateFavoritesQuery(favoritesList);
+		System.out.println("Updating favorites...");
+
+		// Execute query
+		query.execute();
 	}
 
 	/**
@@ -218,22 +222,21 @@ public class DBQueries implements Queries {
 
 	/**
 	 * Add a new entry to the database
-	 * @throws AtlasServerException 
+	 * 
+	 * @throws AtlasServerException
 	 */
 	@Override
 	public void addNew(String name, String category, Date birthDate,
 			int birthlocationID, Date deathDate, int deathlocationID,
 			String wikiLink, boolean isFemale) throws AtlasServerException {
-		
+
 		// Initialize DB query
 		int catId = categoriesMap.get(category);
 		AddPersonQuery query = new AddPersonQuery(name, catId, birthDate,
-				birthlocationID, deathDate, deathlocationID,
-				wikiLink, isFemale);
-		
-		System.out.println(String.format(
-				"Adding person: %s...", name));
-		
+				birthlocationID, deathDate, deathlocationID, wikiLink, isFemale);
+
+		System.out.println(String.format("Adding person: %s...", name));
+
 		// Execute query
 		query.execute();
 	}

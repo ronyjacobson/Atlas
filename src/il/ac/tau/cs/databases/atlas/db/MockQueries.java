@@ -127,9 +127,9 @@ public class MockQueries implements Queries {
 	 * @return True if the favorites were stored successfully
 	 */
 	@Override
-	public boolean storeFavoriteIDs(List<String> favoritesList) {
+	public void storeFavoriteIDs(List<String> favoritesList) {
 		System.out.println(Arrays.toString(favoritesList.toArray()));
-		return true;
+		return;
 	}
 
 

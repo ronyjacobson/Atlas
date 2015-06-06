@@ -117,10 +117,12 @@ public class MapBrowserListeners {
 					if (map != null) {
 						String favorites = ((String) map.getBrowser().evaluate("return getFavorites()"));
 						List<String> favoritesList = Arrays.asList(favorites.split(","));
-						boolean status = Main.queries.storeFavoriteIDs(favoritesList);
-						String msg = "Favorites synced to database successfully.";
-						if (!status){
-							 msg = "Favorites failed to synced to database.";
+						String msg;
+						try {
+							Main.queries.storeFavoriteIDs(favoritesList);
+							msg = "Favorites synced to database successfully.";
+						} catch (AtlasServerException e){
+							msg = "Favorites failed to synced to database.";
 						}
 						map.getBrowser().execute("error(\"" + msg + "\");");
 					} else {
