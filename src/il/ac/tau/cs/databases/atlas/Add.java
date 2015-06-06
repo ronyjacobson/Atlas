@@ -324,7 +324,9 @@ public class Add extends JFrame {
 						.toString(), Queries.locationsMap.get(wasBornIn
 						.getSelectedItem().toString()), hasDiedOn.getDate()
 						.toString(), Queries.locationsMap.get(wasBornIn
-						.getSelectedItem().toString()), wikiLink.getText());
+						.getSelectedItem().toString()), wikiLink.getText(), 
+						//isFemale 
+						true);
 				if (status) {
 					JOptionPane.showMessageDialog(null,
 							"New entry added to the data base.",
@@ -353,7 +355,9 @@ public class Add extends JFrame {
 		public void actionPerformed(ActionEvent arg0) {
 			boolean status = Main.queries.addNew(Main.user.getUsername(),
 					"Favorites", Main.user.getDateOfBirth().toString(),
-					Main.user.getLocationID(), "", -1, "");
+					Main.user.getLocationID(), "", -1, "",
+					//isFemale 
+					true);
 			if (status) {
 				JOptionPane.showMessageDialog(null,
 						"You were added to the data base.",

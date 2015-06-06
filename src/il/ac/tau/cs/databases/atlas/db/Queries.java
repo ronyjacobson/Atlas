@@ -78,7 +78,7 @@ public interface Queries {
 	/**
 	 * Add a new entry to the database
 	 */
-	public boolean addNew(String name, String category, String birthDate, int birthlocationID, String deathDate, int deathlocationID, String wikiLink);
+	public boolean addNew(String name, String category, String birthDate, int birthlocationID, String deathDate, int deathlocationID, String wikiLink, boolean isFemale);
 	
 	/**
 	 * Store all the chosen favorite IDs to the database

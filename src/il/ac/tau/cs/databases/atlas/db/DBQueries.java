@@ -208,8 +208,7 @@ public class DBQueries implements Queries {
 	 */
 	@Override
 	public boolean addNew(String name, String category, String birthDate,
-			int birthlocationID, String deathDate, int deathlocationID,
-			String wikiLink) {
+			int birthlocationID, String deathDate, int deathlocationID, String wikiLink, boolean isFemale) {
 		// TODO Auto-generated method stub
 		return false;
 	}

@@ -145,11 +145,16 @@ public class MockQueries implements Queries {
 		return null;
 	}
 
-
-	@Override
 	public boolean addNew(String name, String category, String birthDate,
 			int birthlocationID, String deathDate, int deathlocationID,
 			String wikiLink) {
+		return false;
+	}
+		
+	@Override
+	public boolean addNew(String name, String category, String birthDate,
+			int birthlocationID, String deathDate, int deathlocationID,
+			String wikiLink, boolean isFemale) {
 		// TODO Auto-generated method stub
 		return false;
 	}
