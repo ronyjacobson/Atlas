@@ -1,11 +1,18 @@
 package il.ac.tau.cs.databases.atlas.connector.command;
 
+import il.ac.tau.cs.databases.atlas.State;
+import il.ac.tau.cs.databases.atlas.connector.ConnectionPool;
+import il.ac.tau.cs.databases.atlas.connector.DynamicConnectionPool;
 import il.ac.tau.cs.databases.atlas.connector.command.base.BaseDBCommand;
+import il.ac.tau.cs.databases.atlas.db.TempTableMetadata;
+import il.ac.tau.cs.databases.atlas.db.TempTablesConstants;
 import il.ac.tau.cs.databases.atlas.db.YagoParser;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
 import java.io.*;
 import java.sql.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ParseFilesCommand extends BaseDBCommand<Boolean>{
@@ -18,6 +25,7 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
     private File geonamesCitiesFile;
     private String parserOutputPath;
     private AtomicInteger progress;
+    private long timestamp;
 
     public ParseFilesCommand(File yagoDateFile, File yagoLocationFile, File yagoCategoryFile, File yagoLabelsFile, File yagoWikiFile, File yagoGeonamesFile, File geonamesCitiesFile, String parserOutputPath, AtomicInteger progress) {
         this.yagoDateFile = yagoDateFile;
@@ -29,6 +37,7 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
         this.geonamesCitiesFile = geonamesCitiesFile;
         this.parserOutputPath = parserOutputPath;
         this.progress = progress;
+        this.timestamp = System.currentTimeMillis();
     }
 
 
@@ -36,12 +45,24 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
     protected Boolean innerExecute(Connection con) throws AtlasServerException {
         // GUI should check if files exist
         YagoParser yagoParser = new YagoParser(yagoDateFile, yagoLocationFile, yagoCategoryFile, yagoLabelsFile, yagoWikiFile, yagoGeonamesFile, geonamesCitiesFile, parserOutputPath);
+
         try {
             yagoParser.parseFiles();
         } catch (IOException e) {
             e.printStackTrace();
         }
         progress.getAndIncrement(); // Increment progress for progress bar
+
+        // parse yago datafile into temp tsv
+        createTempTables(con);
+        // create empty temp table
+
+        // load parsed tsv file into temp table and remove it
+        //loadDataIntoTempTable(con, "category_temp_table", concatToOutPath(YagoParser.CATEGORIES_INFO_OUT_NAME));
+
+        // create final tables if not exists
+
+        // combine temp tables into final tables (transaction?)
 
         // create temporary table to connect yago places and geonames
         final long timeOfInitiation = System.currentTimeMillis();
@@ -83,7 +104,7 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
                     ")");
             pstmt.executeUpdate();
             System.out.println(tempTableName + " is created");
-            pstmt = con.prepareStatement("LOAD DATA LOCAL INFILE ? INTO TABLE ?");
+            pstmt = con.prepareStatement("LOAD DATA LOCAL INFILE `?` INTO TABLE `?` FIELDS TERMINATED BY `\\t`");
             pstmt.setString(1, pathToParsedGeoInfo);
             pstmt.setString(2, tempTableName);
             pstmt.executeUpdate();
@@ -101,15 +122,15 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
         BufferedReader br = null;
         // Replace into so that rows will be updated or created if not exist
         try (PreparedStatement pstmt = con.prepareStatement(
-                "REPLACE INTO `location`" +
+                "REPLACE INTO `templocation`" +
                 "SET `geo_name` = ?, " +
                 "`latitude` = ?, " +
                 "`longtitude` = ?, " +
                 "`wikiURL` = ?, " +
                 "`geo_ID` = ?, " +
-                "`yago_ID` = ?");) {
+                "`yago_ID` = ?")) {
 
-            con.setAutoCommit(false); // make this into a transaction
+            //con.setAutoCommit(false); // make this into a transaction
             br = new BufferedReader(new FileReader(parsedGeoCitiesInfo));
             String line;
             while ((line = br.readLine()) != null) {
@@ -127,7 +148,7 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
             // TODO: unify temp table with this table
 
 
-            con.commit();
+            //con.commit();
             System.out.println("The table `location` has been filled!");
 
         } catch(SQLException | IOException e){
@@ -138,26 +159,77 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
         }
     }
 
-    private void createTempTable(Connection con, String tableName, String dataFilePath) throws AtlasServerException {
-        PreparedStatement pstmt = null;
-        System.out.println("creating temp table " + tableName);
-        try {
+    private void createTempTables(Connection con) throws AtlasServerException {
+        LinkedHashMap<String, TempTableMetadata> tempFields = TempTablesConstants.tempFields;
+        for (String tableName : tempFields.keySet()) {
+            TempTableMetadata tempTableMetadata = tempFields.get(tableName);
+            createEmptyTempTable(con, tableName, tempTableMetadata.getFields());
+            loadDataIntoTempTable(con, tableName, concatToOutPath(tempTableMetadata.getDataFilePath() + timestamp));
+        }
+    }
+
+    private void loadDataIntoTempTable(Connection con, String tableName, String dataFilePath) throws AtlasServerException {
+        System.out.println("populating temp table " + tableName);
+        try (PreparedStatement pstmt = con.prepareStatement(
+                "LOAD DATA INFILE `?` REPLACE INTO TABLE `?` FIELDS TERMINATED BY `\\t`")) {
+            /*
             pstmt = con.prepareStatement("LOAD DATA INFILE '" + dataFilePath +
                     "' REPLACE INTO TABLE " + tableName + " FIELDS TERMINATED BY '\\t'");
             pstmt.executeUpdate();
-            /*
-            pstmt = con.prepareStatement("LOAD DATA INFILE '?' REPLACE INTO TABLE ? FIELDS TERMINATED BY '\\t'");
+            */
             pstmt.setString(1, dataFilePath);
             pstmt.setString(2, tableName);
             pstmt.executeUpdate();
-            */
-            // TODO: Etan - which should we use?
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new AtlasServerException("Failed to load into temp table '" + tableName + "'");
+        }
+    }
+
+    private void createEmptyTempTable(Connection con, String tableName, LinkedHashMap<String, String> fields) throws AtlasServerException {
+        System.out.println("creating empty temp table " + tableName);
+        StringBuilder sb = new StringBuilder();
+        sb.append("CREATE TABLE IF NOT EXISTS " + tableName + " ");
+        sb.append(schemaToString(fields));
+        try (Statement stmt = con.createStatement()) {
+            System.out.println("actual CMD is: " + sb.toString());
+            stmt.execute(sb.toString());
         } catch (SQLException e) {
             e.printStackTrace();
             throw new AtlasServerException("Failed to create temp table '" + tableName + "'");
-        } finally {
-            safelyClose(pstmt);
         }
+    }
+
+
+    // last entry should be the primary key, e.g: PRIMARY KEY geo_ID
+    private String schemaToString(Map<String, String> schema) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("(");
+        for (String name : schema.keySet()) {
+            String type = schema.get(name);
+            sb.append(name);
+            sb.append(" ");
+            sb.append(type);
+            sb.append(", ");
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append(")");
+        return sb.toString();
+    }
+
+    public static void main(String[] args) throws AtlasServerException {
+        DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06","127.0.0.1", "3306", "dbmysql06");
+        ParseFilesCommand cmd = new ParseFilesCommand(new File("/Users/admin/Downloads/yagoDateFacts.tsv"),
+                new File("/Users/admin/Downloads/yagoFacts.tsv"),
+                new File("/Users/admin/Downloads/yagoTransitiveType.tsv"),
+                new File("/Users/admin/Downloads/yagoLabels.tsv"),
+                new File("/Users/admin/Downloads/yagoWikipediaInfo.tsv"),
+                new File("/Users/admin/Downloads/yagoGeonamesEntityIds.tsv"),
+                new File("/Users/admin/Downloads/cities1000.txt"),
+                "/Users/admin/Downloads/Test",
+                new AtomicInteger(0));
+        cmd.execute();
     }
 
     private String concatToOutPath(String fileName) {
