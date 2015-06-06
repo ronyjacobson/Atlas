@@ -39,8 +39,9 @@ public interface Queries {
 	
 	/**
 	 * @return A list of results of all the matching entries in the database
+	 * @throws AtlasServerException 
 	 */
-	public List<Result> getResults(String name);
+	public List<Result> getResults(String name) throws AtlasServerException;
 	
 	/**
 	 * @return A list of results of all the matching entries in the database

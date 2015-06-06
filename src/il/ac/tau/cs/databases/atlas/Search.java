@@ -254,7 +254,11 @@ public class Search extends JFrame {
 			} else {
 				Display.getDefault().syncExec(new Runnable() {
 				    public void run() {
+				    	try {
 				    	MapBrowserListeners.showResultsOnMap(Main.queries.getResults(name.getText()));
+				    	} catch (AtlasServerException e) {
+				    		// TODO handle Exception
+				    	}
 				    }
 				});
 				dispose();

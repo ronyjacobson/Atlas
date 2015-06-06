@@ -17,26 +17,14 @@ import java.util.ArrayList;
 /**
  * Created by user on 22/05/2015.
  */
-public class GetResultsQuery extends BaseDBCommand<ArrayList<Result>> {
+public class SearchResultsByNameQuery extends BaseDBCommand<ArrayList<Result>> {
 	String name;
-	int startYear;
-	int endYear;
-	String category;
-	boolean byName;
-	int limitNumOfResults = 100;
 	boolean isBirth;
+	int limitNumOfResults = 100;
 
-	public GetResultsQuery(int startYear, int endYear, String category, String name, boolean isBirth) {
-		this.startYear = startYear;
-		this.endYear = endYear;
-		this.category = category;
-		this.isBirth= isBirth;
-		if (name == null) {
-			this.byName = false;
-		} else {
-			this.name = name;
-			this.byName = true;
-		}
+	public SearchResultsByNameQuery(String name, boolean isBirth) {
+		this.name = name;
+		this.isBirth = isBirth;
 	}
 
 	@Override
@@ -96,8 +84,6 @@ public class GetResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 	
 	private String makeStatment(boolean isUserOriented) {
 			
-			String bornOrDiedDate = (isBirth ? DBConstants.Person.BORN_ON_DATE : DBConstants.Person.DIED_ON_DATE);
-			
 			String select = String.format(
 					"SELECT DISTINCT %s, %s, %s, %s, %s, %s as LocURL, %s as PersonURL, %s, %s, %s \n",
 					// All labels wanted
@@ -115,30 +101,19 @@ public class GetResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 			
 			String from = 
 					String.format(
-					"FROM %s, %s, %s ,%s, %s, %s",
+					"FROM %s, %s, %s, %s",
 					// All Tables needed
 					DBConstants.Person.TABLE_NAME,
 					DBConstants.Location.TABLE_NAME,
-					DBConstants.PersonHasCategory.TABLE_NAME,
 					DBConstants.PersonLabels.TABLE_NAME,
-					DBConstants.Category.TABLE_NAME,
-					DBConstants.UserFavorites.TABLE_NAME);
-			
-			String withFromByName = 
+					DBConstants.UserFavorites.TABLE_NAME) + 
 					", (SELECT person_ID FROM person_labels WHERE label like '%"+ this.name +"%') as ids"; 
 			
 			String basicWhere =
 					"\n" +
-					"WHERE "+ DBConstants.Category.CATEGORY_NAME		+" = '"+ this.category						 + "' \n"+
-					"AND "  + DBConstants.PersonHasCategory.CATEGORY_ID +" = " + DBConstants.Category.CATEGORY_ID	 + " \n" +
-					"AND "  + DBConstants.PersonHasCategory.PERSON_ID 	+" = " + DBConstants.Person.PERSON_ID 	  	 + " \n" +
-					"AND "  + DBConstants.Person.DIED_IN_LOCATION 		+" = " + DBConstants.Location.GEO_ID		 + " \n" +
+					"WHERE "+ DBConstants.Person.DIED_IN_LOCATION 		+" = " + DBConstants.Location.GEO_ID		 + " \n" +
 					"AND "  + DBConstants.Person.PERSON_ID				+" = " + DBConstants.PersonLabels.PERSON_ID	 + " \n" +
 					"AND "  + DBConstants.PersonLabels.IS_PREFERED	    +" = '1' \n" +
-					"AND year("+ bornOrDiedDate +") >= '"+this.startYear+"' \n" +
-					"AND year("+ bornOrDiedDate +") <= '"+this.endYear  +"' \n";
-			
-			String withNameWhere = 
 					"AND ids.person_ID = person.person_ID"+ " \n";
 			
 			String withFavoritesWhere = 
@@ -152,7 +127,7 @@ public class GetResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 			String favsWhere = basicWhere + withFavoritesWhere;
 			String userAddedWhere = basicWhere + withUserAddedWhere;
 			String limit = "limit " + this.limitNumOfResults;
-		if (!byName) {
+		
 			if (isUserOriented) {
 				String q1 = select + from + favsWhere + limit;
 				String q2 = select + from + userAddedWhere + limit;
@@ -160,15 +135,7 @@ public class GetResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 			} else {
 				return select + from + basicWhere + limit;
 			}
-		} else {
-			if (isUserOriented) {
-				String q1 = select + from + withFromByName + favsWhere + withNameWhere + limit;
-				String q2 = select + from + withFromByName+ userAddedWhere + withNameWhere + limit;
-				return q1 + "\n" + "UNION \n" + q2;
-			} else {
-				return select + from + withFromByName + basicWhere + withNameWhere + limit;
-			}
 		}
-	}
+	
 
 }

@@ -5,6 +5,7 @@ import il.ac.tau.cs.databases.atlas.connector.command.GetGeoLocationsNamesAndIDs
 import il.ac.tau.cs.databases.atlas.connector.command.GetResultsQuery;
 import il.ac.tau.cs.databases.atlas.connector.command.GetUserQuery;
 import il.ac.tau.cs.databases.atlas.connector.command.RegisterUserQuery;
+import il.ac.tau.cs.databases.atlas.connector.command.SearchResultsByNameQuery;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
 import java.util.ArrayList;
@@ -80,6 +81,7 @@ public class DBQueries implements Queries {
 	 */
 	@Override
 	public boolean isConnectedToDB() {
+		// TODO - Etan??
 		return true;
 	}
 
@@ -100,7 +102,6 @@ public class DBQueries implements Queries {
 	/**
 	 * @return The amount of results found in the last results query
 	 */
-	// TODO
 	@Override
 	public int getAmountOfLatestResults() {
 		return amountOfLatestResults;
@@ -110,17 +111,9 @@ public class DBQueries implements Queries {
 	 * @return The male/females statistics of the results found in the last
 	 *         results query
 	 */
-	// TODO
 	@Override
 	public int getStatsOfLatestResults() {
 		return amountOfFemaleResults;
-	}
-
-	// TODO
-	@Override
-	public void update(String fullPathDirectory) {
-		// TODO Auto-generated method stub -PAZ
-
 	}
 
 	@Override
@@ -133,51 +126,61 @@ public class DBQueries implements Queries {
 	}
 
 	@Override
-	public boolean addNew(String name, String category, String birthDate,
-			int birthlocationID, String deathDate, int deathlocationID,
-			String wikiLink) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public List<Result> getResults(String name) {
+	public List<Result> getResults(String name) throws AtlasServerException{
+		List<Result> results = new ArrayList<Result>();
 		amountOfFemaleResults = 0;
-		amountOfLatestResults = 30;
-		amountOfFemaleResults = 40;
-		return null;
+		
+		// Get Births
+		SearchResultsByNameQuery query = new SearchResultsByNameQuery(name, true);
+		System.out.println("Fetching births results by name, category and years");
+		results.addAll(query.execute());
+		
+		// Get Deaths
+		query = new SearchResultsByNameQuery(name, false);
+		System.out.println("Fetching death results by name, category and years");
+		results.addAll(query.execute());
+		
+		amountOfLatestResults = results.size();
+		return results;
+		
+	}
+		
+	public List<Result> getResults(int startYear, int endYear, String category, String name) throws AtlasServerException{
+		List<Result> results = new ArrayList<Result>();
+		amountOfFemaleResults = 0;
+		
+		// Get Births
+		GetResultsQuery query = new GetResultsQuery(startYear, endYear, category, name, true);
+		System.out.println("Fetching births results by name, category and years");
+		results.addAll(query.execute());
+		
+		// Get Deaths
+		query = new GetResultsQuery(startYear, endYear, category, name, false);
+		System.out.println("Fetching death results by name, category and years");
+		results.addAll(query.execute());
+		
+		amountOfLatestResults = results.size();
+		return results;
 	}
 
 	/**
 	 * @return A list of results of all the matching entries in the database
 	 * @throws AtlasServerException 
 	 */
-	// TODO
 	@Override
 	
 	public List<Result> getResults(int startYear, int endYear, String category) throws AtlasServerException {
-		//GetResultsQuery(startYear, endYear, category, byName, userOriented, isBirth)
 		List<Result> results = new ArrayList<Result>();
 		amountOfFemaleResults = 0;
 		
-		// Get births - user oriented
-		GetResultsQuery query = new GetResultsQuery(startYear, endYear, category, false, true, true);
-		System.out.println("Fetching results (Query 1 out of 4...)");
+		// Get Births
+		GetResultsQuery query = new GetResultsQuery(startYear, endYear, category, null, true);
+		System.out.println("Fetching births results by category and years");
 		results.addAll(query.execute());
 		
-		// Get deaths - user oriented
-		query = new GetResultsQuery(startYear, endYear, category, false, true, false);
-		System.out.println("Fetching results (Query 2 out of 4...)");
-		results.addAll(query.execute());
-		
-		// Get all births
-		query = new GetResultsQuery(startYear, endYear, category, false, false, true);
-		System.out.println("Fetching results: Births (Query 3 out of 4...)");
-		results.addAll(query.execute());
-		
-		// Get all deaths
-		query = new GetResultsQuery(startYear, endYear, category, false, false, false);
-		System.out.println("Fetching results: Deaths (Query 4 out of 4...)");
+		// Get Deaths
+		query = new GetResultsQuery(startYear, endYear, category, null, false);
+		System.out.println("Fetching deaths results by category and years");
 		results.addAll(query.execute());
 		
 		amountOfLatestResults = results.size();
@@ -186,6 +189,27 @@ public class DBQueries implements Queries {
 
 	@Override
 	public boolean storeFavoriteIDs(List<String> favoritesList) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+
+	/**
+	 * Update the DB with the Yago files in the given full path directory
+	 */
+	@Override
+	public void update(String fullPathDirectory) {
+		// TODO PAZ
+
+	}
+	
+	/**
+	 * Add a new entry to the database
+	 */
+	@Override
+	public boolean addNew(String name, String category, String birthDate,
+			int birthlocationID, String deathDate, int deathlocationID,
+			String wikiLink) {
 		// TODO Auto-generated method stub
 		return false;
 	}

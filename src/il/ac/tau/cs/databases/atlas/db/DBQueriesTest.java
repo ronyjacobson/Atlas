@@ -84,8 +84,22 @@ public class DBQueriesTest {
 			return;
 		}
 		Main.user = new User(1, "erer", "Sfsf", new Date(), 5);
-		List<Result> res = queries.getResults(1900, 1950, "Actores");
+		List<Result> res= queries.getResults(1900, 1950, "Actores");
+		assertFalse(res.isEmpty());
+		res=queries.getResults(1900, 1950, "Actores","dsd");
 		assertFalse(res.isEmpty());
 		System.out.println("Results: \n"+res.toString());
+	}
+	
+	@Test
+	public void SearchResultsOnlyByNameTest() throws AtlasServerException {
+		if (tester != "Rony") {
+			return;
+		}
+		Main.user = new User(1, "erer", "Sfsf", new Date(), 5);
+		List<Result> res= queries.getResults("dsd");
+		assertFalse(res.isEmpty());
+		res= queries.getResults("sdsdsdsdsdsdsdsdsd");
+		assertTrue(res.isEmpty());
 	}
 }
