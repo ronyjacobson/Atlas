@@ -86,7 +86,7 @@ public class YagoParser {
         String line;
         while ((line = br.readLine()) != null) {
             String[] cols = line.trim().split("\\t");
-            if (cols.length < 4) {
+            if (cols.length < 5) {
                 continue;
             }
             final Matcher matcher = pattern.matcher(cols[3]);
