@@ -80,9 +80,9 @@ public class YagoParser {
             }
             final Matcher matcher = pattern.matcher(cols[3]);
             if ("<wasBornOnDate>".equals(cols[2]) && matcher.find()) {
-                bornOnPw.println(cols[1] + "\t" + matcher.group());
+                bornOnPw.println(cols[1] + "\t" + matcher.group().replace('#', '0'));
             } else if ("<diedOnDate>".equals(cols[2]) && matcher.find()) {
-                diedOnPw.println(cols[1] + "\t" + matcher.group());
+                diedOnPw.println(cols[1] + "\t" + matcher.group().replace('#', '0'));
             }
         }
         bornOnPw.close();
