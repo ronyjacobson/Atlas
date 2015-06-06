@@ -197,7 +197,6 @@ public class DBQueries implements Queries {
 
 	/**
 	 * Store all the chosen favorite IDs to the database
-	 * 
 	 * @param favoritesList
 	 * @throws AtlasServerException 
 	 */
@@ -222,7 +221,6 @@ public class DBQueries implements Queries {
 
 	/**
 	 * Add a new entry to the database
-	 * 
 	 * @throws AtlasServerException
 	 */
 	@Override

@@ -32,7 +32,9 @@ public class Result {
 		this.location = location;
 		this.isBirth = isBirth;
 		this.date = date;
-		this.summary = "A summary";
+		this.summary = (isBirth ? 
+				String.format("%s, was born in %s on %s", name, date.toString(), location.getName())  :
+				String.format("%s, died in %s on %s", name, date.toString(), location.getName()));
 		this.wikiLink = wikiLink;
 		this.isFemale = isFemale;
 	}
