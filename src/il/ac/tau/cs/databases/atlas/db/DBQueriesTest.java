@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import il.ac.tau.cs.databases.atlas.Main;
 import il.ac.tau.cs.databases.atlas.connector.DynamicConnectionPool;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
@@ -77,4 +78,14 @@ public class DBQueriesTest {
 		System.out.println(cat.toString());
 	}
 
+	@Test
+	public void getResultsTest() throws AtlasServerException {
+		if (tester != "Rony") {
+			return;
+		}
+		Main.user = new User(1, "erer", "Sfsf", new Date(), 5);
+		List<Result> res = queries.getResults(1900, 1950, "Actores");
+		assertFalse(res.isEmpty());
+		System.out.println("Results: \n"+res.toString());
+	}
 }
