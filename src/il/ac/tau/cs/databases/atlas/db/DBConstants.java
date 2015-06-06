@@ -6,6 +6,7 @@ public class DBConstants {
 	 * Here so we will only change a String once when needed
 	 */
 	public static final String PERSON_ID_L = "person_ID";
+	public static final String PERSON_YAGO_ID_L = "yago_ID";
 	public static final String BORN_IN_LOCATION_L = "wasBornInLocation";
 	public static final String BORN_ON_DATE_L = "wasBornOnDate";
 	public static final String USER_ID_L = "user_ID";
@@ -57,6 +58,7 @@ public class DBConstants {
 		public static final String DIED_IN_LOCATION = TABLE_NAME + "." + DIED_IN_LOCATION_L;
 		public static final String ADDED_BY_USER = TABLE_NAME + "." + ADDED_BY_USER_L;
 		public static final String IS_FEMALE = TABLE_NAME + "." + IS_FEMALE_L;
+		public static final String YAGO_ID = TABLE_NAME + "." + PERSON_YAGO_ID_L;
 	}
 	
 	public static class Category {
