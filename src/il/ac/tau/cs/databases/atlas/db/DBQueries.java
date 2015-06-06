@@ -13,7 +13,6 @@ import org.apache.log4j.Logger;
 public class DBQueries implements Queries {
 
 	protected final Logger logger = Logger.getLogger(this.getClass().getName());
-
 	public static int amountOfLatestResults = 0;
 	public static int amountOfFemaleResults = 0;
 
@@ -229,6 +228,9 @@ public class DBQueries implements Queries {
 			String wikiLink, boolean isFemale) throws AtlasServerException {
 
 		// Initialize DB query
+		if (category.equals("Favorites")) {
+			throw new AtlasServerException("Cant add to favorites, choose a category and then add");
+		}
 		int catId = categoriesMap.get(category);
 		AddPersonQuery query = new AddPersonQuery(name, catId, birthDate,
 				birthlocationID, deathDate, deathlocationID, wikiLink, isFemale);
