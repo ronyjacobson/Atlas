@@ -107,10 +107,10 @@ public class YagoParser {
         File genderOutfile = new File(concatToOutPath("facts_gender.tsv"));
         PrintWriter genderPw = new PrintWriter(new FileWriter(genderOutfile, true), true);
 
-        File bornInOutfile = new File(concatToOutPath("facts_born_in.tsv"));
+        File bornInOutfile = new File(concatToOutPath("facts_born_in_location.tsv"));
         PrintWriter bornInPw = new PrintWriter(new FileWriter(bornInOutfile, true), true);
 
-        File diedInOutfile = new File(concatToOutPath("facts_died_in.tsv"));
+        File diedInOutfile = new File(concatToOutPath("facts_died_in_location.tsv"));
         PrintWriter diedInPw = new PrintWriter(new FileWriter(diedInOutfile, true), true);
 
         String line;
@@ -142,6 +142,9 @@ public class YagoParser {
     // handles yagoTransitiveType
     public void parseYagoCategoryFile(File yagoCategoryFile) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(yagoCategoryFile));
+        File outfile = new File(concatToOutPath(CATEGORIES_INFO_OUT_NAME));
+        FileWriter fw = new FileWriter(outfile, true);
+        PrintWriter pw = new PrintWriter(fw, true);
         Pattern p = Pattern.compile(CATEGORY_REGEX);
         String line;
         while ((line = br.readLine()) != null) {
@@ -150,33 +153,34 @@ public class YagoParser {
                 continue;
             }
             if (categoryTypes.contains(cols[3])) {
-                File outfile = new File(concatToOutPath(CATEGORIES_INFO_OUT_NAME));
-                FileWriter fw = new FileWriter(outfile, true);
-                PrintWriter pw = new PrintWriter(fw, true);
                 Matcher m = p.matcher(cols[3]);
                 if (m.find()) {
                     pw.println(cols[1] + "\t" + m.group(1));
                 }
-                pw.close();
+
             }
         }
+        pw.close();
         br.close();
     }
 
     // handles yagoWikipediaInfo
     public void parseYagoWikiFile(File yagoWiKiFile) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(yagoWiKiFile));
+        File outfile = new File(concatToOutPath(WIKI_INFO_OUT_NAME));
+        FileWriter fw = new FileWriter(outfile, true);
+        PrintWriter pw = new PrintWriter(fw, true);
         String line;
         while ((line = br.readLine()) != null) {
             String[] cols = line.trim().split("\\t");
-            if (wikiTypes.contains(cols[1])) {
-                File outfile = new File(concatToOutPath(WIKI_INFO_OUT_NAME));
-                FileWriter fw = new FileWriter(outfile, true);
-                PrintWriter pw = new PrintWriter(fw, true);
+            if (cols.length < 3) {
+                continue;
+            }
+            if ("<hasWikipediaUrl>".equals(cols[1])) {
                 pw.println(cols[0] + "\t" + cols[2].substring(1,cols[2].length()-1));
-                pw.close();
             }
         }
+        pw.close();
         br.close();
     }
 
@@ -184,59 +188,70 @@ public class YagoParser {
     // handles yagoGeonamesEntityIds
     public void parseYagoGeonamesFile(File yagoGeonamesFile) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(yagoGeonamesFile));
+        File outfile = new File(concatToOutPath(GEO_INFO_OUT_NAME));
+        FileWriter fw = new FileWriter(outfile, true);
+        PrintWriter pw = new PrintWriter(fw, true);
         Pattern p = Pattern.compile(GEONAMES_URL_REGEX);
         String line;
         while ((line = br.readLine()) != null) {
             String[] cols = line.trim().split("\\t");
-            File outfile = new File(concatToOutPath(GEO_INFO_OUT_NAME));
-            FileWriter fw = new FileWriter(outfile, true);
-            PrintWriter pw = new PrintWriter(fw, true);
+            if (cols.length < 3) {
+                continue;
+            }
             Matcher m = p.matcher(cols[2]);
             if (m.find()) {
                 pw.println(cols[0] + "\t" + m.group(1));
             }
-            pw.close();
         }
+        pw.close();
         br.close();
     }
 
     // handles cities1000
     public void parseGeonamesCitiesFile(File geoCitiesFile) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(geoCitiesFile));
+        File outfile = new File(concatToOutPath(GEO_CITIES_INFO_OUT_NAME));
+        FileWriter fw = new FileWriter(outfile, true);
+        PrintWriter pw = new PrintWriter(fw, true);
         String line;
         while ((line = br.readLine()) != null) {
             String[] cols = line.trim().split("\\t");
-            File outfile = new File(concatToOutPath(GEO_CITIES_INFO_OUT_NAME));
-            FileWriter fw = new FileWriter(outfile, true);
-            PrintWriter pw = new PrintWriter(fw, true);
             int[] columns = {0, 2, 4};
             for (int i : columns) {
                 pw.print(cols[i] + "\t");
             }
             pw.println(cols[5]);
-            pw.close();
         }
+        pw.close();
         br.close();
     }
 
     // handles yagoLabels
     public void parseYagoLabelsFile(File yagoLabelsFile) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(yagoLabelsFile));
+        File labelOutfile = new File("labels_info.tsv");
+        File prefLabelOutfile = new File("pref_labels_info.tsv");
+        PrintWriter labelPw = new PrintWriter(new FileWriter(labelOutfile, true), true);
+        PrintWriter prefLabelPw = new PrintWriter(new FileWriter(prefLabelOutfile, true), true);
+
         Pattern p = Pattern.compile("\"(.*)\"@eng");
         String line;
         while ((line = br.readLine()) != null) {
             String[] cols = line.trim().split("\\t");
-            if (labelTypes.contains(cols[2])) {
-                File outfile = new File("labels_" + cols[2] + "_info.tsv");
-                FileWriter fw = new FileWriter(outfile, true);
-                PrintWriter pw = new PrintWriter(fw, true);
-                Matcher m = p.matcher(cols[3]);
-                if (m.find()) {
-                    pw.println(cols[1] + "\t" + m.group(1));
+            if (cols.length < 4) {
+                continue;
+            }
+            Matcher m = p.matcher(cols[3]);
+            if (m.find()) {
+                if ("skos:prefLabel".equals(cols[2])) {
+                    prefLabelPw.println(cols[1] + "\t" + m.group(1));
+                } else if ("rdfs:label".equals(cols[2])) {
+                    labelPw.println(cols[1] + "\t" + m.group(1));
                 }
-                pw.close();
             }
         }
+        prefLabelPw.close();
+        labelPw.close();
         br.close();
     }
 
