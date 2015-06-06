@@ -75,21 +75,29 @@ public class YagoParser {
     // handles yagoDateFacts
     public void parseYagoDateFile(File yagoDateFile) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(yagoDateFile));
-        Pattern p = Pattern.compile(DATE_REGEX);
+        Pattern pattern = Pattern.compile(DATE_REGEX);
+
+        File bornOnDateOutfile = new File(concatToOutPath("date_bornOnDate.tsv"));
+        PrintWriter bornOnPw = new PrintWriter(new FileWriter(bornOnDateOutfile, true), true);
+
+        File diedOnDatefile = new File(concatToOutPath("date_diedOnDate.tsv"));
+        PrintWriter diedOnPw = new PrintWriter(new FileWriter(diedOnDatefile, true), true);
+
         String line;
         while ((line = br.readLine()) != null) {
             String[] cols = line.trim().split("\\t");
-            if (dateTypes.contains(cols[2])) {
-                File outfile = new File(concatToOutPath("dateFacts_" + cols[2].substring(1,cols[2].length()-1) + ".tsv"));
-                FileWriter fw = new FileWriter(outfile, true);
-                PrintWriter pw = new PrintWriter(fw, true);
-                Matcher m = p.matcher(cols[3]);
-                if (m.find()) {
-                    pw.println(cols[1] + "\t" + m.group());
-                }
-                pw.close();
+            if (cols.length < 4) {
+                continue;
+            }
+            final Matcher matcher = pattern.matcher(cols[3]);
+            if ("<wasBornOnDate>".equals(cols[2]) && matcher.find()) {
+                bornOnPw.println(cols[1] + "\t" + matcher.group());
+            } else if ("<diedOnDate>".equals(cols[2]) && matcher.find()) {
+                diedOnPw.println(cols[1] + "\t" + matcher.group());
             }
         }
+        bornOnPw.close();
+        diedOnPw.close();
         br.close();
     }
 
