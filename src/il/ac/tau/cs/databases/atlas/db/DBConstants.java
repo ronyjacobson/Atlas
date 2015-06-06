@@ -15,11 +15,11 @@ public class DBConstants {
 	public static final String PASSWORD_L = "password";
 	public static final String DIED_ON_DATE_L = "diedOnDate";
 	public static final String GEO_NAME_L = "geo_name";
-	public static final String LONG_L = "latitue";
+	public static final String LONG_L = "latitude";
 	public static final String LAT_L = "longtitude";
 	public static final String GEO_ID_L = "geo_ID";
 	public static final String YAGO_ID_L = "yago_ID";
-	public static final String LABEL_L = "L";
+	public static final String LABEL_L = "label";
 	public static final String IS_PREFERED_L = "isPref";
 	public static final String DIED_IN_LOCATION_L = "diedInLocation";
 	public static final String ADDED_BY_USER_L = "addedByUser";
@@ -66,7 +66,7 @@ public class DBConstants {
 	}
 	
 	public static class PersonLabels {
-		public static final String TABLE_NAME = "pesron_Ls";
+		public static final String TABLE_NAME = "person_labels";
 		public static final String PERSON_ID = TABLE_NAME + "." + PERSON_ID_L;
 		public static final String LABEL = TABLE_NAME + "." + LABEL_L;
 		public static final String IS_PREFERED = TABLE_NAME + "." + IS_PREFERED_L;	

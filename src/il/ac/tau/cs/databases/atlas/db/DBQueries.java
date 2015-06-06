@@ -26,7 +26,7 @@ public class DBQueries implements Queries {
 	public User fetchUser(User user) throws AtlasServerException {
 		// Initialize DB query
 		GetUserQuery query = new GetUserQuery(user);
-		logger.info(String.format(
+		System.out.println(String.format(
 				"Checking for regitered user with username: %s...",
 				user.getUsername()));
 		// Execute query
@@ -41,7 +41,7 @@ public class DBQueries implements Queries {
 	public boolean registerUser(User user) throws AtlasServerException {
 		// Initialize DB query
 		RegisterUserQuery query = new RegisterUserQuery(user);
-		logger.info(String.format("Registering user with username: %s...",
+		System.out.println(String.format("Registering user with username: %s...",
 				user.getUsername()));
 		// Execute query
 		User newUser = query.execute();
@@ -58,7 +58,7 @@ public class DBQueries implements Queries {
 	public void getGeoLocationsHashMap() throws AtlasServerException {
 		// Initialize DB query
 		GetGeoLocationsNamesAndIDsQuery query = new GetGeoLocationsNamesAndIDsQuery();
-		logger.info("Fetching GeoLocations names and Id's...");
+		System.out.println("Fetching GeoLocations names and Id's...");
 		query.execute();
 	}
 
@@ -91,7 +91,7 @@ public class DBQueries implements Queries {
 	public List<String> getAllCategoriesNames() throws AtlasServerException {
 		// Initialize DB query
 		GetCategoriesQuery query = new GetCategoriesQuery();
-		logger.info("Fetching category names...");
+		System.out.println("Fetching category names...");
 		// Execute query
 		ArrayList<String> categories = query.execute();
 		return categories;
@@ -143,8 +143,6 @@ public class DBQueries implements Queries {
 	@Override
 	public List<Result> getResults(String name) {
 		amountOfFemaleResults = 0;
-		
-		
 		amountOfLatestResults = 30;
 		amountOfFemaleResults = 40;
 		return null;
@@ -164,22 +162,22 @@ public class DBQueries implements Queries {
 		
 		// Get births - user oriented
 		GetResultsQuery query = new GetResultsQuery(startYear, endYear, category, false, true, true);
-		logger.info("Fetching results (Query 1 out of 4...");
+		System.out.println("Fetching results (Query 1 out of 4...)");
 		results.addAll(query.execute());
 		
 		// Get deaths - user oriented
 		query = new GetResultsQuery(startYear, endYear, category, false, true, false);
-		logger.info("Fetching results (Query 2 out of 4...");
+		System.out.println("Fetching results (Query 2 out of 4...)");
 		results.addAll(query.execute());
 		
 		// Get all births
 		query = new GetResultsQuery(startYear, endYear, category, false, false, true);
-		logger.info("Fetching results (Query 3 out of 4...");
+		System.out.println("Fetching results: Births (Query 3 out of 4...)");
 		results.addAll(query.execute());
 		
 		// Get all deaths
 		query = new GetResultsQuery(startYear, endYear, category, false, false, false);
-		logger.info("Fetching results (Query 4 out of 4...");
+		System.out.println("Fetching results: Deaths (Query 4 out of 4...)");
 		results.addAll(query.execute());
 		
 		amountOfLatestResults = results.size();
