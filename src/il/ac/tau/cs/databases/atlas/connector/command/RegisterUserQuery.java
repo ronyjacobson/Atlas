@@ -28,24 +28,24 @@ public class RegisterUserQuery extends BaseDBCommand<User> {
 
 			statement = con.prepareStatement("INSERT INTO "
 					+ DBConstants.User.TABLE_NAME + " (`"
-					+ DBConstants.User.USERNAME + "`, `"
-					+ DBConstants.User.PASSWORD + "`, `"
-					+ DBConstants.User.BORN_IN_LOCATION + "`, `"
-					+ DBConstants.User.BORN_ON_DATE + "`) VALUES (?, ?, ?, ?)", new String[]{DBConstants.User.USER_ID});
+					+ DBConstants.USERNAME_L + "`, `"
+					+ DBConstants.PASSWORD_L + "`, `"
+					+ DBConstants.BORN_IN_LOCATION_L + "`, `"
+					+ DBConstants.BORN_ON_DATE_L + "`) VALUES (?, ?, ?, ?)", new String[]{DBConstants.User.USER_ID});
 			
 			statement.setString(1, user.getUsername());
 			statement.setString(2, user.getPassword());
 			statement.setInt(3, user.getLocationID());
 			statement.setDate(4, new java.sql.Date(user.getDateOfBirth().getTime()));
 
-			logger.info(String.format("Executing DB query: %s.", statement.toString()));
+			System.out.println(String.format("Executing DB query: %s.", statement.toString()));
 			
 			statement.executeUpdate();
 			resultSet = statement.getGeneratedKeys();
 			resultSet.next();
             int genID = resultSet.getInt(1);
             user.setUserID(genID);
-            logger.info("User added successfully - The generated user ID is: "+ genID);
+            System.out.println("User added successfully - The generated user ID is: "+ genID);
 
 		} catch (SQLException e) {
 			Integer errorCode = e.getErrorCode();

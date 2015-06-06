@@ -40,17 +40,21 @@ public class DBQueriesTest {
 		assertNull(queries.fetchUser(nonExistingUser));
 	}
 	
-	@Test
+	//@Test
 	public void registerUserTest() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
 		}
-//		User existingUser = new User("rony", "0000", new Date(), 1);
-//		User nonExistingUser = new User("newUser", "password", new Date(), 1);
-//		assertFalse(queries.registerUser(existingUser));
-//		assertTrue(queries.registerUser(nonExistingUser));
-//		User fetchedUser = queries.fetchUser(nonExistingUser);
-//		assertEquals("UserName", fetchedUser.getUsername(), nonExistingUser.getUsername());
+		User existingUser = new User("rony", "0000", new Date(), 1);
+		User nonExistingUser = new User("newUser3", "password", new Date(), 1);
+		try {
+		assertFalse(queries.registerUser(existingUser));
+		} catch(AtlasServerException e) {
+			
+		}
+		assertTrue(queries.registerUser(nonExistingUser));
+		User fetchedUser = queries.fetchUser(nonExistingUser);
+		assertEquals("UserName", fetchedUser.getUsername(), nonExistingUser.getUsername());
 	}
 	
 	@Test

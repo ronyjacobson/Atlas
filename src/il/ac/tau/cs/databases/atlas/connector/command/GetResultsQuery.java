@@ -97,13 +97,6 @@ public class GetResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 	private String makeNormalStatment(boolean byName, boolean isBirth, boolean isUserOriented) {
 		if (!byName) {
 		String bornOrDiedDate = (isBirth ? DBConstants.Person.BORN_ON_DATE : DBConstants.Person.DIED_ON_DATE);
-		String withFavoritesTable = ", "+DBConstants.UserFavorites.TABLE_NAME;
-		String withFavoritesWhere = 
-					"AND " + DBConstants.Person.PERSON_ID +" = " + DBConstants.UserFavorites.PERSON_ID	 + " \n" +
-					"AND " + DBConstants.PersonHasCategory.CATEGORY_ID +" = " + Main.user.getUserID()	 + " \n" ;
-		String withUserAddedWhere = 
-					"AND " + DBConstants.Person.ADDED_BY_USER +" = " + Main.user.getUserID() + " \n";
-		
 		
 		String select = String.format(
 				"SELECT (%s, %s, %s, %s, %s, %s as LocURL, %s as PersonURL, %s, %s, %s \n",
@@ -128,6 +121,8 @@ public class GetResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 				DBConstants.PersonHasCategory.TABLE_NAME,
 				DBConstants.PersonLabels.TABLE_NAME,
 				DBConstants.Category.TABLE_NAME);
+
+		String withFavoritesTable = ", "+DBConstants.UserFavorites.TABLE_NAME;
 		
 		String favoritesFrom = basicFrom + withFavoritesTable;
 		
@@ -142,6 +137,18 @@ public class GetResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 				"AND year("+ bornOrDiedDate +") >= '"+this.startYear+"' \n" +
 				"AND year("+ bornOrDiedDate +") <= '"+this.endYear  +"' \n";
 		
+		String withoutFavoritesAndUserAddedWhere = 
+				"AND " + DBConstants.Person.PERSON_ID +" <> " + DBConstants.UserFavorites.PERSON_ID	 + " \n" +
+				"AND " + DBConstants.PersonHasCategory.CATEGORY_ID +" <> " + Main.user.getUserID()	 + " \n" +
+				"AND " + DBConstants.Person.ADDED_BY_USER +" <> " + Main.user.getUserID() + " \n";
+		
+		String withFavoritesWhere = 
+				"AND " + DBConstants.Person.PERSON_ID +" = " + DBConstants.UserFavorites.PERSON_ID	 + " \n" +
+				"AND " + DBConstants.PersonHasCategory.CATEGORY_ID +" = " + Main.user.getUserID()	 + " \n" ;
+		String withUserAddedWhere = 
+				"AND " + DBConstants.Person.ADDED_BY_USER +" = " + Main.user.getUserID() + " \n";
+	
+		
 		String FavsWhere = basicWhere + withFavoritesWhere;
 		String UserAddedWhere = basicWhere + withUserAddedWhere;
 		String limit = "limit " + this.limitNumOfResults;
@@ -151,7 +158,7 @@ public class GetResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 			String q2 = select + basicFrom + UserAddedWhere + limit;
 			return q1 + "\n UNION \n" + q2;
 		} else {
-			return select + basicFrom + basicWhere + limit;
+			return select + basicFrom + basicWhere + withoutFavoritesAndUserAddedWhere + limit;
 		}
 		} else {
 			//TODO byName

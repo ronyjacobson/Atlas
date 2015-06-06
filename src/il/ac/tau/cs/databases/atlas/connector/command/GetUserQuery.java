@@ -29,7 +29,7 @@ public class GetUserQuery extends BaseDBCommand<User> {
         try {
         	statement = con.prepareStatement(
         			"SELECT * FROM "+ DBConstants.User.TABLE_NAME+
-        			" where "+DBConstants.User.USERNAME+" = ?");
+        			" where "+DBConstants.USERNAME_L+" = ?");
         	statement.setString(1, user.getUsername());
         	logger.info(String.format("Executing DB query: %s.", statement.toString()));
         	resultSet = statement.executeQuery();
@@ -42,11 +42,11 @@ public class GetUserQuery extends BaseDBCommand<User> {
             	}
             	
             	// Create fetched User
-            	String username = resultSet.getString(DBConstants.User.USERNAME);
-            	String password = resultSet.getString(DBConstants.User.PASSWORD);
-            	Date dateOfBirth = resultSet.getDate(DBConstants.User.BORN_ON_DATE);
-            	int locationID = resultSet.getInt(DBConstants.User.BORN_IN_LOCATION);
-            	int userID = resultSet.getInt(DBConstants.User.USER_ID);
+            	String username = resultSet.getString(DBConstants.USERNAME_L);
+            	String password = resultSet.getString(DBConstants.PASSWORD_L);
+            	Date dateOfBirth = resultSet.getDate(DBConstants.BORN_ON_DATE_L);
+            	int locationID = resultSet.getInt(DBConstants.BORN_IN_LOCATION_L);
+            	int userID = resultSet.getInt(DBConstants.USER_ID_L);
                 FetchedUser = new User(userID, username, password, dateOfBirth, locationID);
             }
 
