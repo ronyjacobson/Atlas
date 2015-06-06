@@ -39,8 +39,9 @@ public interface Queries {
 	
 	/**
 	 * @return A list of results of all the matching entries in the database
+	 * @throws AtlasServerException 
 	 */
-	public List<Result> getResults(String name);
+	public List<Result> getResults(String name) throws AtlasServerException;
 	
 	/**
 	 * @return A list of results of all the matching entries in the database
@@ -77,7 +78,7 @@ public interface Queries {
 	/**
 	 * Add a new entry to the database
 	 */
-	public boolean addNew(String name, String category, String birthDate, int birthlocationID, String deathDate, int deathlocationID, String wikiLink);
+	public boolean addNew(String name, String category, String birthDate, int birthlocationID, String deathDate, int deathlocationID, String wikiLink, boolean isFemale);
 	
 	/**
 	 * Store all the chosen favorite IDs to the database
