@@ -54,9 +54,10 @@ public class GetUserQuery extends BaseDBCommand<User> {
             	String locationName = resultSet.getString(DBConstants.GEO_NAME_L);
             	double lng = resultSet.getDouble(DBConstants.LONG_L);
 				double lat = resultSet.getDouble(DBConstants.LAT_L);
+				boolean isFemail = resultSet.getBoolean(DBConstants.IS_FEMALE_L);
 				String locUrl= resultSet.getString(DBConstants.WIKI_URL_L);
             	Location loc = new Location(locationID, locationName, lat, lng, locUrl);
-                fetchedUser = new User(userID, username, password, dateOfBirth, locationID);
+                fetchedUser = new User(userID, username, password, dateOfBirth, locationID, isFemail);
                 fetchedUser.setLocation(loc);
             }
 

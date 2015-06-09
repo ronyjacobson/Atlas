@@ -35,6 +35,9 @@ public class UpdateFavoritesQuery extends BaseDBCommand<Void> {
             		DBConstants.USER_ID_L));
              
             for (String fav : favoritesList) {
+            	if (fav == null) {
+            		continue;
+            	}
             	statement.setInt(1, Integer.parseInt(fav));
                 statement.setInt(2, Main.user.getUserID());
                 statement.addBatch();

@@ -17,6 +17,7 @@ public class GrapicUtils {
 	public static Dimension screenSize;
 	public static final int FONT_SIZE_LABEL = 36;
 	public static final int FONT_SIZE_FIELD = 15;
+	public static final int FONT_SIZE_DATE = 11;
 	public final static String PROJECT_NAME = "ATLAS";
 	public final static String DEFAULT_FILE_NAME = PROJECT_NAME + ".sqlproj";
 	public final static String DEFAULT_SKIN = "graphics/skins/default/";
