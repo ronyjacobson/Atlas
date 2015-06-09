@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 public class MockQueries implements Queries {
 	
@@ -118,6 +119,9 @@ public class MockQueries implements Queries {
 	 */
 	@Override
 	public User fetchUser(User user) throws AtlasServerException {
+		if (new Random().nextBoolean()){
+			return new User(user.getUsername(), user.getPassword() + "a");
+		}
 		return user;
 	}
 	

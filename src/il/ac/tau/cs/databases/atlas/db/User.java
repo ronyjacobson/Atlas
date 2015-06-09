@@ -12,20 +12,28 @@ public class User {
 	private String password;
 	private Date dateOfBirth;
 	private int locationID;
+	private boolean isFemale;
 	
-	public User(String username, String password, Date dateOfBirth, int locationID) {
+	public User(String username, String password) {
+		this.username = username;
+		this.password = password;
+	}
+	
+	public User(String username, String password, Date dateOfBirth, int locationID, boolean isFemale) {
 		this.username = username;
 		this.password = password;
 		this.dateOfBirth = dateOfBirth;
 		this.locationID = locationID;
+		this.isFemale = isFemale;
 	}
 	
-	public User(int ID, String username, String password, Date dateOfBirth, int locationID) {
+	public User(int ID, String username, String password, Date dateOfBirth, int locationID, boolean isFemale) {
 		this.userID = ID;
 		this.username = username;
 		this.password = password;
 		this.dateOfBirth = dateOfBirth;
 		this.locationID = locationID;
+		this.isFemale = isFemale;
 	}
 	
 	public int getUserID() {
@@ -66,6 +74,14 @@ public class User {
 	
 	public void setDateOfBirth(Date dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
+	}
+	
+	public boolean isFemale() {
+		return isFemale;
+	}
+	
+	public void setFemale(boolean isFemale) {
+		this.isFemale = isFemale;
 	}
 	
 
