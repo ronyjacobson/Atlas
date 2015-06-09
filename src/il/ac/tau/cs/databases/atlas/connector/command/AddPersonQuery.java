@@ -16,16 +16,16 @@ import java.util.Date;
  */
 public class AddPersonQuery extends BaseDBCommand<Void> {
 	private String name;
-	private int categoryId;
+	private Integer categoryId;
 	private String wikiLink;
 	private boolean isFemale;
 	private Date birthDate;
 	private Date deathDate;
-	private int birthLocID;
-	private int deathLocID;
+	private Integer birthLocID;
+	private Integer deathLocID;
 
-	public AddPersonQuery(String name, int categoryId, Date birthDate,
-			int birthlocationID, Date deathDate, int deathlocationID,
+	public AddPersonQuery(String name, Integer categoryId, Date birthDate,
+			Integer birthlocationID, Date deathDate, Integer deathlocationID,
 			String wikiLink, boolean isFemale) {
 		this.name = name;
 		this.categoryId = categoryId;

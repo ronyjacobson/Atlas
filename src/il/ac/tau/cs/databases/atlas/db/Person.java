@@ -13,12 +13,12 @@ public class Person {
     private Date bornOnDate;
     private Date diedOnDate;
     private boolean gender;
-    private int addedByUser;
+    private Integer addedByUser;
     private String wikiLink;
     private String category;
     private String yagoID;
 
-    public Person(Map<String, Boolean> labels, Location bornInlocation, Location diedInlocation, Date bornOnDate, Date diedOnDate, boolean gender, int addedByUser, String wikiLink, String category, String yagoID) {
+    public Person(Map<String, Boolean> labels, Location bornInlocation, Location diedInlocation, Date bornOnDate, Date diedOnDate, boolean gender, Integer addedByUser, String wikiLink, String category, String yagoID) {
         this.labels = labels;
         this.bornInlocation = bornInlocation;
         this.diedInlocation = diedInlocation;
@@ -83,11 +83,11 @@ public class Person {
         this.gender = gender;
     }
 
-    public int getAddedByUser() {
+    public Integer getAddedByUser() {
         return addedByUser;
     }
 
-    public void setAddedByUser(int addedByUser) {
+    public void setAddedByUser(Integer addedByUser) {
         this.addedByUser = addedByUser;
     }
 
