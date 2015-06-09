@@ -84,7 +84,7 @@ public interface Queries {
 	 * Add a new entry to the database
 	 * @throws AtlasServerException 
 	 */
-	public void addNew(String name, String category, Date birthDate, int birthlocationID, Date deathDate, int deathlocationID, String wikiLink, boolean isFemale) throws AtlasServerException;
+	public void addNew(String name, String category, Date birthDate, Integer birthlocationID, Date deathDate, Integer deathlocationID, String wikiLink, boolean isFemale) throws AtlasServerException;
 	
 	/**
 	 * Store all the chosen favorite IDs to the database

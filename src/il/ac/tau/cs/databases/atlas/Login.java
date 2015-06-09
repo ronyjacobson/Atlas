@@ -238,7 +238,7 @@ public class Login extends JFrame {
 	}
 
 	/**
-	 * Sex radion buttons listener
+	 * Sex radio buttons listener
 	 */
 	private class SexListener implements ActionListener {
 

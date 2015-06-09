@@ -158,7 +158,7 @@ public class MockQueries implements Queries {
 		
 	@Override
 	public void addNew(String name, String category, Date birthDate,
-			int birthlocationID, Date deathDate, int deathlocationID,
+			Integer birthlocationID, Date deathDate, Integer deathlocationID,
 			String wikiLink, boolean isFemale) {
 		// TODO Auto-generated method stub
 		return;

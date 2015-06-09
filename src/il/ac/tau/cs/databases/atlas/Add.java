@@ -29,7 +29,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -46,6 +48,7 @@ public class Add extends JFrame {
 	private static final String DEFAULT_CATEGORY = "Choose a category...";
 	private static final String DEFAULT_BIRTH_LOCATION = "Choose birth place...";
 	private static final String DEFAULT_DEATH_LOCATION = "Choose death place...";
+	private static final String NOT_DEAD_LOCATION = "NOT DEAD";
 
 	private JLabel label;
 	private JTextField name;
@@ -57,7 +60,9 @@ public class Add extends JFrame {
 	private JComboBox<String> wasBornIn;
 	private JComboBox<String> hasDiedIn;
 	private JTextField wikiLink;
-	private JButton addYourselfButton;
+	private JRadioButton isMale;
+	private JRadioButton isFemale;
+	private JPanel sexPanel;
 	private JButton addButton;
 	private boolean wereDetailsEntered = false;
 
@@ -113,17 +118,10 @@ public class Add extends JFrame {
 
 		// Create buttons and text boxes
 		ClearTextBox clearTextBoxListner = new ClearTextBox();
-		Font labelFont = new Font("Century Gothic", Font.PLAIN,
-				GrapicUtils.FONT_SIZE_LABEL);
-		Font fieldFont = new Font("Century Gothic", Font.PLAIN,
-				GrapicUtils.FONT_SIZE_FIELD);
+		Font labelFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_LABEL);
+		Font fieldFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_FIELD);
 
-		addYourselfButton = new JButton("Add yourself to "
-				+ GrapicUtils.PROJECT_NAME + "!");
-		addYourselfButton.addActionListener(new AddYourselfAction());
-		addYourselfButton.setFont(fieldFont);
-
-		label = new JLabel(" or add a new person:");
+		label = new JLabel("Add a new person:", SwingConstants.CENTER);
 		label.setForeground(Color.DARK_GRAY);
 		label.setFont(labelFont);
 
@@ -133,12 +131,27 @@ public class Add extends JFrame {
 		try {
 			List<String> categories = Main.queries.getAllCategoriesNames();
 			categories.add(0, DEFAULT_CATEGORY);
-			category = new JComboBox<String>(
-					categories.toArray(new String[categories.size()]));
+			category = new JComboBox<String>(categories.toArray(new String[categories.size()]));
 			category.setFont(fieldFont);
 		} catch (AtlasServerException e) {
 			// TODO handle exception
 		}
+
+		isMale = new JRadioButton("Male");
+		isMale.setFont(fieldFont);
+		isMale.setOpaque(false);
+		isMale.setForeground(Color.DARK_GRAY);
+		isMale.addActionListener(new SexListener(false));
+		isFemale = new JRadioButton("Female");
+		isFemale.setFont(fieldFont);
+		isFemale.setOpaque(false);
+		isFemale.setForeground(Color.DARK_GRAY);
+		isFemale.addActionListener(new SexListener(true));
+
+		sexPanel = new JPanel();
+		sexPanel.add(isMale);
+		sexPanel.add(isFemale);
+		sexPanel.setOpaque(false);
 
 		createDatesPanel();
 
@@ -154,14 +167,12 @@ public class Add extends JFrame {
 
 		// Pad panel with blank labels
 		JLabel paddingLabel1 = new JLabel(" ");
-		JLabel paddingLabel2 = new JLabel(" ");
 		paddingLabel1.setFont(labelFont);
-		paddingLabel2.setFont(labelFont);
 
 		// Add buttons and text boxes
 		panel.add(paddingLabel1); // Pad
-		panel.add(addYourselfButton);
 		panel.add(label);
+		panel.add(sexPanel);
 		panel.add(name);
 		panel.add(category);
 		panel.add(datesPanel);
@@ -180,21 +191,20 @@ public class Add extends JFrame {
 		datesPanel.setOpaque(false);
 
 		// Define buttons attributes
-		Font fieldFont = new Font("Century Gothic", Font.PLAIN,
-				GrapicUtils.FONT_SIZE_FIELD);
+		Font fieldFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_FIELD);
 
 		// Create dates
 		Date today = new Date();
 		ClearTextBox clearTextBoxListner = new ClearTextBox();
 
 		wasBornOn = new JDateChooser();
-		wasBornOn.setDate(today);
+		wasBornOn.setDate(null);
 		wasBornOn.setMaxSelectableDate(today);
 		wasBornOn.addMouseListener(clearTextBoxListner);
 		wasBornOn.setFont(fieldFont);
 
 		hasDiedOn = new JDateChooser();
-		hasDiedOn.setDate(today);
+		hasDiedOn.setDate(null);
 		hasDiedOn.setMaxSelectableDate(today);
 		hasDiedOn.addMouseListener(clearTextBoxListner);
 		hasDiedOn.setFont(fieldFont);
@@ -215,20 +225,18 @@ public class Add extends JFrame {
 		locationsPanel.setOpaque(false);
 
 		// Define buttons attributes
-		Font fieldFont = new Font("Century Gothic", Font.PLAIN,
-				GrapicUtils.FONT_SIZE_FIELD);
+		Font fieldFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_FIELD);
 
 		// Create location pickers
 		try {
 			List<String> locations = Main.queries.getAllGeoLocationsNames();
 
 			locations.add(0, DEFAULT_BIRTH_LOCATION);
-			wasBornIn = new JComboBox<String>(
-					locations.toArray(new String[locations.size()]));
+			wasBornIn = new JComboBox<String>(locations.toArray(new String[locations.size()]));
 
 			locations.set(0, DEFAULT_DEATH_LOCATION);
-			hasDiedIn = new JComboBox<String>(
-					locations.toArray(new String[locations.size()]));
+			locations.add(NOT_DEAD_LOCATION);
+			hasDiedIn = new JComboBox<String>(locations.toArray(new String[locations.size()]));
 
 		} catch (AtlasServerException e) {
 			// TODO handle Exception
@@ -274,6 +282,29 @@ public class Add extends JFrame {
 	}
 
 	/**
+	 * Sex radio buttons listener
+	 */
+	private class SexListener implements ActionListener {
+
+		boolean female;
+
+		public SexListener(boolean female) {
+			this.female = female;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			isMale.setSelected(!this.female);
+			isFemale.setSelected(this.female);
+			if (!wereDetailsEntered) {
+				name.setText("");
+				wikiLink.setText("");
+				wereDetailsEntered = true;
+			}
+		}
+	}
+
+	/**
 	 * Add an entry to the database
 	 */
 	private class AddAction implements ActionListener {
@@ -283,96 +314,47 @@ public class Add extends JFrame {
 
 			// Validate input
 			if (!wereDetailsEntered) {
-				JOptionPane.showMessageDialog(null,
-						"Please enter the needed details.",
-						GrapicUtils.PROJECT_NAME, 1);
+				JOptionPane.showMessageDialog(null, "Please enter the needed details.", GrapicUtils.PROJECT_NAME, 1);
+			} else if (!isFemale.isSelected() && !isMale.isSelected()) {
+				JOptionPane.showMessageDialog(null, "Please choose male or female.", GrapicUtils.PROJECT_NAME, 1);
 			} else if (name.getText().equalsIgnoreCase("")) {
-				JOptionPane.showMessageDialog(null, "Name can not be blank.",
-						GrapicUtils.PROJECT_NAME, 1);
-			} else if (category.getSelectedItem().toString()
-					.equals(DEFAULT_CATEGORY)) {
-				JOptionPane.showMessageDialog(null,
-						"Please choose a category place from the list.",
-						GrapicUtils.PROJECT_NAME, 1);
-			} else if (DateUtils.isSameDay(wasBornOn.getCalendar(),
-					hasDiedOn.getCalendar())) {
-				JOptionPane.showMessageDialog(null,
-						"No way that the birth and death dates are the same.",
-						GrapicUtils.PROJECT_NAME, 1);
-			} else if (DateUtils.isAfterDay(wasBornOn.getCalendar(),
-					hasDiedOn.getCalendar())) {
-				JOptionPane.showMessageDialog(null,
-						"No way that the birth date is after the death date.",
-						GrapicUtils.PROJECT_NAME, 1);
-			} else if (wasBornIn.getSelectedItem().toString()
-					.equals(DEFAULT_BIRTH_LOCATION)) {
-				JOptionPane.showMessageDialog(null,
-						"Please choose a birth place from the list.",
-						GrapicUtils.PROJECT_NAME, 1);
-			} else if (hasDiedIn.getSelectedItem().toString()
-					.equals(DEFAULT_DEATH_LOCATION)) {
-				JOptionPane.showMessageDialog(null,
-						"Please choose a death place from the list.",
-						GrapicUtils.PROJECT_NAME, 1);
+				JOptionPane.showMessageDialog(null, "Name can not be blank.", GrapicUtils.PROJECT_NAME, 1);
+			} else if (category.getSelectedItem().toString().equals(DEFAULT_CATEGORY)) {
+				JOptionPane.showMessageDialog(null, "Please choose a category place from the list.", GrapicUtils.PROJECT_NAME, 1);
+			} else if (wasBornOn.getCalendar() == null) {
+				JOptionPane.showMessageDialog(null, "Please choose a birth date", GrapicUtils.PROJECT_NAME, 1);
+			} else if (hasDiedOn.getCalendar() != null && DateUtils.isSameDay(wasBornOn.getCalendar(), hasDiedOn.getCalendar())) {
+				JOptionPane.showMessageDialog(null, "No way that the birth and death dates are the same.", GrapicUtils.PROJECT_NAME, 1);
+			} else if (hasDiedOn.getCalendar() != null && DateUtils.isAfterDay(wasBornOn.getCalendar(), hasDiedOn.getCalendar())) {
+				JOptionPane.showMessageDialog(null, "No way that the birth date is after the death date.", GrapicUtils.PROJECT_NAME, 1);
+			} else if (wasBornIn.getSelectedItem().toString().equals(DEFAULT_BIRTH_LOCATION)) {
+				JOptionPane.showMessageDialog(null, "Please choose a birth place from the list.", GrapicUtils.PROJECT_NAME, 1);
+			} else if (hasDiedIn.getSelectedItem().toString().equals(DEFAULT_DEATH_LOCATION)) {
+				JOptionPane.showMessageDialog(null, "Please choose a death place from the list.", GrapicUtils.PROJECT_NAME, 1);
 			} else if (wikiLink.getText().equalsIgnoreCase("")) {
-				JOptionPane.showMessageDialog(null,
-						"Wikipedia link can not be blank.",
-						GrapicUtils.PROJECT_NAME, 1);
+				JOptionPane.showMessageDialog(null, "Wikipedia link can not be blank.", GrapicUtils.PROJECT_NAME, 1);
 			} else {
 				try {
-					Main.queries.addNew(name.getText(), category
-							.getSelectedItem().toString(), wasBornOn.getDate(),
-							Queries.locationsMap.get(wasBornIn
-									.getSelectedItem().toString()), hasDiedOn
-									.getDate(),
-							Queries.locationsMap.get(wasBornIn
-									.getSelectedItem().toString()), wikiLink
-									.getText(),
-							// isFemale
-							true);
-					JOptionPane.showMessageDialog(null,
-							"New entry added to the data base.",
-							GrapicUtils.PROJECT_NAME,
+					// Get locations IDs
+					Integer birthLocaionID = Queries.locationsMap.get(wasBornIn.getSelectedItem().toString());
+					Integer deathLocaionID = (hasDiedIn.getSelectedItem().toString().equals(NOT_DEAD_LOCATION)) ? null : Queries.locationsMap.get(hasDiedIn.getSelectedItem().toString());
+					// Get dates
+					Date birthDate = wasBornOn.getDate();
+					Date deathDate = (hasDiedOn.getCalendar() == null) ? null : hasDiedOn.getDate();
+					// Add entry
+					Main.queries.addNew(name.getText(), category.getSelectedItem().toString(),
+							birthDate, birthLocaionID,
+							deathDate, deathLocaionID,
+							wikiLink.getText(), isFemale.isSelected());
+					JOptionPane.showMessageDialog(null, "New entry added to the data base.", GrapicUtils.PROJECT_NAME,
 							JOptionPane.INFORMATION_MESSAGE);
+
 					// Close the windows
 					dispose();
 				} catch (AtlasServerException e) {
-					JOptionPane
-							.showMessageDialog(
-									null,
-									"Failed to add new entry: "
-											+ e.getMessage() + ".",
-									GrapicUtils.PROJECT_NAME,
-									JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Failed to add new entry: " + e.getMessage() + ".", GrapicUtils.PROJECT_NAME,
+							JOptionPane.ERROR_MESSAGE);
 				}
-			}
-		}
-	}
-
-	/**
-	 * Add yourself to the database
-	 */
-	private class AddYourselfAction implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			try {
-				Main.queries.addNew(Main.user.getUsername(), "Favorites",
-						Main.user.getDateOfBirth(), Main.user.getLocationID(),
-						null, -1, "",
-						// isFemale
-						true);
-				JOptionPane.showMessageDialog(null,
-						"You were added to the data base.",
-						GrapicUtils.PROJECT_NAME,
-						JOptionPane.INFORMATION_MESSAGE);
-
-				// Close the windows
-				dispose();
-			} catch (AtlasServerException e) {
-				JOptionPane.showMessageDialog(null, "Failed to add new entry: "
-						+ e.getMessage() + ".", GrapicUtils.PROJECT_NAME,
-						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
