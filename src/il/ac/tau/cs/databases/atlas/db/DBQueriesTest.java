@@ -144,10 +144,10 @@ public class DBQueriesTest {
 		}
 		Main.user = new User(1, "erer", "Sfsf", new Date(), 5, true);
 		@SuppressWarnings("deprecation")
-		List<Result> res = queries.SearchResultsByDates(new Date(0, 5, 1),
+		List<Result> res = queries.getResults(new Date(0, 5, 1),
 				new Date(200, 5, 1));
 		assertFalse(res.isEmpty());
-		res = queries.SearchResultsByDates(new Date(1300, 5, 1), new Date(1500,
+		res = queries.getResults(new Date(1300, 5, 1), new Date(1500,
 				5, 1));
 		assertTrue(res.isEmpty());
 	}

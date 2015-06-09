@@ -4,6 +4,7 @@ import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -166,10 +167,13 @@ public class MockQueries implements Queries {
 
 
 	@Override
-	public List<Result> SearchResultsByDates(Date sdate, Date edate)
+	public List<Result> getResults(Date sdate, Date edate)
 			throws AtlasServerException {
-		// TODO Auto-generated method stub
-		return null;
+		Calendar startCal = Calendar.getInstance();
+		Calendar endCal = Calendar.getInstance();
+		startCal.setTime(sdate);
+		endCal.setTime(edate);
+		return getResults(startCal.get(Calendar.YEAR), endCal.get(Calendar.YEAR), "");
 	}
 
 
@@ -177,6 +181,22 @@ public class MockQueries implements Queries {
 	public List<Result> getFavorites() throws AtlasServerException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * @return The start year of the latest search results fetched from the database 
+	 */
+	@Override
+	public int getLatestResultsStartTimeLine() {
+		return 1100;
+	}
+
+	/**
+	 * @return The end year of the latest search results fetched from the database 
+	 */
+	@Override
+	public int getLatestResultsEndTimeLine() {
+		return 1200;
 	}
 
 

@@ -103,7 +103,7 @@ public interface Queries {
 	 * @return A list of results of all the matching entries in the database
 	 * @throws AtlasServerException
 	 */
-	List<Result> SearchResultsByDates(Date sdate, Date edate)
+	List<Result> getResults(Date sdate, Date edate)
 			throws AtlasServerException;
 	
 	/**
@@ -111,5 +111,15 @@ public interface Queries {
 	 * @throws AtlasServerException
 	 */
 	List<Result> getFavorites() throws AtlasServerException;
+	
+	/**
+	 * @return The start year of the latest search results fetched from the database 
+	 */
+	int getLatestResultsStartTimeLine();
+	
+	/**
+	 * @return The end year of the latest search results fetched from the database 
+	 */
+	int getLatestResultsEndTimeLine();
 
 }

@@ -1,8 +1,6 @@
 package il.ac.tau.cs.databases.atlas;
 
 import il.ac.tau.cs.databases.atlas.State;
-import il.ac.tau.cs.databases.atlas.connector.DynamicConnectionPool;
-import il.ac.tau.cs.databases.atlas.db.DBQueries;
 import il.ac.tau.cs.databases.atlas.db.MockQueries;
 import il.ac.tau.cs.databases.atlas.db.Queries;
 import il.ac.tau.cs.databases.atlas.db.User;
@@ -13,7 +11,7 @@ import java.awt.Toolkit;
 public class Main {
 
 	// DB queries object
-	public static final Queries queries = new DBQueries();
+	public static final Queries queries = new MockQueries();
 	public static User user;
 	
 	/**
@@ -27,7 +25,7 @@ public class Main {
 		// Load earlier state
 		try {
 			// Initialize DB
-			DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06", "127.0.0.1", "3306", "dbmysql06");
+			//DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06", "127.0.0.1", "3306", "dbmysql06");
 			State.autoLoad();
 		} catch (Exception e) {
 			// Throw exception to main screen

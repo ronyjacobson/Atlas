@@ -143,7 +143,7 @@ public class MapBrowserListeners {
 						JScrollBar timeline = (JScrollBar) e.getAdjustable();
 						int start = timeline.getValue();
 						int end =  timeline.getValue() + timeline.getModel().getExtent();
-						map.getBrowser().execute("setTimespan(" + start + "," + end + ");");
+						setTimespan(start, end);
 					} else {
 						// TODO Show message?
 					}
@@ -151,5 +151,9 @@ public class MapBrowserListeners {
 			});
 			
 		}
+	}
+	
+	public static void setTimespan(int startYear, int endYear){
+		map.getBrowser().execute("setTimespan(" + startYear + "," + endYear + ");");
 	}
 }

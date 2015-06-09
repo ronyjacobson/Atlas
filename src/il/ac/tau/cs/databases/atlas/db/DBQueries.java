@@ -16,6 +16,8 @@ public class DBQueries implements Queries {
 	protected final Logger logger = Logger.getLogger(this.getClass().getName());
 	public static int amountOfLatestResults = 0;
 	public static int amountOfFemaleResults = 0;
+	private static int maxYear = 0;
+	private static int minYear = 0;
 
 	@Override
 	/**
@@ -129,8 +131,8 @@ public class DBQueries implements Queries {
 	public List<Result> getResults(String name) throws AtlasServerException {
 		List<Result> results = new ArrayList<Result>();
 		amountOfFemaleResults = 0;
-		int maxYear = 0;
-		int minYear = 0;
+		maxYear = 0;
+		minYear = 0;
 
 		// Get Births
 		SearchResultsByNameQuery query = new SearchResultsByNameQuery(name,
@@ -254,7 +256,7 @@ public class DBQueries implements Queries {
 	 * @throws AtlasServerException
 	 */
 	@Override
-	public List<Result> SearchResultsByDates(Date sdate, Date edate)
+	public List<Result> getResults(Date sdate, Date edate)
 			throws AtlasServerException {
 		List<Result> results = new ArrayList<Result>();
 		amountOfFemaleResults = 0;
@@ -323,6 +325,22 @@ public class DBQueries implements Queries {
 
 		// Execute query
 		query.execute();
+	}
+
+	/**
+	 * @return The start year of the latest search results fetched from the database 
+	 */
+	@Override
+	public int getLatestResultsStartTimeLine() {
+		return minYear;
+	}
+	
+	/**
+	 * @return The end year of the latest search results fetched from the database 
+	 */
+	@Override
+	public int getLatestResultsEndTimeLine() {
+		return maxYear;
 	}
 
 }

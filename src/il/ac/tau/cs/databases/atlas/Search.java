@@ -227,7 +227,8 @@ public class Search extends JFrame {
 				Display.getDefault().syncExec(new Runnable() {
 				    public void run() {
 				    	try {
-							MapBrowserListeners.showResultsOnMap(Main.queries.getResults(fromDate.getCalendar().get(Calendar.YEAR), untilDate.getCalendar().get(Calendar.YEAR), "All"));
+				    		MapBrowserListeners.showResultsOnMap(Main.queries.getResults(name.getText()));
+				    		MapBrowserListeners.setTimespan(Main.queries.getLatestResultsStartTimeLine(), Main.queries.getLatestResultsEndTimeLine());
 						} catch (AtlasServerException e) {
 							// TODO Auto-generated catch block
 							JOptionPane.showMessageDialog(null, e.getMessage(), GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
@@ -255,7 +256,8 @@ public class Search extends JFrame {
 				Display.getDefault().syncExec(new Runnable() {
 				    public void run() {
 				    	try {
-				    	MapBrowserListeners.showResultsOnMap(Main.queries.getResults(name.getText()));
+				    		MapBrowserListeners.showResultsOnMap(Main.queries.getResults(fromDate.getCalendar().getTime(), untilDate.getCalendar().getTime()));
+				    		MapBrowserListeners.setTimespan(fromDate.getCalendar().get(Calendar.YEAR), untilDate.getCalendar().get(Calendar.YEAR));
 				    	} catch (AtlasServerException e) {
 				    		// TODO handle Exception
 				    	}
