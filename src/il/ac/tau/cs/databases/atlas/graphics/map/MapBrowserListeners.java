@@ -1,6 +1,7 @@
 package il.ac.tau.cs.databases.atlas.graphics.map;
 
 import il.ac.tau.cs.databases.atlas.Main;
+import il.ac.tau.cs.databases.atlas.Map;
 import il.ac.tau.cs.databases.atlas.db.Result;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
@@ -11,6 +12,7 @@ import java.awt.event.AdjustmentListener;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.JComboBox;
 import javax.swing.JScrollBar;
 
 import org.eclipse.swt.widgets.Display;
@@ -50,27 +52,34 @@ public class MapBrowserListeners {
 	}
 
 	public static class BrowserAddMarkerActionListener implements ActionListener {
-		
+
 		JScrollBar timeline;
-		String category;
-		
-		public BrowserAddMarkerActionListener(JScrollBar timeline, String category) {
+		JComboBox<String> categoriesComboBox;
+
+		public BrowserAddMarkerActionListener(JScrollBar timeline, JComboBox<String> categoriesComboBox) {
 			this.timeline = timeline;
-			this.category = category;
+			this.categoriesComboBox = categoriesComboBox;
 		}
-		
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
 					if (map != null) {
 						int startYear = timeline.getModel().getValue();
-						int endYear =  timeline.getModel().getValue() + timeline.getModel().getExtent();
-						try {
-							showResultsOnMap(Main.queries.getResults(startYear, endYear, category));
-						} catch (AtlasServerException e) {
-							// TODO Auto-generated catch block HANDLE EXCEPTION
-							e.printStackTrace();
+						int endYear = timeline.getModel().getValue() + timeline.getModel().getExtent();
+						String category = categoriesComboBox.getSelectedItem().toString();
+						// Check category
+						if (category.equals(Map.DEFAULT_CATEGORY)) {
+							map.getBrowser().execute("error(\"" + "Please select a category." + "\");");
+						} else {
+							try {
+								showResultsOnMap(Main.queries.getResults(startYear, endYear, category));
+							} catch (AtlasServerException e) {
+								// TODO Auto-generated catch block HANDLE
+								// EXCEPTION
+								e.printStackTrace();
+							}
 						}
 					} else {
 						// TODO Show message?
@@ -79,20 +88,23 @@ public class MapBrowserListeners {
 			});
 		}
 	}
-	
-	public static void showResultsOnMap(List<Result> results){
+
+	public static void showResultsOnMap(List<Result> results) {
 		map.getBrowser().execute("deleteMarkers();");
 		for (Result result : results) {
 			String imageIcon;
-			if (result.isBirth()){
+			if (result.isBirth()) {
 				imageIcon = "./flag-birth.png";
 			} else {
 				imageIcon = "./flag-death.png";
 			}
-			map.getBrowser().execute("addMarker(" + result.getID() + "," + result.getLocation().getLat() + "," + result.getLocation().getLng() + ",\"" + result.getName() + "\",\"" + imageIcon + "\",\"" + result.getSummary() + "\",\"" + result.getWikiLink() + "\");");
+			map.getBrowser().execute(
+					"addMarker(" + result.getID() + "," + result.getLocation().getLat() + "," + result.getLocation().getLng() + ",\""
+							+ result.getName() + "\",\"" + imageIcon + "\",\"" + result.getSummary() + "\",\"" + result.getWikiLink()
+							+ "\");");
 		}
 	}
-	
+
 	public static class BrowserDeleteMarkersActionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -107,9 +119,9 @@ public class MapBrowserListeners {
 			});
 		}
 	}
-	
+
 	public static class BrowserSyncFavoritesActionListener implements ActionListener {
-	
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Display.getDefault().asyncExec(new Runnable() {
@@ -121,7 +133,7 @@ public class MapBrowserListeners {
 						try {
 							Main.queries.storeFavoriteIDs(favoritesList);
 							msg = "Favorites synced to database successfully.";
-						} catch (AtlasServerException e){
+						} catch (AtlasServerException e) {
 							msg = "Favorites failed to synced to database.";
 						}
 						map.getBrowser().execute("error(\"" + msg + "\");");
@@ -142,18 +154,18 @@ public class MapBrowserListeners {
 					if (map != null) {
 						JScrollBar timeline = (JScrollBar) e.getAdjustable();
 						int start = timeline.getValue();
-						int end =  timeline.getValue() + timeline.getModel().getExtent();
+						int end = timeline.getValue() + timeline.getModel().getExtent();
 						setTimespan(start, end);
 					} else {
 						// TODO Show message?
 					}
 				}
 			});
-			
+
 		}
 	}
-	
-	public static void setTimespan(int startYear, int endYear){
+
+	public static void setTimespan(int startYear, int endYear) {
 		map.getBrowser().execute("setTimespan(" + startYear + "," + endYear + ");");
 	}
 }
