@@ -74,7 +74,7 @@ public class MapBrowserListeners {
 							map.getBrowser().execute("error(\"" + "Please select a category." + "\");");
 						} else {
 							try {
-								showResultsOnMap(Main.queries.getResults(startYear, endYear, category));
+								showResultsOnMap(Main.queries.getResults(startYear, endYear, category), category);
 							} catch (AtlasServerException e) {
 								// TODO Auto-generated catch block HANDLE
 								// EXCEPTION
@@ -90,14 +90,22 @@ public class MapBrowserListeners {
 	}
 
 	public static void showResultsOnMap(List<Result> results) {
+		showResultsOnMap(results, "");
+	}
+	
+	public static void showResultsOnMap(List<Result> results, String category) {
 		map.getBrowser().execute("deleteMarkers();");
 		for (Result result : results) {
-			String imageIcon;
+			String imageIcon = "./flag-";
 			if (result.isBirth()) {
-				imageIcon = "./flag-birth.png";
+				imageIcon += "birth";
 			} else {
-				imageIcon = "./flag-death.png";
+				imageIcon += "death";
 			}
+			if (!category.equalsIgnoreCase("")){				
+				imageIcon += "-" + category.toLowerCase().replace(" ", "-");
+			}
+			imageIcon += ".png";
 			map.getBrowser().execute(
 					"addMarker(" + result.getID() + "," + result.getLocation().getLat() + "," + result.getLocation().getLng() + ",\""
 							+ result.getName() + "\",\"" + imageIcon + "\",\"" + result.getSummary() + "\",\"" + result.getWikiLink()

@@ -27,9 +27,9 @@ public class DBFilesUplaodListner implements ActionListener {
 
 		if (status == JFileChooser.APPROVE_OPTION) {
 			// Get files
-			File selectedFile = fileChooser.getSelectedFile();
-			String fullFilePath = selectedFile.getParent() + "\\" + selectedFile.getName();
-			Main.queries.update(fullFilePath);
+			File fullPath = fileChooser.getSelectedFile();
+			String fullPathString = fullPath.toString();
+			Main.queries.update(fullPathString);
 		} else if (status == JFileChooser.CANCEL_OPTION) {
 			// Do nothing
 		}
