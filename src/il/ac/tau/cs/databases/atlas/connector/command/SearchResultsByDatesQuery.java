@@ -14,21 +14,22 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
  * Created by user on 22/05/2015.
  */
-public class SearchResultsByNameQuery extends BaseDBCommand<ArrayList<Result>> {
-	private String name;
+public class SearchResultsByDatesQuery extends BaseDBCommand<ArrayList<Result>> {
 	private boolean isBirth;
 	private int limitNumOfResults = 100;
-	private int maxYear = -20000;
-	private int minYear= 20000;
+	private Date sDate;
+	private Date eDate;
 
-	public SearchResultsByNameQuery(String name, boolean isBirth) {
-		this.name = name;
+	public SearchResultsByDatesQuery(Date sDate, Date eDate, boolean isBirth) {
 		this.isBirth = isBirth;
+		this.sDate = sDate;
+		this.eDate = eDate;
 	}
 
 	@Override
@@ -39,8 +40,6 @@ public class SearchResultsByNameQuery extends BaseDBCommand<ArrayList<Result>> {
 		HashMap<String, Result> results = new HashMap<String, Result>();
 
 		try {
-			
-			//Make Statement
 			String st = String.format("%s\nUNION\n%s",
 					// Get user oriented results
 					makeStatment(true),
@@ -51,12 +50,10 @@ public class SearchResultsByNameQuery extends BaseDBCommand<ArrayList<Result>> {
 			
 			System.out.println(String.format("Executing DB query: %s.",
 					statement.toString()));
-			
-			//Execute:
 			resultSet = statement.executeQuery();
+			
 
 			while (resultSet.next()) {
-				
 				// Create fetched Result
 				int personID = resultSet.getInt(DBConstants.PERSON_ID_L);
 				String name = resultSet.getString(DBConstants.LABEL_L);
@@ -69,30 +66,13 @@ public class SearchResultsByNameQuery extends BaseDBCommand<ArrayList<Result>> {
 				double lng = resultSet.getDouble(DBConstants.LONG_L);
 				double lat = resultSet.getDouble(DBConstants.LAT_L);
 				boolean isFemale = resultSet.getBoolean(DBConstants.IS_FEMALE_L);
-				
 				if (isFemale) {
 					DBQueries.amountOfFemaleResults ++;
 				}
-				
 				Location location = new Location(0, geoname, lat, lng, locUrl);
 				java.util.Date date = (isBirth ? bornOn : diedOn);
 				
-				// Adjust Max year/Min Year to set in timeline
-				if (date != null) {
-					Calendar cal = Calendar.getInstance();
-					cal.setTime(date);
-					int year = cal.get(Calendar.YEAR);
-					if (year < minYear) {
-						minYear = year;
-					}
-					if (year > maxYear) {
-						maxYear = year;
-					}
-				}
-				
 				Result res = new Result(String.valueOf(personID), name, location, date, isBirth, personUrl, isFemale, category);
-				
-				// If this person has more then one category, add it.
 				if (results.containsKey(res.getID())) {
 					res= results.get(res.getID());
 					res.setSummary(category + ", " + res.getSummary());
@@ -101,7 +81,7 @@ public class SearchResultsByNameQuery extends BaseDBCommand<ArrayList<Result>> {
 				}
 			}
 
-		} catch (SQLException e) {
+		} catch (SQLException e) { 
 			// TODO - handle Exception??
 			e.printStackTrace();
 		} finally {
@@ -117,6 +97,8 @@ public class SearchResultsByNameQuery extends BaseDBCommand<ArrayList<Result>> {
 	
 	
 	private String makeStatment(boolean isUserOriented) {
+			
+			String bornOrDiedDate = (isBirth ? DBConstants.Person.BORN_ON_DATE : DBConstants.Person.DIED_ON_DATE);
 			
 			String select = String.format(
 					"SELECT DISTINCT %s, %s, %s, %s, %s, %s as LocURL, %s as PersonURL, %s, %s, %s, %s \n",
@@ -143,17 +125,15 @@ public class SearchResultsByNameQuery extends BaseDBCommand<ArrayList<Result>> {
 					DBConstants.PersonLabels.TABLE_NAME,
 					DBConstants.UserFavorites.TABLE_NAME,
 					DBConstants.Category.TABLE_NAME,
-					DBConstants.PersonHasCategory.TABLE_NAME) + 
-					", (SELECT person_ID FROM person_labels WHERE label like '%"+ this.name +"%') as ids"; 
+					DBConstants.PersonHasCategory.TABLE_NAME);
 			
 			String basicWhere =
 					"\n" +
-					"WHERE "+ DBConstants.Person.DIED_IN_LOCATION 	+" = " + DBConstants.Location.GEO_ID				 + " \n" +
-					"AND "  + DBConstants.Person.PERSON_ID			+" = " + DBConstants.PersonLabels.PERSON_ID			 + " \n" +
-					"AND "  + DBConstants.Person.PERSON_ID			+" = " + DBConstants.PersonHasCategory.PERSON_ID 	 + " \n" +
-					"AND "  + DBConstants.Category.CATEGORY_ID		+" = " + DBConstants.PersonHasCategory.CATEGORY_ID 	 + " \n" +
-					"AND "  + DBConstants.PersonLabels.IS_PREFERED  +" = '1' \n" +
-					"AND ids.person_ID = person.person_ID"+ " \n";
+					"WHERE "+ DBConstants.Person.DIED_IN_LOCATION 		+" = " + DBConstants.Location.GEO_ID		 + " \n" +
+					"AND "  + DBConstants.Person.PERSON_ID				+" = " + DBConstants.PersonLabels.PERSON_ID	 + " \n" +
+					"AND "  + DBConstants.PersonLabels.IS_PREFERED	    +" = '1' \n" +
+					"AND "+ bornOrDiedDate +" >= '"+ new java.sql.Date(this.sDate.getTime())+"' \n" +
+					"AND "+ bornOrDiedDate +" <= '"+ new java.sql.Date(this.eDate.getTime())  +"' \n";
 			
 			String withFavoritesWhere = 
 					"AND " + DBConstants.Person.PERSON_ID +" = " + DBConstants.UserFavorites.PERSON_ID	 + " \n" +
@@ -165,8 +145,8 @@ public class SearchResultsByNameQuery extends BaseDBCommand<ArrayList<Result>> {
 			
 			String favsWhere = basicWhere + withFavoritesWhere;
 			String userAddedWhere = basicWhere + withUserAddedWhere;
-			String limit = "LIMIT " + this.limitNumOfResults;
-		
+			String limit = "limit " + this.limitNumOfResults;
+			
 			if (isUserOriented) {
 				String q1 = select + from + favsWhere + limit;
 				String q2 = select + from + userAddedWhere + limit;
@@ -174,15 +154,6 @@ public class SearchResultsByNameQuery extends BaseDBCommand<ArrayList<Result>> {
 			} else {
 				return select + from + basicWhere + limit;
 			}
-		}
-
-
-	public int getMaxYear() {
-		return maxYear;
-	}
-
-	public int getMinYear() {
-		return minYear;
 	}
 
 }

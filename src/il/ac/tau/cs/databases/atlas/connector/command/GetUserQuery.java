@@ -2,6 +2,7 @@ package il.ac.tau.cs.databases.atlas.connector.command;
 
 import il.ac.tau.cs.databases.atlas.connector.command.base.BaseDBCommand;
 import il.ac.tau.cs.databases.atlas.db.DBConstants;
+import il.ac.tau.cs.databases.atlas.db.Location;
 import il.ac.tau.cs.databases.atlas.db.User;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
@@ -12,7 +13,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Created by user on 22/05/2015.
+ * A query to get a registered user and his location from the DB.
+ * Will return null if the user does not exists in the DB. 
  */
 public class GetUserQuery extends BaseDBCommand<User> {
     private User user;
@@ -25,11 +27,13 @@ public class GetUserQuery extends BaseDBCommand<User> {
     protected User innerExecute(Connection con) throws AtlasServerException {
     	PreparedStatement statement = null;
         ResultSet resultSet = null;
-        User FetchedUser = null;
+        User fetchedUser = null;
         try {
         	statement = con.prepareStatement(
-        			"SELECT * FROM "+ DBConstants.User.TABLE_NAME+
-        			" where "+DBConstants.USERNAME_L+" = ?");
+        			"SELECT * FROM "+
+        						DBConstants.User.TABLE_NAME + ", " +
+        						DBConstants.Location.TABLE_NAME +
+        			" WHERE "+ DBConstants.USERNAME_L+" = ? AND "+ DBConstants.BORN_IN_LOCATION_L +" = "+DBConstants.GEO_ID_L);
         	statement.setString(1, user.getUsername());
         	logger.info(String.format("Executing DB query: %s.", statement.toString()));
         	resultSet = statement.executeQuery();
@@ -37,7 +41,7 @@ public class GetUserQuery extends BaseDBCommand<User> {
             while (resultSet.next()) {
             	
             	// Validate that no more then 1 users with that UserName exists
-            	if (FetchedUser != null) {
+            	if (fetchedUser != null) {
             		throw new AtlasServerException(String.format("Error: Found more then 1 user with the username: %s", user.getUsername()));
             	}
             	
@@ -47,7 +51,13 @@ public class GetUserQuery extends BaseDBCommand<User> {
             	Date dateOfBirth = resultSet.getDate(DBConstants.BORN_ON_DATE_L);
             	int locationID = resultSet.getInt(DBConstants.BORN_IN_LOCATION_L);
             	int userID = resultSet.getInt(DBConstants.USER_ID_L);
-                FetchedUser = new User(userID, username, password, dateOfBirth, locationID);
+            	String locationName = resultSet.getString(DBConstants.GEO_NAME_L);
+            	double lng = resultSet.getDouble(DBConstants.LONG_L);
+				double lat = resultSet.getDouble(DBConstants.LAT_L);
+				String locUrl= resultSet.getString(DBConstants.WIKI_URL_L);
+            	Location loc = new Location(locationID, locationName, lat, lng, locUrl);
+                fetchedUser = new User(userID, username, password, dateOfBirth, locationID);
+                fetchedUser.setLocation(loc);
             }
 
         } catch (SQLException e) {
@@ -59,7 +69,7 @@ public class GetUserQuery extends BaseDBCommand<User> {
         }
         
         logger.info(String.format("Query executed properly.", statement.toString()));
-        return FetchedUser;
+        return fetchedUser;
     }
 
 }

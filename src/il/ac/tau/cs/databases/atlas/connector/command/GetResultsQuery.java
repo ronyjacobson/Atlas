@@ -77,7 +77,7 @@ public class GetResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 				}
 				Location location = new Location(0, geoname, lat, lng, locUrl);
 				java.util.Date date = (isBirth ? bornOn : diedOn);
-				Result res = new Result(String.valueOf(personID), name, location, date, isBirth, personUrl, isFemale);
+				Result res = new Result(String.valueOf(personID), name, location, date, isBirth, personUrl, isFemale, this.category);
 				results.add(res);
 			}
 

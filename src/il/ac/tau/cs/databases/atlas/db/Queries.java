@@ -8,9 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface Queries {
-
+	
+	//Maps between location names and id's
 	public static HashMap<String, Integer> locationsMap= new HashMap<String, Integer>();
+	//Location names list
 	public static ArrayList<String> locationsNames= new ArrayList<String>();
+	//Maps between category names and ids
 	public static HashMap<String, Integer> categoriesMap= new HashMap<String, Integer>();
 	
 	
@@ -95,5 +98,12 @@ public interface Queries {
 	 * TODO
 	 */
 	public Integer getLocationId(String locationName);
+
+	/**
+	 * @return A list of results of all the matching entries in the database
+	 * @throws AtlasServerException
+	 */
+	List<Result> SearchResultsByDates(Date sdate, Date edate)
+			throws AtlasServerException;
 
 }

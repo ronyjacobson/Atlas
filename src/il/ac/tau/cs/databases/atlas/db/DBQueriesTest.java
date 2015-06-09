@@ -124,15 +124,31 @@ public class DBQueriesTest {
 				1, "url", true);
 	}
 
-	@Test
+	// @Test
 	public void AddFavorites() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
 		}
 		Main.user = new User(1, "erer", "Sfsf", new Date(), 5);
-		List<String> fav= new ArrayList<String>();
+		List<String> fav = new ArrayList<String>();
 		fav.add("2");
 		fav.add("4");
 		queries.storeFavoriteIDs(fav);
+	}
+
+	@SuppressWarnings("deprecation")
+	//@Test
+	public void getResultsByDatesTest() throws AtlasServerException {
+		if (tester != "Rony") {
+			return;
+		}
+		Main.user = new User(1, "erer", "Sfsf", new Date(), 5);
+		@SuppressWarnings("deprecation")
+		List<Result> res = queries.SearchResultsByDates(new Date(0, 5, 1),
+				new Date(200, 5, 1));
+		assertFalse(res.isEmpty());
+		res = queries.SearchResultsByDates(new Date(1300, 5, 1), new Date(1500,
+				5, 1));
+		assertTrue(res.isEmpty());
 	}
 }

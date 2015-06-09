@@ -5,6 +5,7 @@ import il.ac.tau.cs.databases.atlas.connector.command.*;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -128,19 +129,23 @@ public class DBQueries implements Queries {
 	public List<Result> getResults(String name) throws AtlasServerException {
 		List<Result> results = new ArrayList<Result>();
 		amountOfFemaleResults = 0;
+		int maxYear=0;
+		int minYear=0;
 
 		// Get Births
-		SearchResultsByNameQuery query = new SearchResultsByNameQuery(name,
-				true);
-		System.out
-				.println("Fetching births results by name, category and years");
+		SearchResultsByNameQuery query = new SearchResultsByNameQuery(name, true);
+		System.out.println("Fetching births results by name");
 		results.addAll(query.execute());
+		maxYear = query.getMaxYear();
+		minYear = query.getMinYear();
 
 		// Get Deaths
 		query = new SearchResultsByNameQuery(name, false);
-		System.out
-				.println("Fetching death results by name, category and years");
+		System.out.println("Fetching deaths results by name");
 		results.addAll(query.execute());
+
+		maxYear = query.getMaxYear() > maxYear ? query.getMaxYear() : maxYear;
+		minYear = query.getMinYear() < minYear ? query.getMinYear() : minYear;
 
 		amountOfLatestResults = results.size();
 		return results;
@@ -159,6 +164,12 @@ public class DBQueries implements Queries {
 				.println("Fetching births results by name, category and years");
 		results.addAll(query.execute());
 
+		// Add current user if suitible
+		Result userResult = AddUserToResults(startYear, endYear);
+		if (userResult != null) {
+			results.add(userResult);
+		}
+
 		// Get Deaths
 		query = new GetResultsQuery(startYear, endYear, category, name, false);
 		System.out
@@ -168,6 +179,27 @@ public class DBQueries implements Queries {
 		amountOfLatestResults = results.size();
 		return results;
 	}
+
+	/**
+	 * @return true if the current user should be added to results set
+	 */
+	private Result AddUserToResults(int startYear, int endYear) {
+		User user= Main.user;
+		// Get year of birth
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(user.getDateOfBirth());
+		int year = cal.get(Calendar.YEAR);
+		Result result= null;
+		
+		//Check if year of birth in scope
+		if (year >= startYear && year <= endYear) {
+			Location l = user.getLocation();
+			result = new Result(null, user.getUsername(), l, user.getDateOfBirth(), true, "This is you!" , "");
+		}
+		return result;
+		
+	}
+	
 
 	/**
 	 * @return A list of results of all the matching entries in the database
@@ -193,14 +225,40 @@ public class DBQueries implements Queries {
 		amountOfLatestResults = results.size();
 		return results;
 	}
+	
+	/**
+	 * @return A list of results of all the matching entries in the database
+	 * @throws AtlasServerException
+	 */
+	@Override
+	public List<Result> SearchResultsByDates(Date sdate, Date edate)
+			throws AtlasServerException {
+		List<Result> results = new ArrayList<Result>();
+		amountOfFemaleResults = 0;
+
+		// Get Births
+		SearchResultsByDatesQuery query = new SearchResultsByDatesQuery(sdate, edate, true);
+		System.out.println("Fetching births results by dates...");
+		results.addAll(query.execute());
+
+		// Get Deaths
+		query = new SearchResultsByDatesQuery(sdate, edate, false);
+		System.out.println("Fetching deaths results by dates...");
+		results.addAll(query.execute());
+
+		amountOfLatestResults = results.size();
+		return results;
+	}
 
 	/**
 	 * Store all the chosen favorite IDs to the database
+	 * 
 	 * @param favoritesList
-	 * @throws AtlasServerException 
+	 * @throws AtlasServerException
 	 */
 	@Override
-	public void storeFavoriteIDs(List<String> favoritesList) throws AtlasServerException {
+	public void storeFavoriteIDs(List<String> favoritesList)
+			throws AtlasServerException {
 		// Initialize DB query
 		UpdateFavoritesQuery query = new UpdateFavoritesQuery(favoritesList);
 		System.out.println("Updating favorites...");
@@ -220,6 +278,7 @@ public class DBQueries implements Queries {
 
 	/**
 	 * Add a new entry to the database
+	 * 
 	 * @throws AtlasServerException
 	 */
 	@Override
@@ -229,7 +288,8 @@ public class DBQueries implements Queries {
 
 		// Initialize DB query
 		if (category.equals("Favorites")) {
-			throw new AtlasServerException("Cant add to favorites, choose a category and then add");
+			throw new AtlasServerException(
+					"Cant add to favorites, choose a category and then add");
 		}
 		int catId = categoriesMap.get(category);
 		AddPersonQuery query = new AddPersonQuery(name, catId, birthDate,

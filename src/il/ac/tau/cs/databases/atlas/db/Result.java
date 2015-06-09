@@ -26,15 +26,15 @@ public class Result {
 		this.wikiLink = wikiLink;
 	}
 	
-	public Result(String id, String name, Location location, Date date, boolean isBirth, String wikiLink, boolean isFemale) {
+	public Result(String id, String name, Location location, Date date, boolean isBirth, String wikiLink, boolean isFemale, String cat) {
 		this.id = id;
 		this.name = name;
 		this.location = location;
 		this.isBirth = isBirth;
 		this.date = date;
 		this.summary = (isBirth ? 
-				String.format("%s, was born in %s on %s", name, date.toString(), location.getName())  :
-				String.format("%s, died in %s on %s", name, date.toString(), location.getName()));
+				String.format("%s.\nWas born on %s in %s.", cat, date.toString(), location.getName())  :
+				String.format("%s.\nDied on %s in %s.", cat, date.toString(), location.getName()));
 		this.wikiLink = wikiLink;
 		this.isFemale = isFemale;
 	}

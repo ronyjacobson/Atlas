@@ -12,6 +12,7 @@ public class User {
 	private String password;
 	private Date dateOfBirth;
 	private int locationID;
+	private Location location;
 	
 	public User(String username, String password, Date dateOfBirth, int locationID) {
 		this.username = username;
@@ -66,6 +67,14 @@ public class User {
 	
 	public void setDateOfBirth(Date dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
+	}
+
+	public Location getLocation() {
+		return location;
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
 	}
 	
 
