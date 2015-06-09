@@ -173,5 +173,12 @@ public class MockQueries implements Queries {
 	}
 
 
+	@Override
+	public List<Result> getFavorites() throws AtlasServerException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
 
 }

@@ -151,4 +151,17 @@ public class DBQueriesTest {
 				5, 1));
 		assertTrue(res.isEmpty());
 	}
+
+	@Test
+	public void getFavs() throws AtlasServerException {
+		if (tester != "Rony") {
+			return;
+		}
+		Main.user = new User(1, "erer", "Sfsf", new Date(), 5, true);
+		List<Result> res = queries.getFavorites();
+		assertFalse(res.isEmpty());
+		Main.user = new User(67, "erer", "Sfsf", new Date(), 5, true);
+		res = queries.getFavorites();
+		assertTrue(res.isEmpty());
+	}
 }

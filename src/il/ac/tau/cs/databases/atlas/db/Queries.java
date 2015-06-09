@@ -105,5 +105,11 @@ public interface Queries {
 	 */
 	List<Result> SearchResultsByDates(Date sdate, Date edate)
 			throws AtlasServerException;
+	
+	/**
+	 * @return A list of results of all the favorite entries in the database
+	 * @throws AtlasServerException
+	 */
+	List<Result> getFavorites() throws AtlasServerException;
 
 }

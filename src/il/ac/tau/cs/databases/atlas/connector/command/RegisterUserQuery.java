@@ -31,12 +31,14 @@ public class RegisterUserQuery extends BaseDBCommand<User> {
 					+ DBConstants.USERNAME_L + "`, `"
 					+ DBConstants.PASSWORD_L + "`, `"
 					+ DBConstants.BORN_IN_LOCATION_L + "`, `"
-					+ DBConstants.BORN_ON_DATE_L + "`) VALUES (?, ?, ?, ?)", new String[]{DBConstants.User.USER_ID});
+					+ DBConstants.IS_FEMALE_L + "`, `"
+					+ DBConstants.BORN_ON_DATE_L + "`) VALUES (?, ?, ?, ?, ?)", new String[]{DBConstants.User.USER_ID});
 			
 			statement.setString(1, user.getUsername());
 			statement.setString(2, user.getPassword());
 			statement.setInt(3, user.getLocationID());
-			statement.setDate(4, new java.sql.Date(user.getDateOfBirth().getTime()));
+			statement.setBoolean(4, user.isFemale());
+			statement.setDate(5, new java.sql.Date(user.getDateOfBirth().getTime()));
 
 			System.out.println(String.format("Executing DB query: %s.", statement.toString()));
 			
