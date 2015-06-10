@@ -64,7 +64,7 @@ public class GetFavoritesResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 				Location location = new Location(0, geoname, lat, lng, locUrl);
 				java.util.Date date = (isBirth ? bornOn : diedOn);
 				
-				Result res = new Result(String.valueOf(personID), name, location, date, isBirth, personUrl, isFemale, category);
+				Result res = new Result(String.valueOf(personID), name, location, date, isBirth, category, personUrl, isFemale, category);
 				if (results.containsKey(res.getID())) {
 					res= results.get(res.getID());
 					res.setSummary(category + ", " + res.getSummary());

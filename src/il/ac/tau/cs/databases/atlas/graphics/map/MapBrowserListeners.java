@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -74,7 +75,7 @@ public class MapBrowserListeners {
 							map.getBrowser().execute("error(\"" + "Please select a category." + "\");");
 						} else {
 							try {
-								showResultsOnMap(Main.queries.getResults(startYear, endYear, category), category);
+								showResultsOnMap(Main.queries.getResults(startYear, endYear, category));
 							} catch (AtlasServerException e) {
 								// TODO Auto-generated catch block HANDLE
 								// EXCEPTION
@@ -88,12 +89,8 @@ public class MapBrowserListeners {
 			});
 		}
 	}
-
-	public static void showResultsOnMap(List<Result> results) {
-		showResultsOnMap(results, "");
-	}
 	
-	public static void showResultsOnMap(List<Result> results, String category) {
+	public static void showResultsOnMap(List<Result> results) {
 		map.getBrowser().execute("deleteMarkers();");
 		for (Result result : results) {
 			String imageIcon = "./flag-";
@@ -102,8 +99,15 @@ public class MapBrowserListeners {
 			} else {
 				imageIcon += "death";
 			}
-			if (!category.equalsIgnoreCase("")){				
-				imageIcon += "-" + category.toLowerCase().replace(" ", "-");
+			if (!result.getCategory().equalsIgnoreCase("")){
+				// Check for existing category flag
+				String categoryPostfix = result.getCategory().toLowerCase().replace(" ", "-");
+				String flagFilename = imageIcon + "-" + categoryPostfix + ".png";
+				String flagFilePath = MapBrowserListeners.class.getResource(flagFilename).getPath();
+				File file = new File(flagFilePath);
+				if(file.exists() && !file.isDirectory()) {
+					imageIcon += "-" + categoryPostfix;
+				}
 			}
 			imageIcon += ".png";
 			map.getBrowser().execute(

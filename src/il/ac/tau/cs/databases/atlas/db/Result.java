@@ -12,26 +12,29 @@ public class Result {
 	private Location location;
 	private Date date;
 	private boolean isBirth;
+	private String category;
 	private String summary;
 	private String wikiLink;
 	private boolean isFemale;
 	
-	public Result(String id, String name, Location location, Date date, boolean isBirth, String summary, String wikiLink) {
+	public Result(String id, String name, Location location, Date date, boolean isBirth, String category, String summary, String wikiLink) {
 		this.id = id;
 		this.name = name;
 		this.location = location;
 		this.isBirth = isBirth;
 		this.date = date;
+		this.category = category;
 		this.summary = summary;
 		this.wikiLink = wikiLink;
 	}
 	
-	public Result(String id, String name, Location location, Date date, boolean isBirth, String wikiLink, boolean isFemale, String cat) {
+	public Result(String id, String name, Location location, Date date, boolean isBirth, String category, String wikiLink, boolean isFemale, String cat) {
 		this.id = id;
 		this.name = name;
 		this.location = location;
 		this.isBirth = isBirth;
 		this.date = date;
+		this.category = category;
 		this.summary = (isBirth ? 
 				String.format("%s.\nWas born on %s in %s.", cat, date.toString(), location.getName())  :
 				String.format("%s.\nDied on %s in %s.", cat, date.toString(), location.getName()));
@@ -77,6 +80,14 @@ public class Result {
 
 	public void setBirth(boolean isBirth) {
 		this.isBirth = isBirth;
+	}
+	
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
 	}
 	
 	public String getSummary() {

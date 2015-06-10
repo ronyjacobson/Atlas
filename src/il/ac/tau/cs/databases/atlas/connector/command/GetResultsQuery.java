@@ -68,6 +68,7 @@ public class GetResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 				java.util.Date bornOn = resultSet.getDate(DBConstants.BORN_ON_DATE_L); 
 				java.util.Date diedOn =resultSet.getDate(DBConstants.DIED_ON_DATE_L);
 				String locUrl= resultSet.getString("LocURL");
+				String category = resultSet.getString(DBConstants.CATEGORY_NAME_L);
 				String personUrl = resultSet.getString("PersonURL");
 				double lng = resultSet.getDouble(DBConstants.LONG_L);
 				double lat = resultSet.getDouble(DBConstants.LAT_L);
@@ -77,7 +78,7 @@ public class GetResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 				}
 				Location location = new Location(0, geoname, lat, lng, locUrl);
 				java.util.Date date = (isBirth ? bornOn : diedOn);
-				Result res = new Result(String.valueOf(personID), name, location, date, isBirth, personUrl, isFemale, this.category);
+				Result res = new Result(String.valueOf(personID), name, location, date, isBirth, category, personUrl, isFemale, this.category);
 				results.add(res);
 			}
 

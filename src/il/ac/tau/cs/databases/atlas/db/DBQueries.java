@@ -198,7 +198,7 @@ public class DBQueries implements Queries {
 		if (year >= startYear && year <= endYear) {
 			Location l = user.getLocation();
 			result = new Result(null, user.getUsername(), l,
-					user.getDateOfBirth(), true, "This is you!", null);
+					user.getDateOfBirth(), true, "favorites", "This is you!", null);
 		}
 		return result;
 	}

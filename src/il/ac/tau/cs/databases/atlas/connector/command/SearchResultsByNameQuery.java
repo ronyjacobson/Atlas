@@ -90,7 +90,7 @@ public class SearchResultsByNameQuery extends BaseDBCommand<ArrayList<Result>> {
 					}
 				}
 				
-				Result res = new Result(String.valueOf(personID), name, location, date, isBirth, personUrl, isFemale, category);
+				Result res = new Result(String.valueOf(personID), name, location, date, isBirth, category, personUrl, isFemale, category);
 				
 				// If this person has more then one category, add it.
 				if (results.containsKey(res.getID())) {
