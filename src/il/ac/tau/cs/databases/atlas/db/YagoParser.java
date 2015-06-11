@@ -14,7 +14,7 @@ public class YagoParser {
     public static final String CATEGORIES_INFO_OUT_NAME = "categories_info.tsv";
     public static final String DATE_BORN_ON_DATE_OUT_NAME = "date_bornOnDate.tsv";
     public static final String DATE_DIED_ON_DATE_OUT_NAME = "date_diedOnDate.tsv";
-    public static final String FACTS_GENDER_OUT_NAME = "facts_gender.tsv";
+    public static final String FACTS_GENDER_OUT_NAME = "is_female.tsv";
     public static final String FACTS_BORN_IN_LOCATION_OUT_NAME = "facts_born_in_location.tsv";
     public static final String FACTS_DIED_IN_LOCATION_OUT_NAME = "facts_died_in_location.tsv";
     public static final String LABELS_INFO_OUT_NAME = "labels_info.tsv";
