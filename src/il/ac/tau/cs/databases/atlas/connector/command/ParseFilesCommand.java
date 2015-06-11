@@ -14,6 +14,8 @@ import java.sql.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ParseFilesCommand extends BaseDBCommand<Boolean>{
     private File yagoDateFile;
@@ -37,7 +39,8 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
         this.geonamesCitiesFile = geonamesCitiesFile;
         this.parserOutputPath = parserOutputPath;
         this.progress = progress;
-        this.timestamp = System.currentTimeMillis();
+        //this.timestamp = System.currentTimeMillis();
+        this.timestamp = 1433944465995l; // TODO: revert
     }
 
 
@@ -52,10 +55,10 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
         } catch (IOException e) {
             e.printStackTrace();
         }*/
-        progress.getAndIncrement(); // Increment progress for progress bar
+        //progress.getAndIncrement(); // Increment progress for progress bar
 
         // parse yago datafile into temp tsv
-        createTempTables(con);
+        //createTempTables(con);
         // create empty temp table
 
         // load parsed tsv file into temp table and remove it
@@ -70,9 +73,12 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
         String yagoToGeoTableName = "temp_yago_to_geo" + timeOfInitiation;
         createGeoToYagoTempTable(con, yagoToGeoTableName);
         progress.getAndIncrement();
-
+        */
         // Insert data table to DB
+        createCategoriesTable(con);
+        createLocationTable(con);
 
+        /*
         insertLocations(con, yagoToGeoTableName);
         dropTable(con, yagoToGeoTableName);
         progress.getAndIncrement();
@@ -160,17 +166,48 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
         }
     }
 
+    private void createCategoriesTable(Connection con) throws AtlasServerException {
+        try (PreparedStatement pstmt = con
+                .prepareStatement("REPLACE INTO category(category_ID,categoryName) VALUES(?,?)")) {
+            Pattern p = Pattern.compile(YagoParser.CATEGORY_REGEX);
+            int i = 0;
+            for (String categoryType : YagoParser.categoryTypes) {
+                Matcher m = p.matcher(categoryType);
+                if (m.find()) {
+                    pstmt.setInt(1, i++);
+                    pstmt.setString(2, m.group(1));
+                    pstmt.addBatch();
+                }
+            }
+            pstmt.executeBatch();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new AtlasServerException("Failed to insert categories");
+        }
+    }
+
+    private void createLocationTable(Connection con) throws AtlasServerException {
+        StringBuilder sb = new StringBuilder();
+        sb.append("REPLACE location SELECT");
+        sb.append(" gct.location, gct.latitude, gct.longitude, wikit.wikiUrl, gct.geo_id, git.yago_id");
+        sb.append(" FROM tempGeoInfoTable" + timestamp + " git, tempGeoCitiesTable" + timestamp + " gct, tempWikiTable" + timestamp + " wikit");
+        sb.append(" WHERE gct.geo_id=git.geo_id AND git.yago_id=wikit.yago_id");
+        try (Statement stmt = con.createStatement()) {
+            System.out.println("actual CMD is: " + sb.toString());
+            stmt.execute(sb.toString());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new AtlasServerException("Failed to load into 'location' table");
+        }
+    }
+
     private void createTempTables(Connection con) throws AtlasServerException {
         LinkedHashMap<String, TempTableMetadata> tempFields = TempTablesConstants.tempFields;
         int i = 0;
         for (String tableName : tempFields.keySet()) {
-            if (i++ < 5) {
-                continue;
-            }
-            // TODO: revert
             TempTableMetadata tempTableMetadata = tempFields.get(tableName);
-            createEmptyTempTable(con, tableName + "1433944465995", tempTableMetadata.getFields());
-            loadDataIntoTempTable(con, tableName + "1433944465995", concatToOutPath(tempTableMetadata.getDataFilePath()));
+            createEmptyTempTable(con, tableName + timestamp, tempTableMetadata.getFields());
+            loadDataIntoTempTable(con, tableName + timestamp, concatToOutPath(tempTableMetadata.getDataFilePath()));
         }
     }
 
@@ -191,7 +228,7 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
         }
         */
         StringBuilder sb = new StringBuilder();
-        sb.append("LOAD DATA LOCAL INFILE  '" + dataFilePath + "'IGNORE INTO TABLE " + tableName + " FIELDS TERMINATED BY '\\t'");
+        sb.append("LOAD DATA LOCAL INFILE '" + dataFilePath + "'IGNORE INTO TABLE " + tableName + " FIELDS TERMINATED BY '\\t'");
         try (Statement stmt = con.createStatement()) {
             System.out.println("actual CMD is: " + sb.toString());
             stmt.execute(sb.toString());

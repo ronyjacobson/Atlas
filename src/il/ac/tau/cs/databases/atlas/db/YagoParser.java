@@ -25,6 +25,8 @@ public class YagoParser {
     public static final String CATEGORY_REGEX = "<wordnet_(.+)_[0-9]+>";
     public static final String LABEL_REGEX = "\"(.*)\"((@eng)?)";
 
+    public static final Set<String> categoryTypes = new HashSet<>();
+
     private final File yagoDateFile;
     private final File yagoLocationFile;
     private final File yagoCategoryFile;
@@ -33,8 +35,6 @@ public class YagoParser {
     private final File yagoGeonamesFile;
     private final File geonamesCitiesFile;
     private final String outputPath;
-
-    private Set<String> categoryTypes;
 
     private String concatToOutPath(String outFileName) {
         return outputPath + File.separator + outFileName;
@@ -50,7 +50,7 @@ public class YagoParser {
         this.geonamesCitiesFile = geonamesCitiesFile;
         this.outputPath = parserOutputPath;
 
-        categoryTypes = new HashSet<>();
+        //categoryTypes = new HashSet<>();
         categoryTypes.add("<wordnet_scientist_110560637>");
         categoryTypes.add("<wordnet_philosopher_110423589>");
         categoryTypes.add("<wordnet_politician_110450303>");
