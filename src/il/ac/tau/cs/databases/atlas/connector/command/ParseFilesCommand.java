@@ -46,11 +46,12 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
         // GUI should check if files exist
         YagoParser yagoParser = new YagoParser(yagoDateFile, yagoLocationFile, yagoCategoryFile, yagoLabelsFile, yagoWikiFile, yagoGeonamesFile, geonamesCitiesFile, parserOutputPath);
 
+        /*
         try {
             yagoParser.parseFiles();
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
         progress.getAndIncrement(); // Increment progress for progress bar
 
         // parse yago datafile into temp tsv
@@ -65,7 +66,7 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
         // combine temp tables into final tables (transaction?)
 
         // create temporary table to connect yago places and geonames
-        final long timeOfInitiation = System.currentTimeMillis();
+        /*final long timeOfInitiation = System.currentTimeMillis();
         String yagoToGeoTableName = "temp_yago_to_geo" + timeOfInitiation;
         createGeoToYagoTempTable(con, yagoToGeoTableName);
         progress.getAndIncrement();
@@ -75,7 +76,7 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
         insertLocations(con, yagoToGeoTableName);
         dropTable(con, yagoToGeoTableName);
         progress.getAndIncrement();
-
+        */
         return true;
     }
 
@@ -161,25 +162,39 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
 
     private void createTempTables(Connection con) throws AtlasServerException {
         LinkedHashMap<String, TempTableMetadata> tempFields = TempTablesConstants.tempFields;
+        int i = 0;
         for (String tableName : tempFields.keySet()) {
+            if (i++ < 5) {
+                continue;
+            }
+            // TODO: revert
             TempTableMetadata tempTableMetadata = tempFields.get(tableName);
-            createEmptyTempTable(con, tableName, tempTableMetadata.getFields());
-            loadDataIntoTempTable(con, tableName, concatToOutPath(tempTableMetadata.getDataFilePath() + timestamp));
+            createEmptyTempTable(con, tableName + "1433944465995", tempTableMetadata.getFields());
+            loadDataIntoTempTable(con, tableName + "1433944465995", concatToOutPath(tempTableMetadata.getDataFilePath()));
         }
     }
 
     private void loadDataIntoTempTable(Connection con, String tableName, String dataFilePath) throws AtlasServerException {
         System.out.println("populating temp table " + tableName);
-        try (PreparedStatement pstmt = con.prepareStatement(
-                "LOAD DATA INFILE `?` REPLACE INTO TABLE `?` FIELDS TERMINATED BY `\\t`")) {
+        /*try (PreparedStatement pstmt = con.prepareStatement(
+                "LOAD DATA LOCAL INFILE ? REPLACE INTO TABLE ? FIELDS TERMINATED BY '\\t'")) {
             /*
             pstmt = con.prepareStatement("LOAD DATA INFILE '" + dataFilePath +
                     "' REPLACE INTO TABLE " + tableName + " FIELDS TERMINATED BY '\\t'");
             pstmt.executeUpdate();
-            */
+
             pstmt.setString(1, dataFilePath);
             pstmt.setString(2, tableName);
+            System.out.println(pstmt.toString());
             pstmt.executeUpdate();
+
+        }
+        */
+        StringBuilder sb = new StringBuilder();
+        sb.append("LOAD DATA LOCAL INFILE  '" + dataFilePath + "'IGNORE INTO TABLE " + tableName + " FIELDS TERMINATED BY '\\t'");
+        try (Statement stmt = con.createStatement()) {
+            System.out.println("actual CMD is: " + sb.toString());
+            stmt.execute(sb.toString());
         } catch (SQLException e) {
             e.printStackTrace();
             throw new AtlasServerException("Failed to load into temp table '" + tableName + "'");
@@ -189,7 +204,7 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
     private void createEmptyTempTable(Connection con, String tableName, LinkedHashMap<String, String> fields) throws AtlasServerException {
         System.out.println("creating empty temp table " + tableName);
         StringBuilder sb = new StringBuilder();
-        sb.append("CREATE TABLE IF NOT EXISTS " + tableName + " ");
+        sb.append("CREATE TABLE IF NOT EXISTS " + tableName);
         sb.append(schemaToString(fields));
         try (Statement stmt = con.createStatement()) {
             System.out.println("actual CMD is: " + sb.toString());
@@ -219,7 +234,7 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
     }
 
     public static void main(String[] args) throws AtlasServerException {
-        DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06","127.0.0.1", "3306", "dbmysql06");
+        DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06","localhost", "3305", "DbMysql06");
         ParseFilesCommand cmd = new ParseFilesCommand(new File("/Users/admin/Downloads/yagoDateFacts.tsv"),
                 new File("/Users/admin/Downloads/yagoFacts.tsv"),
                 new File("/Users/admin/Downloads/yagoTransitiveType.tsv"),
@@ -233,6 +248,6 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
     }
 
     private String concatToOutPath(String fileName) {
-        return parserOutputPath + File.pathSeparator + fileName;
+        return parserOutputPath + File.separator + fileName;
     }
 }
