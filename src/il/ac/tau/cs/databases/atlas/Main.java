@@ -5,11 +5,12 @@ import il.ac.tau.cs.databases.atlas.db.MockQueries;
 import il.ac.tau.cs.databases.atlas.db.Queries;
 import il.ac.tau.cs.databases.atlas.db.User;
 import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
+import org.apache.log4j.Logger;
 
 import java.awt.Toolkit;
 
 public class Main {
-
+	private static final Logger log = Logger.getLogger(Main.class);
 	// DB queries object
 	public static final Queries queries = new MockQueries();
 	public static User user;
@@ -21,6 +22,7 @@ public class Main {
 	 */
 	private static void initialize() throws Exception {
 		// Get the user's screen size
+		log.debug("Atlas started");
 		GrapicUtils.screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		// Load earlier state
 		try {
