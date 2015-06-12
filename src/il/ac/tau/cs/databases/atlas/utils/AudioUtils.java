@@ -30,7 +30,8 @@ public class AudioUtils {
 
         try {
         	String audioPath = GrapicUtils.RESOURCES_FOLDER + AudioUtils.AUDIO_FILE_NAME;
-        	InputStream stream = new BufferedInputStream(AudioUtils.class.getResourceAsStream(audioPath));
+            final InputStream resourceAsStream = getClass().getResourceAsStream(audioPath);
+            InputStream stream = new BufferedInputStream(resourceAsStream);
             audioStream = AudioSystem.getAudioInputStream(stream);
         } catch (Exception e){
             e.printStackTrace();
