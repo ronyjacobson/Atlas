@@ -7,6 +7,8 @@ import il.ac.tau.cs.databases.atlas.graphics.map.MapBrowserListeners;
 import il.ac.tau.cs.databases.atlas.utils.AudioUtils;
 import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
 
+import org.apache.commons.io.IOUtils;
+
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -19,6 +21,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -138,9 +142,35 @@ public class Map extends JFrame {
 		// Initialize the browser
 		if (map.initialize()) {
 			// Navigate to the following URL
-			map.setUrl(GrapicUtils.MAP_HTML_PATH);
+			String mapURL = GrapicUtils.RESOURCES_FOLDER + "map.html";
+			// Create a temporary map HTML file in the file system
+			InputStream in  =  Map.class.getResourceAsStream(mapURL);
+			File temp = File.createTempFile("mapAtlas", ".html");
+			try (FileOutputStream out = new FileOutputStream(temp)) {
+	            IOUtils.copy(in, out);
+				out.close();
+	        }
+			in.close();
+			temp.deleteOnExit();
+			URL url = temp.toURI().toURL();
+			// Set browser to show the map
+			map.setUrl(url.toString());
 			// Set map for browser actions
 			MapBrowserListeners.setMap(map);
+			// Create temporary flag PNG files
+			String[] pngFiles = { "favorite.png", "flag-birth-favorites.png", "flag-birth-kings-and-queens.png", "flag-birth-philosophers.png", "flag-birth-scientists.png", "flag-birth.png", "flag-death-favorites.png", "flag-death-kings-and-queens.png", "flag-death-philosophers.png", "flag-death-scientists.png", "flag-death.png" };
+			String tempDir = System.getProperty("java.io.tmpdir");
+			for (String pngFile: pngFiles){
+				String pngURL = GrapicUtils.RESOURCES_FOLDER + pngFile;
+				in  =  Map.class.getResourceAsStream(pngURL);
+				temp = new File(tempDir + "/" + pngFile);
+				try (FileOutputStream out = new FileOutputStream(temp)) {
+		            IOUtils.copy(in, out);
+					out.close();
+		        }
+				in.close();
+				temp.deleteOnExit();
+			}
 		} else {
 			throw new MapBrowser.BrowserException();
 		}

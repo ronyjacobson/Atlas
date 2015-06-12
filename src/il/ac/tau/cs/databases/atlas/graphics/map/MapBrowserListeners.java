@@ -93,7 +93,7 @@ public class MapBrowserListeners {
 	public static void showResultsOnMap(List<Result> results) {
 		map.getBrowser().execute("deleteMarkers();");
 		for (Result result : results) {
-			String imageIcon = "./flag-";
+			String imageIcon = "flag-";
 			if (result.isBirth()) {
 				imageIcon += "birth";
 			} else {
@@ -103,7 +103,8 @@ public class MapBrowserListeners {
 				// Check for existing category flag
 				String categoryPostfix = result.getCategory().toLowerCase().replace(" ", "-");
 				String flagFilename = imageIcon + "-" + categoryPostfix + ".png";
-				String flagFilePath = MapBrowserListeners.class.getResource(flagFilename).getPath();
+				String tempDir = System.getProperty("java.io.tmpdir");
+				String flagFilePath = tempDir + flagFilename;
 				File file = new File(flagFilePath);
 				if(file.exists() && !file.isDirectory()) {
 					imageIcon += "-" + categoryPostfix;
