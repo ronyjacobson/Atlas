@@ -22,6 +22,7 @@ public class GrapicUtils {
 	public final static String DEFAULT_SKIN = "graphics/skins/default/";
 	public final static String PACKAGE_PATH = "/il/ac/tau/cs/databases/atlas/";
 	public final static String RESOURCES_FOLDER = "/resources/";
+	public final static String RESOURCES_MAP_FOLDER = RESOURCES_FOLDER + "map/";
 	
 	/**
 	 * Returns the current skin.

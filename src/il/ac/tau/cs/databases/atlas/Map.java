@@ -142,7 +142,7 @@ public class Map extends JFrame {
 		// Initialize the browser
 		if (map.initialize()) {
 			// Navigate to the following URL
-			String mapURL = GrapicUtils.RESOURCES_FOLDER + "map.html";
+			String mapURL = GrapicUtils.RESOURCES_MAP_FOLDER + "map.html";
 			// Create a temporary map HTML file in the file system
 			InputStream in  =  Map.class.getResourceAsStream(mapURL);
 			File temp = File.createTempFile("mapAtlas", ".html");
@@ -161,7 +161,7 @@ public class Map extends JFrame {
 			String[] pngFiles = { "favorite.png", "flag-birth-favorites.png", "flag-birth-kings-and-queens.png", "flag-birth-philosophers.png", "flag-birth-scientists.png", "flag-birth.png", "flag-death-favorites.png", "flag-death-kings-and-queens.png", "flag-death-philosophers.png", "flag-death-scientists.png", "flag-death.png" };
 			String tempDir = System.getProperty("java.io.tmpdir");
 			for (String pngFile: pngFiles){
-				String pngURL = GrapicUtils.RESOURCES_FOLDER + pngFile;
+				String pngURL = GrapicUtils.RESOURCES_MAP_FOLDER + pngFile;
 				in  =  Map.class.getResourceAsStream(pngURL);
 				temp = new File(tempDir + "/" + pngFile);
 				try (FileOutputStream out = new FileOutputStream(temp)) {
