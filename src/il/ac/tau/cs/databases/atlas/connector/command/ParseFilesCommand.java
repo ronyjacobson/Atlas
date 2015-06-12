@@ -11,8 +11,7 @@ import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
 import java.io.*;
 import java.sql.*;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -58,11 +57,9 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
         //progress.getAndIncrement(); // Increment progress for progress bar
 
         // parse yago datafile into temp tsv
+
         //createTempTables(con);
         // create empty temp table
-
-        // load parsed tsv file into temp table and remove it
-        //loadDataIntoTempTable(con, "category_temp_table", concatToOutPath(YagoParser.CATEGORIES_INFO_OUT_NAME));
 
         // create final tables if not exists
 
@@ -75,8 +72,10 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
         progress.getAndIncrement();
         */
         // Insert data table to DB
-        createCategoriesTable(con);
-        createLocationTable(con);
+        //createCategoriesTable(con);
+        //createLocationTable(con);
+        //int addedByUser = addYagoUser(con);
+        //createPersonTable(con, addedByUser);
 
         /*
         insertLocations(con, yagoToGeoTableName);
@@ -182,7 +181,89 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
             pstmt.executeBatch();
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new AtlasServerException("Failed to insert categories");
+            throw new AtlasServerException("Failed to insert into `categories` table");
+        }
+    }
+
+    // TODO
+    private void createPersonLabelsTable(Connection con) throws AtlasServerException {
+        StringBuilder sb = new StringBuilder();
+        sb.append("REPLACE person_labels SELECT");
+        sb.append(" gct.location, gct.latitude, gct.longitude, wikit.wikiUrl, gct.geo_id, git.yago_id");
+        sb.append(" FROM tempGeoInfoTable" + timestamp + " git, tempGeoCitiesTable" + timestamp + " gct, tempWikiTable" + timestamp + " wikit");
+        sb.append(" WHERE gct.geo_id=git.geo_id AND git.yago_id=wikit.yago_id");
+        try (Statement stmt = con.createStatement()) {
+            System.out.println("actual CMD is: " + sb.toString());
+            stmt.execute(sb.toString());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new AtlasServerException("Failed to insert into 'person_labels' table");
+        }
+    }
+
+    private void createPersonTable(Connection con, int addedByUser) throws AtlasServerException {
+        StringBuilder sb = new StringBuilder();
+
+        /*
+        REPLACE person
+        SELECT
+                i,
+                wiki_t.wikiURL,
+                died_on_t.diedOnDate,
+                born_on_t.bornOnDate,
+                8,
+                born_in_t.wasBornInLocation,
+                died_in_t.diedInLocation,
+                gender_t.is_female,
+                gender_t.yago_person_id
+        FROM
+        tempWikiTable1433944465995 wiki_t,
+        tempBornInTable1433944465995 born_in_t,
+        tempBornOnTable1433944465995 born_on_t,
+        tempDiedOnTable1433944465995 died_on_t,
+        tempDiedInTable1433944465995 died_in_t,
+        tempGenderTable1433944465995 gender_t
+        WHERE
+        died_in_t.yago_person_id = wiki_t.yago_id
+        AND died_in_t.yago_person_id = born_in_t.yago_person_id
+        AND died_in_t.yago_person_id = born_on_t.yago_person_id
+        AND died_in_t.yago_person_id = died_on_t.yago_person_id
+        AND died_in_t.yago_person_id = died_in_t.yago_person_id
+        AND died_in_t.yago_person_id = gender_t.yago_person_id;
+*/
+        sb.append("REPLACE person SELECT");
+        sb.append(" gct.location, gct.latitude, gct.longitude, wikit.wikiUrl, gct.geo_id, git.yago_id");
+        sb.append(" FROM tempGeoInfoTable" + timestamp + " git, tempGeoCitiesTable" + timestamp + " gct, tempWikiTable" + timestamp + " wikit");
+        sb.append(" WHERE gct.geo_id=git.geo_id AND git.yago_id=wikit.yago_id");
+        try (Statement stmt = con.createStatement()) {
+            System.out.println("actual CMD is: " + sb.toString());
+            stmt.execute(sb.toString());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new AtlasServerException("Failed to insert into 'person_labels' table");
+        }
+    }
+
+    private int addYagoUser(Connection con) throws AtlasServerException {
+        int newUserId;
+        ResultSet rs = null;
+        try (PreparedStatement pstmt = con
+                .prepareStatement("INSERT INTO user(username, password, wasBornInLocation) VALUES (?, ?, ?)",
+                        Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setString(1, "YAGO");
+            pstmt.setString(2, "yagohasnopassword");
+            pstmt.setInt(3, 293397); // Tel Aviv
+            pstmt.executeUpdate();
+            rs = pstmt.getGeneratedKeys();
+            rs.next();
+            newUserId = rs.getInt(1);
+            System.out.println("YAGO user created with id=" + newUserId);
+            return newUserId;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new AtlasServerException("Failed to create YAGO user");
+        } finally {
+            safelyClose(rs);
         }
     }
 
@@ -197,17 +278,27 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
             stmt.execute(sb.toString());
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new AtlasServerException("Failed to load into 'location' table");
+            throw new AtlasServerException("Failed to insert into 'location' table");
         }
     }
 
     private void createTempTables(Connection con) throws AtlasServerException {
         LinkedHashMap<String, TempTableMetadata> tempFields = TempTablesConstants.tempFields;
-        int i = 0;
         for (String tableName : tempFields.keySet()) {
             TempTableMetadata tempTableMetadata = tempFields.get(tableName);
             createEmptyTempTable(con, tableName + timestamp, tempTableMetadata.getFields());
             loadDataIntoTempTable(con, tableName + timestamp, concatToOutPath(tempTableMetadata.getDataFilePath()));
+        }
+        createTempPersonIds(con);
+    }
+
+    private void createTempPersonIds(Connection con) throws AtlasServerException {
+        try (Statement stmt = con.createStatement()) {
+            stmt.execute("SELECT @i:=0;");
+            stmt.execute("UPDATE tempGenderTable" + timestamp +" SET person_ID = @i:=@i+1;");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new AtlasServerException("Failed to create temp person IDs");
         }
     }
 
