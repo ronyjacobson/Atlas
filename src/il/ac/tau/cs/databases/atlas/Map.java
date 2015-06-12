@@ -48,6 +48,7 @@ public class Map extends JFrame {
 	private static final int TIMELINE_EXTENT = 100;
 	private static final int TIMELINE_INITIAL_VALUE = 1000;
 	public static final String DEFAULT_CATEGORY = "Choose a category...";
+	public static final String FAVORITES_CATEGORY = "Favorites";
 	private static final String GO_BUTTON = "GO!";
 	private static int width;
 	private static int height;
@@ -196,6 +197,7 @@ public class Map extends JFrame {
 		try {
 			List<String> categories = Main.queries.getAllCategoriesNames();
 			categories.add(0, DEFAULT_CATEGORY);
+			categories.add(FAVORITES_CATEGORY);
 			categoriesComboBox = new JComboBox<String>(categories.toArray(new String[categories.size()]));
 			categoriesComboBox.setFont(fieldFont);
 			categoriesComboBox.setPreferredSize(dimensionCategory);

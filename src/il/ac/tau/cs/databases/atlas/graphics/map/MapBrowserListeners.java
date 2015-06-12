@@ -73,12 +73,16 @@ public class MapBrowserListeners {
 						// Check category
 						if (category.equals(Map.DEFAULT_CATEGORY)) {
 							map.getBrowser().execute("error(\"" + "Please select a category." + "\");");
+						} else if (category.equals(Map.FAVORITES_CATEGORY)){
+							try {
+								showResultsOnMap(Main.queries.getFavorites());
+							} catch (AtlasServerException e) {
+								e.printStackTrace();
+							}
 						} else {
 							try {
 								showResultsOnMap(Main.queries.getResults(startYear, endYear, category));
 							} catch (AtlasServerException e) {
-								// TODO Auto-generated catch block HANDLE
-								// EXCEPTION
 								e.printStackTrace();
 							}
 						}
