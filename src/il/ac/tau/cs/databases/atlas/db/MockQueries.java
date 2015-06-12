@@ -87,7 +87,6 @@ public class MockQueries implements Queries {
 		categories.add("Scientists");
 		categories.add("Philosophers");
 		categories.add("Kings And Queens");
-		categories.add("Favorites");
 		return categories;
 	}
 
@@ -179,8 +178,7 @@ public class MockQueries implements Queries {
 
 	@Override
 	public List<Result> getFavorites() throws AtlasServerException {
-		// TODO Auto-generated method stub
-		return null;
+		return getResults("");
 	}
 
 	/**

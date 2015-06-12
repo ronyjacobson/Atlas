@@ -100,7 +100,7 @@ public class GetResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 			String bornOrDiedDate = (isBirth ? DBConstants.Person.BORN_ON_DATE : DBConstants.Person.DIED_ON_DATE);
 			
 			String select = String.format(
-					"SELECT DISTINCT %s, %s, %s, %s, %s, %s as LocURL, %s as PersonURL, %s, %s, %s \n",
+					"SELECT DISTINCT %s, %s, %s, %s, %s, %s as LocURL, %s as PersonURL, %s, %s, %s, %s \n",
 					// All labels wanted
 					DBConstants.Person.PERSON_ID,
 					DBConstants.PersonLabels.LABEL,
@@ -111,19 +111,21 @@ public class GetResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 					DBConstants.Person.WIKI_URL,
 					DBConstants.Location.LONG, 
 					DBConstants.Location.LAT, 
-					DBConstants.Person.IS_FEMALE);
+					DBConstants.Person.IS_FEMALE,
+					DBConstants.Category.CATEGORY_NAME);
 			
 			
 			String from = 
 					String.format(
-					"FROM %s, %s, %s ,%s, %s, %s",
+					"FROM %s, %s, %s ,%s, %s",
 					// All Tables needed
 					DBConstants.Person.TABLE_NAME,
 					DBConstants.Location.TABLE_NAME,
 					DBConstants.PersonHasCategory.TABLE_NAME,
 					DBConstants.PersonLabels.TABLE_NAME,
-					DBConstants.Category.TABLE_NAME,
-					DBConstants.UserFavorites.TABLE_NAME);
+					DBConstants.Category.TABLE_NAME);
+			
+			String withFavsFrom = ", " + DBConstants.UserFavorites.TABLE_NAME;
 			
 			String withFromByName = 
 					", (SELECT person_ID FROM person_labels WHERE label like '%"+ this.name +"%') as ids"; 
@@ -155,7 +157,7 @@ public class GetResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 			String limit = "limit " + this.limitNumOfResults;
 		if (!byName) {
 			if (isUserOriented) {
-				String q1 = select + from + favsWhere + limit;
+				String q1 = select + from + withFavsFrom + favsWhere + limit;
 				String q2 = select + from + userAddedWhere + limit;
 				return q1 + "\n" + "UNION \n" + q2;
 			} else {
