@@ -36,8 +36,8 @@ public class Result {
 		this.date = date;
 		this.category = category;
 		this.summary = (isBirth ? 
-				String.format("%s.\nWas born on %s in %s.", cat, date.toString(), location.getName())  :
-				String.format("%s.\nDied on %s in %s.", cat, date.toString(), location.getName()));
+				String.format("%s.\\<br\\>Was born on %s in %s.", cat, date.toString(), location.getName())  :
+				String.format("%s.\\<br\\>Died on %s in %s.", cat, date.toString(), location.getName()));
 		this.wikiLink = wikiLink;
 		this.isFemale = isFemale;
 	}

@@ -73,12 +73,16 @@ public class MapBrowserListeners {
 						// Check category
 						if (category.equals(Map.DEFAULT_CATEGORY)) {
 							map.getBrowser().execute("error(\"" + "Please select a category." + "\");");
+						} else if (category.equals(Map.FAVORITES_CATEGORY)){
+							try {
+								showResultsOnMap(Main.queries.getFavorites());
+							} catch (AtlasServerException e) {
+								e.printStackTrace();
+							}
 						} else {
 							try {
 								showResultsOnMap(Main.queries.getResults(startYear, endYear, category));
 							} catch (AtlasServerException e) {
-								// TODO Auto-generated catch block HANDLE
-								// EXCEPTION
 								e.printStackTrace();
 							}
 						}
@@ -93,11 +97,17 @@ public class MapBrowserListeners {
 	public static void showResultsOnMap(List<Result> results) {
 		map.getBrowser().execute("deleteMarkers();");
 		for (Result result : results) {
+			double lat = result.getLocation().getLat();
+			double lng = result.getLocation().getLng();
 			String imageIcon = "flag-";
 			if (result.isBirth()) {
 				imageIcon += "birth";
+				// TODO can offset the coordinates a little so results in the same place
+				// won't be in the exact mark on the map
 			} else {
 				imageIcon += "death";
+				// TODO can offset the coordinates a little so results in the same place
+				// won't be in the exact mark on the map
 			}
 			if (!result.getCategory().equalsIgnoreCase("")){
 				// Check for existing category flag
@@ -112,7 +122,7 @@ public class MapBrowserListeners {
 			}
 			imageIcon += ".png";
 			map.getBrowser().execute(
-					"addMarker(" + result.getID() + "," + result.getLocation().getLat() + "," + result.getLocation().getLng() + ",\""
+					"addMarker(" + result.getID() + "," + lat + "," + lng + ",\""
 							+ result.getName() + "\",\"" + imageIcon + "\",\"" + result.getSummary() + "\",\"" + result.getWikiLink()
 							+ "\");");
 		}
@@ -131,6 +141,27 @@ public class MapBrowserListeners {
 				}
 			});
 		}
+	}
+	
+	public static class BrowserShowStatsActionListner implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					if (map != null) {
+						String msg = " Showing "
+								+ Main.queries.getAmountOfLatestResults() + " results:\\n\\n " + Main.queries.getStatsOfLatestResults() + " Females\\n "
+								+ (Main.queries.getAmountOfLatestResults() - Main.queries.getStatsOfLatestResults()) + " Males";
+						map.getBrowser().execute("error(\"" + msg + "\");");
+					} else {
+						// TODO Show message?
+					}
+				}
+			});
+
+		}
+
 	}
 
 	public static class BrowserSyncFavoritesActionListener implements ActionListener {
