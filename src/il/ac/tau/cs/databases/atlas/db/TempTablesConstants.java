@@ -34,7 +34,7 @@ public class TempTablesConstants {
 
         LinkedHashMap<String, String> tempBornInFields = new LinkedHashMap<>();
         tempBornInFields.put("yago_person_id", "varchar(200)");
-        tempBornInFields.put("yago_location_id", "varchar(200)");
+        tempBornInFields.put("wasBornInLocation", "varchar(200)");
         TempTableMetadata tempBornInMetadata = new TempTableMetadata(YagoParser.FACTS_BORN_IN_LOCATION_OUT_NAME, tempBornInFields);
         tempFields.put("tempBornInTable", tempBornInMetadata);
 
@@ -47,19 +47,20 @@ public class TempTablesConstants {
 
         LinkedHashMap<String, String> tempDiedInFields = new LinkedHashMap<>();
         tempDiedInFields.put("yago_person_id", "varchar(200)");
-        tempDiedInFields.put("yago_location_id", "varchar(200)");
+        tempDiedInFields.put("diedInLocation", "varchar(200)");
         TempTableMetadata tempDiedInMetadata = new TempTableMetadata(YagoParser.FACTS_DIED_IN_LOCATION_OUT_NAME, tempDiedInFields);
         tempFields.put("tempDiedInTable", tempDiedInMetadata);
 
         LinkedHashMap<String, String> tempDiedOnFields = new LinkedHashMap<>();
         tempDiedOnFields.put("yago_person_id", "varchar(200)");
-        tempDiedOnFields.put("diedOnData", "date");
+        tempDiedOnFields.put("diedOnDate", "date");
         TempTableMetadata tempDiedOnMetadata = new TempTableMetadata(YagoParser.DATE_DIED_ON_DATE_OUT_NAME, tempDiedOnFields);
         tempFields.put("tempDiedOnTable", tempDiedOnMetadata);
 
         LinkedHashMap<String, String> tempGenderFields = new LinkedHashMap<>();
         tempGenderFields.put("yago_person_id", "varchar(200)");
         tempGenderFields.put("is_female", "bool");
+        tempGenderFields.put("person_ID", "int");
         TempTableMetadata tempGenderMetadata = new TempTableMetadata(YagoParser.FACTS_GENDER_OUT_NAME, tempGenderFields);
         tempFields.put("tempGenderTable", tempGenderMetadata);
 
