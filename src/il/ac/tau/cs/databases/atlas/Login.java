@@ -296,7 +296,7 @@ public class Login extends JFrame {
 							LoginSuccesful();
 						} else {
 							// Login failed
-							JOptionPane.showConfirmDialog(null,
+							JOptionPane.showMessageDialog(null,
 									"Username/password combination not found.", GrapicUtils.PROJECT_NAME,
 									JOptionPane.ERROR_MESSAGE);
 						}

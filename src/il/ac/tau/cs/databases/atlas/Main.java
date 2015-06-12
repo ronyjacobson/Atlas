@@ -27,6 +27,7 @@ public class Main {
 		// Load earlier state
 		try {
 			// Initialize DB
+			// TODO - read from properties file
 			DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06", "127.0.0.1", "3306", "dbmysql06");
 			State.autoLoad();
 		} catch (Exception e) {
