@@ -296,33 +296,21 @@ public class Login extends JFrame {
 							LoginSuccesful();
 						} else {
 							// Login failed
-							int reply = JOptionPane.showConfirmDialog(null,
-									"Username/password combination not found.\n Would you like to sign up?", GrapicUtils.PROJECT_NAME,
-									JOptionPane.YES_NO_OPTION);
-							if (reply == JOptionPane.YES_OPTION) {
-								// Enable Sign up
-								signupEnabled = true;
-								wasBornIn.setEnabled(true);
-								wasBornOn.setEnabled(true);
-								isMale.setEnabled(true);
-								isFemale.setEnabled(true);
-							}
+							JOptionPane.showConfirmDialog(null,
+									"Username/password combination not found.", GrapicUtils.PROJECT_NAME,
+									JOptionPane.ERROR_MESSAGE);
 						}
 					} else {
 						// Suggest to sign up
 						int reply = JOptionPane.showConfirmDialog(null, "Unregistered user. Would you like to register?",
 								GrapicUtils.PROJECT_NAME, JOptionPane.YES_NO_OPTION);
 						if (reply == JOptionPane.YES_OPTION) {
-							try {
-								Main.queries.registerUser(user);
-								JOptionPane.showMessageDialog(null, "You are now registered!");
-								// Login
-								LoginSuccesful();
-							} catch (Exception e) {
-								// TODO Throw exception? add Msg?
-								JOptionPane
-										.showMessageDialog(null, "Failed to login.", GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
-							}
+							// Enable Sign up
+							signupEnabled = true;
+							wasBornIn.setEnabled(true);
+							wasBornOn.setEnabled(true);
+							isMale.setEnabled(true);
+							isFemale.setEnabled(true);
 						}
 					}
 				} else {
@@ -333,15 +321,15 @@ public class Login extends JFrame {
 					try {
 						status = Main.queries.registerUser(fetchedUser);
 						if (status) {
+							JOptionPane.showMessageDialog(null, "You are now registered!");
+							// Login
 							LoginSuccesful();
 						} else {
-							// TODO Throw exception? add Msg?
-							JOptionPane.showMessageDialog(null, "Failed to register.", GrapicUtils.PROJECT_NAME,
+							JOptionPane.showMessageDialog(null, "Failed to register. Try again later.", GrapicUtils.PROJECT_NAME,
 									JOptionPane.ERROR_MESSAGE);
 						}
 					} catch (AtlasServerException e) {
-						// TODO Throw exception? add Msg?
-						JOptionPane.showMessageDialog(null, String.format("Failed to register.\n%s", e.getMessage()), GrapicUtils.PROJECT_NAME,
+						JOptionPane.showMessageDialog(null, "Failed to register.\n" + e.getMessage(), GrapicUtils.PROJECT_NAME,
 								JOptionPane.ERROR_MESSAGE);
 					}
 				}
