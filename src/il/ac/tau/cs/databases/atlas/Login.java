@@ -361,8 +361,7 @@ public class Login extends JFrame {
 		// Play audio
 		Runnable r = new Runnable() {
 			public void run() {
-				String loginAudioPath = getClass().getResource(GrapicUtils.getSkin() + AudioUtils.AUDIO_FILE_NAME).getPath();
-				new AudioUtils().playSound(loginAudioPath);
+				new AudioUtils().playSound();
 			}
 		};
 		new Thread(r).start();

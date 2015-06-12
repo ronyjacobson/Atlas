@@ -2,8 +2,9 @@ package il.ac.tau.cs.databases.atlas.utils;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -16,7 +17,6 @@ public class AudioUtils {
 
 	public static final String AUDIO_FILE_NAME = "glimpse_melody.wav";
     private final int BUFFER_SIZE = 128000;
-    private File soundFile;
     private AudioInputStream audioStream;
     private AudioFormat audioFormat;
     private SourceDataLine sourceLine;
@@ -26,19 +26,12 @@ public class AudioUtils {
      * Plays a wav file
      * @param filename the name of the file that is going to be played
      */
-    public void playSound(String filename){
-
-        String strFilename = filename;
+    public void playSound(){
 
         try {
-            soundFile = new File(strFilename);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-
-        try {
-            audioStream = AudioSystem.getAudioInputStream(soundFile);
+        	String audioPath = GrapicUtils.RESOURCES_FOLDER + AudioUtils.AUDIO_FILE_NAME;
+        	InputStream stream = new BufferedInputStream(AudioUtils.class.getResourceAsStream(audioPath));
+            audioStream = AudioSystem.getAudioInputStream(stream);
         } catch (Exception e){
             e.printStackTrace();
             System.exit(1);
@@ -96,8 +89,7 @@ public class AudioUtils {
 				// Play audio
 				Runnable r = new Runnable() {
 					public void run() {
-						String loginAudioPath = getClass().getResource("../" + GrapicUtils.getSkin() + AUDIO_FILE_NAME).getPath();
-						new AudioUtils().playSound(loginAudioPath);
+						new AudioUtils().playSound();
 					}
 				};
 				new Thread(r).start();
