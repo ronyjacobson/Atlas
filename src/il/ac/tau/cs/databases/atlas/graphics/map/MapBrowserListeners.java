@@ -151,8 +151,8 @@ public class MapBrowserListeners {
 				public void run() {
 					if (map != null) {
 						String msg = " Showing "
-								+ Main.queries.getAmountOfLatestResults() + " results:\\n\\n " + Main.queries.getStatsOfLatestResults() + " Males\\n "
-								+ (Main.queries.getAmountOfLatestResults() - Main.queries.getStatsOfLatestResults()) + " Females";
+								+ Main.queries.getAmountOfLatestResults() + " results:\\n\\n " + Main.queries.getStatsOfLatestResults() + " Females\\n "
+								+ (Main.queries.getAmountOfLatestResults() - Main.queries.getStatsOfLatestResults()) + " Males";
 						map.getBrowser().execute("error(\"" + msg + "\");");
 					} else {
 						// TODO Show message?
