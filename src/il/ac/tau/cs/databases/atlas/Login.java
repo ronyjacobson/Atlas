@@ -24,8 +24,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -162,7 +164,7 @@ public class Login extends JFrame {
 		wasBornOn.setEnabled(false);
 
 		try {
-			List<String> options = Main.queries.getAllGeoLocationsNames();
+			List<String> options = new ArrayList<String>(Main.queries.getAllGeoLocationsNames());
 			options.add(0, DEFAULT_LOCATION);
 			wasBornIn = new JComboBox<String>(options.toArray(new String[options.size()]));
 			wasBornIn.setFont(fieldFont);

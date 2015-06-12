@@ -18,6 +18,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -229,7 +230,7 @@ public class Add extends JFrame {
 
 		// Create location pickers
 		try {
-			List<String> locations = Main.queries.getAllGeoLocationsNames();
+			List<String> locations = new ArrayList<String>(Main.queries.getAllGeoLocationsNames());
 
 			locations.add(0, DEFAULT_BIRTH_LOCATION);
 			wasBornIn = new JComboBox<String>(locations.toArray(new String[locations.size()]));
@@ -241,7 +242,7 @@ public class Add extends JFrame {
 		} catch (AtlasServerException e) {
 			// TODO handle Exception
 		}
-
+ 
 		wasBornIn.setFont(fieldFont);
 		hasDiedIn.setFont(fieldFont);
 		// Add to panel
