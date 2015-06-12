@@ -136,15 +136,16 @@ public class SearchResultsByNameQuery extends BaseDBCommand<ArrayList<Result>> {
 			
 			String from = 
 					String.format(
-					"FROM %s, %s, %s, %s, %s, %s",
+					"FROM %s, %s, %s, %s, %s",
 					// All Tables needed
 					DBConstants.Person.TABLE_NAME,
 					DBConstants.Location.TABLE_NAME,
 					DBConstants.PersonLabels.TABLE_NAME,
-					DBConstants.UserFavorites.TABLE_NAME,
 					DBConstants.Category.TABLE_NAME,
 					DBConstants.PersonHasCategory.TABLE_NAME) + 
 					", (SELECT person_ID FROM person_labels WHERE label like '%"+ this.name +"%') as ids"; 
+			
+			String withFavsFrom = ", " + DBConstants.UserFavorites.TABLE_NAME;
 			
 			String basicWhere =
 					"\n" +
@@ -168,7 +169,7 @@ public class SearchResultsByNameQuery extends BaseDBCommand<ArrayList<Result>> {
 			String limit = "LIMIT " + this.limitNumOfResults;
 		
 			if (isUserOriented) {
-				String q1 = select + from + favsWhere + limit;
+				String q1 = select + from + withFavsFrom + favsWhere + limit;
 				String q2 = select + from + userAddedWhere + limit;
 				return q1 + "\n" + "UNION \n" + q2;
 			} else {

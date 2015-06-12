@@ -118,14 +118,15 @@ public class SearchResultsByDatesQuery extends BaseDBCommand<ArrayList<Result>> 
 			
 			String from = 
 					String.format(
-					"FROM %s, %s, %s, %s, %s, %s",
+					"FROM %s, %s, %s, %s, %s",
 					// All Tables needed
 					DBConstants.Person.TABLE_NAME,
 					DBConstants.Location.TABLE_NAME,
 					DBConstants.PersonLabels.TABLE_NAME,
-					DBConstants.UserFavorites.TABLE_NAME,
 					DBConstants.Category.TABLE_NAME,
 					DBConstants.PersonHasCategory.TABLE_NAME);
+			
+			String withFavsFrom = ", " + DBConstants.UserFavorites.TABLE_NAME;
 			
 			String basicWhere =
 					"\n" +
@@ -134,6 +135,7 @@ public class SearchResultsByDatesQuery extends BaseDBCommand<ArrayList<Result>> 
 					"AND "  + DBConstants.PersonLabels.IS_PREFERED	    +" = '1' \n" +
 					"AND "+ bornOrDiedDate +" >= '"+ new java.sql.Date(this.sDate.getTime())+"' \n" +
 					"AND "+ bornOrDiedDate +" <= '"+ new java.sql.Date(this.eDate.getTime())  +"' \n";
+			
 			
 			String withFavoritesWhere = 
 					"AND " + DBConstants.Person.PERSON_ID +" = " + DBConstants.UserFavorites.PERSON_ID	 + " \n" +
@@ -148,7 +150,7 @@ public class SearchResultsByDatesQuery extends BaseDBCommand<ArrayList<Result>> 
 			String limit = "limit " + this.limitNumOfResults;
 			
 			if (isUserOriented) {
-				String q1 = select + from + favsWhere + limit;
+				String q1 = select + from + withFavsFrom + favsWhere + limit;
 				String q2 = select + from + userAddedWhere + limit;
 				return q1 + "\n" + "UNION \n" + q2;
 			} else {
