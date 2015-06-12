@@ -55,10 +55,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId></groupId>
-			<artifactId></artifactId>
-		</dependency>
-		<dependency>
 		<groupId>org.slf4j</groupId>
 		<artifactId>jcl-over-slf4j</artifactId>
 		<version>1.7.0</version>
