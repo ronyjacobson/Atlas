@@ -53,7 +53,7 @@ public class RegisterUserQuery extends BaseDBCommand<User> {
 			Integer errorCode = e.getErrorCode();
 			if (errorCode.equals(1062)) {
 				// This error code represents that there is already a username with the desired value
-				String msg = String.format("Error - Duplicate values where found when trying to reguter username %s", user.getUsername());
+				String msg = String.format("Username %s already taken.", user.getUsername());
 				throw new AtlasServerException(msg);
 			} else {
 				//TODO- handle Exception?

@@ -336,12 +336,12 @@ public class Login extends JFrame {
 							LoginSuccesful();
 						} else {
 							// TODO Throw exception? add Msg?
-							JOptionPane.showMessageDialog(null, "Failed to register. Try again later.", GrapicUtils.PROJECT_NAME,
+							JOptionPane.showMessageDialog(null, "Failed to register.", GrapicUtils.PROJECT_NAME,
 									JOptionPane.ERROR_MESSAGE);
 						}
 					} catch (AtlasServerException e) {
 						// TODO Throw exception? add Msg?
-						JOptionPane.showMessageDialog(null, "Failed to register. Try again later.", GrapicUtils.PROJECT_NAME,
+						JOptionPane.showMessageDialog(null, String.format("Failed to register.\n%s", e.getMessage()), GrapicUtils.PROJECT_NAME,
 								JOptionPane.ERROR_MESSAGE);
 					}
 				}

@@ -48,7 +48,7 @@ public class DBQueries implements Queries {
 		if (newUser == null) {
 			return false;
 		} else {
-			Main.user.setUserID(newUser.getUserID());
+			user.setUserID(newUser.getUserID());
 			return true;
 		}
 
@@ -180,6 +180,8 @@ public class DBQueries implements Queries {
 		results.addAll(query.execute());
 
 		amountOfLatestResults = results.size();
+		
+		
 		return results;
 	}
 
@@ -248,6 +250,11 @@ public class DBQueries implements Queries {
 		results.addAll(query.execute());
 
 		amountOfLatestResults = results.size();
+		System.out.print("Results: ");
+		for (Result res : results) {
+			System.out.print(String.format("%s, ", res.getName()));
+		}
+		System.out.println("");
 		return results;
 	}
 
