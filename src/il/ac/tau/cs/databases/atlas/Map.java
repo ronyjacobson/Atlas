@@ -188,7 +188,7 @@ public class Map extends JFrame {
 
 		// Define buttons attributes
 		Font fieldFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_FIELD);
-		Dimension dimensionCategory = new Dimension(width / 4, height / 13);
+		Dimension dimensionCategory = new Dimension(width / 5, height / 13);
 		Dimension dimensionGo = new Dimension(width / 9, height / 13);
 		Dimension dimensionStats = new Dimension((int) dimensionCategory.getWidth() / 3, (int) dimensionCategory.getHeight());
 		Dimension dimensionOther = new Dimension((int) dimensionCategory.getWidth() / 3, (int) dimensionCategory.getHeight() / 2);
