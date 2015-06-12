@@ -251,9 +251,7 @@ public class Map extends JFrame {
 
 		// Add listeners
 		buttonGo.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(timeline, categoriesComboBox));
-		buttonStats.addActionListener(new MapBrowserListeners.BrowserMessageActionListener(" Showing "
-				+ Main.queries.getAmountOfLatestResults() + " results:\\n\\n " + Main.queries.getStatsOfLatestResults() + " Males\\n "
-				+ (Main.queries.getAmountOfLatestResults() - Main.queries.getStatsOfLatestResults()) + " Females"));
+		buttonStats.addActionListener(new MapBrowserListeners.BrowserShowStatsActionListner());
 		buttonAdd.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
