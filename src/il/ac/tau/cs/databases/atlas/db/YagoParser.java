@@ -1,7 +1,11 @@
 package il.ac.tau.cs.databases.atlas.db;
 
+import il.ac.tau.cs.databases.atlas.parsing.PersonLifetime;
+
 import java.io.*;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,6 +40,8 @@ public class YagoParser {
     private final File geonamesCitiesFile;
     private final String outputPath;
 
+    private Map<Long, PersonLifetime> personsMap;
+
     private String concatToOutPath(String outFileName) {
         return outputPath + File.separator + outFileName;
     }
@@ -50,6 +56,8 @@ public class YagoParser {
         this.geonamesCitiesFile = geonamesCitiesFile;
         this.outputPath = parserOutputPath;
 
+        personsMap = new HashMap<>();
+
         //categoryTypes = new HashSet<>();
         categoryTypes.add("<wordnet_scientist_110560637>");
         categoryTypes.add("<wordnet_philosopher_110423589>");
@@ -59,6 +67,10 @@ public class YagoParser {
         categoryTypes.add("<wordnet_monarchist_110327824>");
         categoryTypes.add("<wordnet_poet_110444194>");
         categoryTypes.add("<wordnet_medalist_110305062>");
+    }
+
+    public Map<Long, PersonLifetime> getPersonsMap() {
+        return personsMap;
     }
 
     // handles yagoDateFacts
@@ -78,11 +90,18 @@ public class YagoParser {
             if (cols.length < 5) {
                 continue;
             }
-            final Matcher matcher = pattern.matcher(cols[3]);
-            if ("<wasBornOnDate>".equals(cols[2]) && matcher.find()) {
-                bornOnPw.println(cols[1] + "\t" + matcher.group().replace('#', '0'));
-            } else if ("<diedOnDate>".equals(cols[2]) && matcher.find()) {
-                diedOnPw.println(cols[1] + "\t" + matcher.group().replace('#', '0'));
+            long yagoId = yagoIdToHash(cols[1]);
+            String type = cols[2];
+            String factDate = cols[3];
+            final Matcher matcher = pattern.matcher(factDate);
+            if ("<wasBornOnDate>".equals(type) && matcher.find()) {
+                PersonLifetime personLifetime = getPersonLifetime(yagoId);
+                personLifetime.setBornOnDate(matcher.group().replace('#', '0'));
+                // bornOnPw.println(yagoId + "\t" + matcher.group().replace('#', '0'));
+            } else if ("<diedOnDate>".equals(type) && matcher.find()) {
+                PersonLifetime personLifetime = getPersonLifetime(yagoId);
+                personLifetime.setDiedOnDate(matcher.group().replace('#', '0'));
+                // diedOnPw.println(yagoId + "\t" + matcher.group().replace('#', '0'));
             }
         }
         bornOnPw.close();
@@ -103,29 +122,58 @@ public class YagoParser {
         PrintWriter diedInPw = new PrintWriter(new FileWriter(diedInOutfile, true), true);
 
         String line;
-        String currentValue;
+        String isFemale;
         while ((line = br.readLine()) != null) {
             String[] cols = line.trim().split("\\t");
             if (cols.length < 4) {
                 continue;
             }
-            if ("<hasGender>".equals(cols[2])) {
-                if ("<female>".equals(cols[3])) {
-                    currentValue = "true";
+
+            long yagoId = yagoIdToHash(cols[1]);
+            String type = cols[2];
+            String factValue = cols[3];
+            if ("<hasGender>".equals(type)) {
+                if ("<female>".equals(factValue)) {
+                    isFemale = "true";
                 } else {
-                    currentValue = "false";
+                    isFemale = "false";
                 }
-                genderPw.println(cols[1] + "\t" + currentValue);
-            } else if ("<wasBornIn>".equals(cols[2])) {
-                bornInPw.println(cols[1] + "\t" + cols[3]);
-            } else if ("<diedIn>".equals(cols[2])) {
-                diedInPw.println(cols[1] + "\t" + cols[3]);
+                genderPw.println(yagoId + "\t" + isFemale);
+            } else {
+                if ("<wasBornIn>".equals(type)) {
+                    PersonLifetime personLifetime = getPersonLifetime(yagoId);
+                    personLifetime.setBornInLocation(yagoIdToHash(factValue));
+                    // bornInPw.println(cols[1] + "\t" + cols[3]);
+                } else if ("<diedIn>".equals(type)) {
+                    PersonLifetime personLifetime = getPersonLifetime(yagoId);
+                    personLifetime.setDiedInLocation(yagoIdToHash(factValue));
+                    // diedInPw.println(cols[1] + "\t" + cols[3]);
+                }
             }
         }
         genderPw.close();
         bornInPw.close();
         diedInPw.close();
         br.close();
+    }
+
+    // TODO: find a better alternative?
+    private long yagoIdToHash(String yagoId) {
+        String cleanYagoId = yagoId.substring(1,yagoId.length()-1);
+        long hash=7;
+        for (int i=0; i < cleanYagoId.length(); i++) {
+            hash = hash * 31 + cleanYagoId.charAt(i);
+        }
+        return hash;
+    }
+
+    private PersonLifetime getPersonLifetime(long yagoId) {
+        PersonLifetime personLifetime = personsMap.get(yagoId);
+        if (personLifetime == null) {
+            personLifetime = new PersonLifetime(yagoId);
+            personsMap.put(yagoId, personLifetime);
+        }
+        return personLifetime;
     }
 
     // handles yagoTransitiveType
@@ -283,7 +331,11 @@ public class YagoParser {
                 new File("/Users/admin/Downloads/yagoWikipediaInfo.tsv"),
                 new File("/Users/admin/Downloads/yagoGeonamesEntityIds.tsv"),
                 new File("/Users/admin/Downloads/cities1000.txt"), "/Users/admin/Downloads/Test");
+        /*
         yagoParser.parseFiles();
+        */
+        
+
     }
 
     private boolean validateFiles() {

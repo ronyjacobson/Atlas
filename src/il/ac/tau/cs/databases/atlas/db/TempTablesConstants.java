@@ -60,7 +60,6 @@ public class TempTablesConstants {
         LinkedHashMap<String, String> tempGenderFields = new LinkedHashMap<>();
         tempGenderFields.put("yago_person_id", "varchar(200)");
         tempGenderFields.put("is_female", "bool");
-        tempGenderFields.put("person_ID", "int");
         TempTableMetadata tempGenderMetadata = new TempTableMetadata(YagoParser.FACTS_GENDER_OUT_NAME, tempGenderFields);
         tempFields.put("tempGenderTable", tempGenderMetadata);
 
