@@ -99,7 +99,7 @@ public class SearchResultsByDatesQuery extends BaseDBCommand<ArrayList<Result>> 
 	private String makeStatment(boolean isUserOriented) {
 			
 			String bornOrDiedDate = (isBirth ? DBConstants.Person.BORN_ON_DATE : DBConstants.Person.DIED_ON_DATE);
-			
+			String bornOrDiedLocation = (isBirth ? DBConstants.Person.BORN_IN_LOCATION : DBConstants.Person.DIED_IN_LOCATION);
 			String select = String.format(
 					"SELECT DISTINCT %s, %s, %s, %s, %s, %s as LocURL, %s as PersonURL, %s, %s, %s, %s \n",
 					// All labels wanted
@@ -130,7 +130,7 @@ public class SearchResultsByDatesQuery extends BaseDBCommand<ArrayList<Result>> 
 			
 			String basicWhere =
 					"\n" +
-					"WHERE "+ DBConstants.Person.DIED_IN_LOCATION 		+" = " + DBConstants.Location.GEO_ID		 + " \n" +
+					"WHERE "+ bornOrDiedLocation				 		+" = " + DBConstants.Location.GEO_ID		 + " \n" +
 					"AND "  + DBConstants.Person.PERSON_ID				+" = " + DBConstants.PersonLabels.PERSON_ID	 + " \n" +
 					"AND "  + DBConstants.PersonLabels.IS_PREFERED	    +" = '1' \n" +
 					"AND "+ bornOrDiedDate +" >= '"+ new java.sql.Date(this.sDate.getTime())+"' \n" +

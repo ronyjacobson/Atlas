@@ -117,7 +117,7 @@ public class SearchResultsByNameQuery extends BaseDBCommand<ArrayList<Result>> {
 	
 	
 	private String makeStatment(boolean isUserOriented) {
-			
+		
 			String select = String.format(
 					"SELECT DISTINCT %s, %s, %s, %s, %s, %s as LocURL, %s as PersonURL, %s, %s, %s, %s \n",
 					// All labels wanted
@@ -149,7 +149,7 @@ public class SearchResultsByNameQuery extends BaseDBCommand<ArrayList<Result>> {
 			
 			String basicWhere =
 					"\n" +
-					"WHERE "+ DBConstants.Person.DIED_IN_LOCATION 	+" = " + DBConstants.Location.GEO_ID				 + " \n" +
+					"WHERE "+ DBConstants.Person.BORN_IN_LOCATION 	+" = " + DBConstants.Location.GEO_ID				 + " \n" +
 					"AND "  + DBConstants.Person.PERSON_ID			+" = " + DBConstants.PersonLabels.PERSON_ID			 + " \n" +
 					"AND "  + DBConstants.Person.PERSON_ID			+" = " + DBConstants.PersonHasCategory.PERSON_ID 	 + " \n" +
 					"AND "  + DBConstants.Category.CATEGORY_ID		+" = " + DBConstants.PersonHasCategory.CATEGORY_ID 	 + " \n" +

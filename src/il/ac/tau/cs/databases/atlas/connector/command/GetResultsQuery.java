@@ -98,6 +98,7 @@ public class GetResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 	private String makeStatment(boolean isUserOriented) {
 			
 			String bornOrDiedDate = (isBirth ? DBConstants.Person.BORN_ON_DATE : DBConstants.Person.DIED_ON_DATE);
+			String bornOrDiedLocation = (isBirth ? DBConstants.Person.BORN_IN_LOCATION : DBConstants.Person.DIED_IN_LOCATION);
 			
 			String select = String.format(
 					"SELECT DISTINCT %s, %s, %s, %s, %s, %s as LocURL, %s as PersonURL, %s, %s, %s, %s \n",
@@ -135,7 +136,7 @@ public class GetResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 					"WHERE "+ DBConstants.Category.CATEGORY_NAME		+" = '"+ this.category						 + "' \n"+
 					"AND "  + DBConstants.PersonHasCategory.CATEGORY_ID +" = " + DBConstants.Category.CATEGORY_ID	 + " \n" +
 					"AND "  + DBConstants.PersonHasCategory.PERSON_ID 	+" = " + DBConstants.Person.PERSON_ID 	  	 + " \n" +
-					"AND "  + DBConstants.Person.DIED_IN_LOCATION 		+" = " + DBConstants.Location.GEO_ID		 + " \n" +
+					"AND "  + bornOrDiedLocation				 		+" = " + DBConstants.Location.GEO_ID		 + " \n" +
 					"AND "  + DBConstants.Person.PERSON_ID				+" = " + DBConstants.PersonLabels.PERSON_ID	 + " \n" +
 					"AND "  + DBConstants.PersonLabels.IS_PREFERED	    +" = '1' \n" +
 					"AND year("+ bornOrDiedDate +") >= '"+this.startYear+"' \n" +

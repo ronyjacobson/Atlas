@@ -119,7 +119,7 @@ public class GetFavoritesResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 			
 			String where =
 					"\n" +
-					"WHERE "+ DBConstants.Person.DIED_IN_LOCATION 		+" = " + DBConstants.Location.GEO_ID		 + " \n" +
+					"WHERE "+ DBConstants.Person.BORN_IN_LOCATION 		+" = " + DBConstants.Location.GEO_ID		 + " \n" +
 					"AND "  + DBConstants.Person.PERSON_ID				+" = " + DBConstants.PersonLabels.PERSON_ID	 + " \n" +
 					"AND "  + DBConstants.PersonLabels.IS_PREFERED	    +" = '1' \n"+
 					"AND " + DBConstants.Person.PERSON_ID 				+" = " + DBConstants.UserFavorites.PERSON_ID + " \n" +
