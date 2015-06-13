@@ -32,6 +32,7 @@ public class TempTablesConstants {
         TempTableMetadata tempGeoInfoMetadata = new TempTableMetadata(YagoParser.GEO_INFO_OUT_NAME, tempGeoInfoFields);
         tempFields.put("tempGeoInfoTable", tempGeoInfoMetadata);
 
+        /*
         LinkedHashMap<String, String> tempBornInFields = new LinkedHashMap<>();
         tempBornInFields.put("yago_person_id", "varchar(200)");
         tempBornInFields.put("wasBornInLocation", "varchar(200)");
@@ -56,7 +57,7 @@ public class TempTablesConstants {
         tempDiedOnFields.put("diedOnDate", "date");
         TempTableMetadata tempDiedOnMetadata = new TempTableMetadata(YagoParser.DATE_DIED_ON_DATE_OUT_NAME, tempDiedOnFields);
         tempFields.put("tempDiedOnTable", tempDiedOnMetadata);
-
+*/
         LinkedHashMap<String, String> tempGenderFields = new LinkedHashMap<>();
         tempGenderFields.put("yago_person_id", "varchar(200)");
         tempGenderFields.put("is_female", "bool");

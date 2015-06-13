@@ -331,11 +331,8 @@ public class YagoParser {
                 new File("/Users/admin/Downloads/yagoWikipediaInfo.tsv"),
                 new File("/Users/admin/Downloads/yagoGeonamesEntityIds.tsv"),
                 new File("/Users/admin/Downloads/cities1000.txt"), "/Users/admin/Downloads/Test");
-        /*
-        yagoParser.parseFiles();
-        */
-        
 
+        yagoParser.parseFiles();
     }
 
     private boolean validateFiles() {
