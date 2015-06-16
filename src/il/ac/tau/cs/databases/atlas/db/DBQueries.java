@@ -307,36 +307,6 @@ public class DBQueries implements Queries {
 		return results;
 
 	}
-
-	public List<Result> getResults(int startYear, int endYear, String category,
-			String name) throws AtlasServerException {
-		List<Result> results = new ArrayList<Result>();
-		amountOfFemaleResults = 0;
-
-		// Get Births
-		GetResultsQuery query = new GetResultsQuery(startYear, endYear,
-				category, name, true);
-		System.out
-				.println("Fetching births results by name, category and years");
-		results.addAll(query.execute());
-
-		// Add current user if suitible
-		Result userResult = AddUserToResults(startYear, endYear);
-		if (userResult != null) {
-			results.add(userResult);
-		}
-
-		// Get Deaths
-		query = new GetResultsQuery(startYear, endYear, category, name, false);
-		System.out
-				.println("Fetching death results by name, category and years");
-		results.addAll(query.execute());
-
-		amountOfLatestResults = results.size();
-		
-		
-		return results;
-	}
 	
 
 

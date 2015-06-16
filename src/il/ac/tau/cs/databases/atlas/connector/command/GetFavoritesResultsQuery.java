@@ -90,12 +90,15 @@ public class GetFavoritesResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 	
 	private String makeStatment() {
 		
+		String bornOrDiedDate = (isBirth ? DBConstants.Person.BORN_ON_DATE : DBConstants.Person.DIED_ON_DATE);
+		String bornOrDiedLocation = (isBirth ? DBConstants.Person.BORN_IN_LOCATION : DBConstants.Person.DIED_IN_LOCATION);
+		
 		String select = String.format(
 					"SELECT DISTINCT %s, %s, %s, %s, %s, %s as LocURL, %s as PersonURL, %s, %s, %s, %s \n",
 					// All labels wanted
 					DBConstants.Person.PERSON_ID,
 					DBConstants.PersonLabels.LABEL,
-					DBConstants.Location.GEO_NAME, 
+					DBConstants.Location.GEO_NAME,
 					DBConstants.Person.BORN_ON_DATE, 
 					DBConstants.Person.DIED_ON_DATE,
 					DBConstants.Location.WIKI_URL, 
@@ -119,7 +122,9 @@ public class GetFavoritesResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 			
 			String where =
 					"\n" +
-					"WHERE "+ DBConstants.Person.BORN_IN_LOCATION 		+" = " + DBConstants.Location.GEO_ID		 + " \n" +
+					"WHERE "+ bornOrDiedLocation						+" <> 'NULL' \n" +
+					"AND "  + bornOrDiedDate						    +" <> 'NULL' \n" +
+					"AND "  + bornOrDiedLocation				 		+" = " + DBConstants.Location.GEO_ID		 + " \n" +
 					"AND "  + DBConstants.Person.PERSON_ID				+" = " + DBConstants.PersonLabels.PERSON_ID	 + " \n" +
 					"AND "  + DBConstants.PersonLabels.IS_PREFERED	    +" = '1' \n"+
 					"AND " + DBConstants.Person.PERSON_ID 				+" = " + DBConstants.UserFavorites.PERSON_ID + " \n" +

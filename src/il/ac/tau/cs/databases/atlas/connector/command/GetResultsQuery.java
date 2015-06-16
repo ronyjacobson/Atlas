@@ -139,6 +139,9 @@ public class GetResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 					"AND "  + bornOrDiedLocation				 		+" = " + DBConstants.Location.GEO_ID		 + " \n" +
 					"AND "  + DBConstants.Person.PERSON_ID				+" = " + DBConstants.PersonLabels.PERSON_ID	 + " \n" +
 					"AND "  + DBConstants.PersonLabels.IS_PREFERED	    +" = '1' \n" +
+					"AND "  + DBConstants.PersonLabels.IS_PREFERED	    +" = '1' \n" +
+					"AND "  + bornOrDiedDate 							+" <> 'NULL' \n" +
+					"AND "  + bornOrDiedLocation 						+" <> 'NULL' \n" +
 					"AND year("+ bornOrDiedDate +") >= '"+this.startYear+"' \n" +
 					"AND year("+ bornOrDiedDate +") <= '"+this.endYear  +"' \n";
 			
