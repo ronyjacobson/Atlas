@@ -168,6 +168,23 @@ public class DBQueries implements Queries {
 		return results;
 	}
 	
+	/**
+	 * @return A list of all the favorite id's in the database
+	 * @throws AtlasServerException
+	 */
+	@Override
+	public List<String> getFavoritesIDs() throws AtlasServerException {
+		List<Result> results = getFavorites();
+		List<String> ids = new ArrayList<String>();
+		for (Result res : results) {
+			String id = res.getID();
+			if (!ids.contains(id)) {
+				ids.add(id);
+			}
+		}
+		return ids;		
+	}
+	
 	
 	/**
 	 * Store all the chosen favorite IDs to the database

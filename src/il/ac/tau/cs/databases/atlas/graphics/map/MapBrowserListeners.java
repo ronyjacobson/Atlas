@@ -25,6 +25,33 @@ public class MapBrowserListeners {
 	public static void setMap(MapBrowser map) {
 		MapBrowserListeners.map = map;
 	}
+	
+	public static void updateFavorites() {
+		Display.getDefault().syncExec(new Runnable() {
+			public void run() {
+				if (map != null) {
+					String msg;
+					try {
+						List<String> favs = Main.queries.getFavoritesIDs();
+						// create favs list: [id1, id2, id3 ... ]
+						String favList = "[";
+						int i;
+						for (i=0 ; i < favs.size()-1 ; i++) {
+							favList += favs.get(i) + ", ";
+						}
+						favList += favs.get(favs.size()-1) + "]";
+						map.getBrowser().execute("updateFavorites("+ favList +");");
+						System.out.println("Favorites were sent to map: "+ favList);
+					} catch (AtlasServerException e) {
+						msg = "Couldnt get favorites from database.";
+						map.getBrowser().execute("error(\"" + msg + "\");");
+					}
+				} else {
+					// TODO Show message?
+				}
+			}
+		});
+	}
 
 	public static class BrowserMessageActionListener implements ActionListener {
 
@@ -53,7 +80,7 @@ public class MapBrowserListeners {
 	}
 
 	public static class BrowserAddMarkerActionListener implements ActionListener {
-
+		static boolean firstQuery = true;
 		JScrollBar timeline;
 		JComboBox<String> categoriesComboBox;
 
@@ -66,6 +93,11 @@ public class MapBrowserListeners {
 		public void actionPerformed(ActionEvent e) {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
+					if (firstQuery) {
+						firstQuery = false;
+						// Set up favorites list
+						MapBrowserListeners.updateFavorites();
+					}
 					if (map != null) {
 						int startYear = timeline.getModel().getValue();
 						int endYear = timeline.getModel().getValue() + timeline.getModel().getExtent();
@@ -95,6 +127,7 @@ public class MapBrowserListeners {
 	}
 	
 	public static void showResultsOnMap(List<Result> results) {
+		
 		map.getBrowser().execute("deleteMarkers();");
 		for (Result result : results) {
 			double lat = result.getLocation().getLat();
@@ -143,6 +176,7 @@ public class MapBrowserListeners {
 		}
 	}
 	
+	
 	public static class BrowserShowStatsActionListner implements ActionListener {
 
 		@Override
@@ -172,10 +206,14 @@ public class MapBrowserListeners {
 				public void run() {
 					if (map != null) {
 						String favorites = ((String) map.getBrowser().evaluate("return getFavorites()"));
+						String removeFromFavorites = ((String) map.getBrowser().evaluate("return getRemoveFromFavorites()"));
 						List<String> favoritesList = Arrays.asList(favorites.split(","));
 						String msg;
 						try {
+							//TODO(rony): add remove list
 							Main.queries.storeFavoriteIDs(favoritesList);
+							String favList = "[" + favorites + "]";
+							map.getBrowser().execute("updateFavorites("+ favList +");");
 							msg = "Favorites synced to database successfully.";
 						} catch (AtlasServerException e) {
 							msg = "Favorites failed to synced to database.";

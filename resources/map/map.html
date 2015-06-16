@@ -21,6 +21,7 @@
       var map;
       var markers = [];
       var favorites = [];
+      var removeFromFavorites = [];
       var mapCenter = new google.maps.LatLng(31.0000, 35.0000);
       var infowindow;
       var timespanControlText;
@@ -33,12 +34,29 @@
       <!-- Add a location marker to the map -->
       <!-- The marker will be places at (lat,lng) -->
       <!-- Hovering over the marker will show name -->
-      <!-- The marker's icon will be img -->
+      <!-- The markers icon will be img -->
       <!-- Pressing the marker will show an info screen with the name as -->
       <!-- a title, summery as the content and a link to wikipedia which is wikilink -->
       function addMarker(resultid,lat,lng,name,img,summery,wikilink) {
             // Define the icon of the marker
             var image = img;
+            // Set favorite button
+            var isInFavorites = !(favorites.indexOf(resultid) === -1);
+            var favButton;
+            if (isInFavorites) {
+            	favButton = 
+                 '<button onclick="toggleFavorites(' + resultid + ', this)" ' +
+                 'style="font: 11px Century Gothic; color: transparent; background-color: transparent; border-color: transparent; cursor: default; padding: 0px 0px;">' +
+                 '<img src="removefavorite.png"/>' +
+                 '</button>'
+            } else {
+            	favButton = 
+                 '<button onclick="toggleFavorites(' + resultid + ', this)" ' +
+                 'style="font: 11px Century Gothic; color: transparent; background-color: transparent; border-color: transparent; cursor: default; padding: 0px 0px;">' +
+                 '<img src="addfavorite.png"/>' +
+                 '</button>'
+            }
+
             // Define the content to be shown in the info screen
             var contentString = '<div id="content">'+
                  '<div id="siteNotice">'+
@@ -48,11 +66,7 @@
                  '<p>' + summery + '</p>'+
                  '<p>Wikipedia link: ' + name + ', <a href="' + wikilink +'">'+
                  wikilink + '</a> '+
-                 '</p>'+
-                 '<button onclick="toggleFavorites(' + resultid + ')" ' +
-                 'style="font: 11px Century Gothic; color: transparent; background-color: transparent; border-color: transparent; cursor: default; padding: 0px 0px;">' +
-                 '<img src="favorite.png"/>' +
-                 '</button>' +
+                 '</p>'+ favButton +
                  '</div>'+
                  '</div>';
             // Define the marker and it's properties
@@ -76,23 +90,35 @@
       }
 
       <!-- Add id to favorites -->
-      function toggleFavorites(resultid) {
+      function toggleFavorites(resultid, element) {
             var i = favorites.indexOf(resultid);
-            if (i != -1) {
-                  // Remove
-                  favorites.splice(i, 1);
-                  alert("Removed from favorites.");
-
-            } else {
-                  // ADD
+            if (i == -1) {
+      			  element.querySelector('img').setAttribute("src","removefavorite.png");
+                  // This result is not in favorites - ADD
                   favorites.push(resultid);
-                  alert("Added to favorites.");
+                  var j= removeFromFavorites.indexOf(resultid);
+                  if (j != -1) {
+                  	// This result was previously asked to be removed
+                  	removeFromFavorites.splice(j, 1);
+                  }
+                  alert("This person will be added to your favorites after you sync.");
+            } else {
+                  // This result is in favorites - REMOVE
+                  element.querySelector('img').setAttribute("src","addfavorite.png");
+                  favorites.splice(i, 1);
+                  removeFromFavorites.push(resultid);
+                  alert("This person will be removed from your favorites after you sync.");
             }
       }
 
-      <!-- Returns favorites array -->
+      <!-- Returns add to favorites array -->
       function getFavorites() {
             return favorites.join();
+      }
+	 
+	 <!-- Returns remove from favorites array -->
+      function getRemoveFromFavorites() {
+            return removeFromFavorites.join();
       }
 
       <!-- Set the map for all markers -->
@@ -118,6 +144,13 @@
       function deleteMarkers() {
             clearMarkers();
             markers = [];
+      }
+
+
+      <!-- Delete the all markers on the map and in memory -->
+      function updateFavorites(favList) {
+            favorites= favList;
+            removeFromFavorites= [];
       }
 
       <!-- Define the center button -->
@@ -219,7 +252,7 @@
 
       <!-- The map initilatization function -->
       function initialize() {
-	// Define the map properties
+	 // Define the map properties
         var mapDiv = document.getElementById('map-canvas');
         var mapOptions = {
           center: mapCenter,

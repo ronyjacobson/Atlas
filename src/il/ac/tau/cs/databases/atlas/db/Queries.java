@@ -124,4 +124,10 @@ public interface Queries {
 	 */
 	int getLatestResultsEndTimeLine();
 
+	/**
+	 * @return A list of all the favorite id's in the database
+	 * @throws AtlasServerException
+	 */
+	List<String> getFavoritesIDs() throws AtlasServerException;
+
 }

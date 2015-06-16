@@ -94,8 +94,8 @@ public class Map extends JFrame {
 
 		// Set up the content pane.
 		addComponentsToPanel(getContentPane());
-		pack();
-
+		
+		pack();	
 	}
 
 	private void addComponentsToPanel(Container pane) throws Exception {
@@ -158,8 +158,9 @@ public class Map extends JFrame {
 			map.setUrl(url.toString());
 			// Set map for browser actions
 			MapBrowserListeners.setMap(map);
+			
 			// Create temporary flag PNG files
-			String[] pngFiles = { "favorite.png", "flag-birth-favorites.png", "flag-birth-kings-and-queens.png", "flag-birth-philosophers.png", "flag-birth-scientists.png", "flag-birth.png", "flag-death-favorites.png", "flag-death-kings-and-queens.png", "flag-death-philosophers.png", "flag-death-scientists.png", "flag-death.png" };
+			String[] pngFiles = { "favorite.png", "addfavorite.png", "removefavorite.png", "flag-birth-favorites.png", "flag-birth-kings-and-queens.png", "flag-birth-philosophers.png", "flag-birth-scientists.png", "flag-birth.png", "flag-death-favorites.png", "flag-death-kings-and-queens.png", "flag-death-philosophers.png", "flag-death-scientists.png", "flag-death.png" };
 			String tempDir = System.getProperty("java.io.tmpdir");
 			for (String pngFile: pngFiles){
 				String pngURL = GrapicUtils.RESOURCES_MAP_FOLDER + pngFile;
@@ -172,6 +173,7 @@ public class Map extends JFrame {
 				in.close();
 				temp.deleteOnExit();
 			}
+			
 		} else {
 			throw new MapBrowser.BrowserException();
 		}
@@ -179,7 +181,7 @@ public class Map extends JFrame {
 	}
 
 	private JPanel createButtonsPanel() {
-		// Create buttons panel
+		// Create buttons panel  
 		FlowLayout buttonsPanelLayout = new FlowLayout(FlowLayout.CENTER, GAP_BETWEEN_BUTTONS, GAP_BETWEEN_COMPONENTS);
 		JPanel buttonsPanel = new JPanel(buttonsPanelLayout);
 
