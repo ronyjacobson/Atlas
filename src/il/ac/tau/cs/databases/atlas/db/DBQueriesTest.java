@@ -83,7 +83,7 @@ public class DBQueriesTest {
 		System.out.println(cat.toString());
 	}
 
-	@Test
+	// @Test
 	public void getResultsTest() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
@@ -117,15 +117,12 @@ public class DBQueriesTest {
 		if (tester != "Rony") {
 			return;
 		}
-		Queries.categoriesMap.put("Actores", 1);
+		Queries.categoriesMap.put("Kings And Queens", 1);
 		Main.user = new User(1, "erer", "Sfsf", new Date(), 5, false);
 		try {
-			queries.addNew("NewPersonTest3", "Actores", new Date(), 1,
-					new Date(), 1, "url", true);
+			queries.addNew("Test", "Kings And Queens", new Date(), 1,new Date(), 1, "TestUrl", true);
 		} catch (AtlasServerException e) {
 		}
-		queries.addNew("NewPersonTest5", "Actores", new Date(), 1, new Date(),
-				1, "url", true);
 	}
 
 	// @Test
