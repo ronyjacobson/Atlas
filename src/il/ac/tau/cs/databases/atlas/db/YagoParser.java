@@ -13,7 +13,7 @@ public class YagoParser {
 
     protected final Logger logger = Logger.getLogger(this.getClass().getName());
 
-    // TODO: consider changing to private members
+    // TODO: consider changing to private members or globals in another class (ParserConstants?)
     public static final String GEONAMES_URL_REGEX = "http://sws.geonames.org/([0-9]+)";
     public static final String DATE_REGEX = "[0-9][0-9][0-9][0-9]-[#0-9][#0-9]-[#0-9][#0-9]";
     public static final String CATEGORY_REGEX = "<wordnet_(.+)_[0-9]+>";
@@ -29,17 +29,12 @@ public class YagoParser {
     private final File yagoWikiFile;
     private final File yagoGeonamesFile;
     private final File geonamesCitiesFile;
-    private final String outputPath;
 
     private Map<Long, YagoPerson> personsMap; // yagoId -> Person
     private Map<Long, YagoLocation> locationsMap; // geoId -> Location
-    private Map<Long, Long> yagoToGeoMap;
+    private Map<Long, Long> yagoToGeoMap; // yagoId -> geoId
 
-    private String concatToOutPath(String outFileName) {
-        return outputPath + File.separator + outFileName;
-    }
-
-    public YagoParser(File yagoDateFile, File yagoLocationFile, File yagoCategoryFile, File yagoLabelsFile, File yagoWikiFile, File yagoGeonamesFile, File geonamesCitiesFile, String parserOutputPath) {
+    public YagoParser(File yagoDateFile, File yagoLocationFile, File yagoCategoryFile, File yagoLabelsFile, File yagoWikiFile, File yagoGeonamesFile, File geonamesCitiesFile) {
         this.yagoDateFile = yagoDateFile;
         this.yagoLocationFile = yagoLocationFile;
         this.yagoCategoryFile = yagoCategoryFile;
@@ -47,7 +42,6 @@ public class YagoParser {
         this.yagoWikiFile = yagoWikiFile;
         this.yagoGeonamesFile = yagoGeonamesFile;
         this.geonamesCitiesFile = geonamesCitiesFile;
-        this.outputPath = parserOutputPath;
 
         personsMap = new HashMap<>();
         locationsMap = new HashMap<>();
@@ -178,12 +172,24 @@ public class YagoParser {
                     yagoPerson.setIsFemale(true);
                 }
             } else if ("<wasBornIn>".equals(factType) && yagoPerson != null) {
-                yagoPerson.setBornInLocation(yagoIdToHash(factValue));
+                setLoactionIdFromYagoId(factValue, yagoPerson, true);
             } else if ("<diedIn>".equals(factType) && yagoPerson != null) {
-                yagoPerson.setDiedInLocation(yagoIdToHash(factValue));
+                setLoactionIdFromYagoId(factValue, yagoPerson, false);
             }
         }
         br.close();
+    }
+
+    private void setLoactionIdFromYagoId(String yagoLocationId, YagoPerson yagoPerson, boolean born) {
+        Long geoId = yagoToGeoMap.get(yagoIdToHash(yagoLocationId));
+        if (geoId != null) {
+            YagoLocation yagoLocation = locationsMap.get(geoId);
+            if (yagoLocation != null && born) {
+                yagoPerson.setBornInLocation(yagoLocation.getLocationId());
+            } else if (yagoLocation != null) {
+                yagoPerson.setDiedInLocation(yagoLocation.getLocationId());
+            }
+        }
     }
 
     // handles yagoTransitiveType
@@ -284,6 +290,21 @@ public class YagoParser {
         br.close();
     }
 
+    public void literalFacts(File literalFile) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(literalFile));
+        String line;
+        int etan = 0;
+        while ((line = br.readLine()) != null) {
+            String[] cols = line.trim().split("\\t");
+            //long locationId = yagoIdToHash(cols[0]);
+            if ("<hasLatitude>".equals(cols[2])) {
+                etan++;
+            }
+        }
+        System.out.println(etan);
+        br.close();
+    }
+
     // handles yagoLabels
     public void parseYagoLabelsFile(File yagoLabelsFile) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(yagoLabelsFile));
@@ -315,24 +336,24 @@ public class YagoParser {
             System.out.println("Terminating parser");
 //            throw new IOException("Bad input file");
         }*/
+        logger.info("Parsing YAGO geonames info..");
+        parseYagoGeonamesFile(yagoGeonamesFile);
+        logger.info("Parsing Geonames cities info..");
+        parseGeonamesCitiesFile(geonamesCitiesFile);
+        logger.info("Validating locations..");
+        validateLocationsMap();
         logger.info("Parsing YAGO dates..");
         parseYagoDateFile(yagoDateFile);
-        logger.info("Parsing YAGO locations..");
+        logger.info("Parsing YAGO locations facts..");
         parseYagoLocationFile(yagoLocationFile);
-        logger.info("Filtering out persons without birth date/place");
+        logger.info("Filtering out persons without birth date/place..");
         validatePersonsMap();
         logger.info("Parsing YAGO categories..");
         parseYagoCategoryFile(yagoCategoryFile);
         logger.info("Parsing YAGO labels..");
         parseYagoLabelsFile(yagoLabelsFile);
-        logger.info("Parsing YAGO geonames info..");
-        parseYagoGeonamesFile(yagoGeonamesFile);
-        logger.info("Parsing Geonames cities info..");
-        parseGeonamesCitiesFile(geonamesCitiesFile);
         logger.info("Parsing YAGO wikipedia info..");
         parseYagoWikiFile(yagoWikiFile);
-        logger.info("Validating locations..");
-        validateLocationsMap();
         logger.info("Ensuring labels..");
         ensureLabels(); // remove persons without prefLabel or no labels at all
         logger.info("Parsing complete");
@@ -347,13 +368,15 @@ public class YagoParser {
                 new File("/Users/admin/Downloads/yagoLabels.tsv"),
                 new File("/Users/admin/Downloads/yagoWikipediaInfo.tsv"),
                 new File("/Users/admin/Downloads/yagoGeonamesEntityIds.tsv"),
-                new File("/Users/admin/Downloads/cities1000.txt"), "/Users/admin/Downloads/Test");
-
+                new File("/Users/admin/Downloads/cities1000.txt"));
+/*
         yagoParser.parseFiles();
+*/
+        yagoParser.literalFacts(new File("/Users/admin/Downloads/yagoDateFacts.tsv"));
     }
 
     private boolean validateFiles() {
-        System.out.println("Datafiles Validation Started");
+        logger.info("Datafiles Validation Started");
         return validateFile(yagoDateFile)
                 && validateFile(yagoLocationFile)
                 && validateFile(yagoCategoryFile)
@@ -364,13 +387,12 @@ public class YagoParser {
     }
 
     private boolean validateFile(File datafile) {
-        System.out.print("Validating file: " + datafile.getName() + "..");
+        logger.info("Validating file: " + datafile.getName() + "..");
         if (datafile.exists() && !datafile.isDirectory() && datafile.canRead()) {
-            System.out.println("   Done");
+            logger.info("File OK: " + datafile.getName());
             return true;
         }
-        System.out.println("   Error");
+        logger.error("File ERROR: " + datafile.getName());
         return false;
     }
-
 }
