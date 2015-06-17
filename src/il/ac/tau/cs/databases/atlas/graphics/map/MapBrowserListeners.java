@@ -217,12 +217,13 @@ public class MapBrowserListeners {
 						try {
 							Main.queries.storeFavoriteIDs(favoritesList, removeList);
 							String favList = "[" + favorites + "]";
-							map.getBrowser().execute("updateFavorites("+ favList +");");
-							map.getBrowser().execute("syncComplete();");
 							
 						} catch (AtlasServerException e) {
 							msg = "Favorites failed to sync to database.";
 							map.getBrowser().execute("error(\"" + msg + "\");");
+						} finally {
+							map.getBrowser().execute("updateFavorites("+ favList +");");
+							map.getBrowser().execute("syncComplete();");
 						}
 						
 					} else {
