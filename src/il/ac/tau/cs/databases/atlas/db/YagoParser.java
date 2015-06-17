@@ -69,72 +69,6 @@ public class YagoParser {
         return locationsMap;
     }
 
-    // handles yagoDateFacts
-    public void parseYagoDateFile(File yagoDateFile, char from, char to) throws IOException {
-        BufferedReader br = new BufferedReader(new FileReader(yagoDateFile));
-        Pattern pattern = Pattern.compile(DATE_REGEX);
-
-        String line;
-        while ((line = br.readLine()) != null) {
-            String[] cols = line.trim().split("\\t");
-            if (cols.length < 5) {
-                continue;
-            }
-            /*
-            char c = Character.toLowerCase(cols[1].charAt(1));
-            if (!(c >= from && c <= to)) {
-                continue;
-            }*/
-
-            long yagoId = yagoIdToHash(cols[1]);
-            String factType = cols[2];
-            String factValue = cols[3];
-            java.sql.Date foundDate;
-            final Matcher matcher = pattern.matcher(factValue);
-            if (matcher.find()) {
-                try {
-                    foundDate = java.sql.Date.valueOf(matcher.group().replace("##", "01").replace("00", "01"));
-                } catch (java.lang.IllegalArgumentException e) {
-                    continue;
-                }
-                if ("<wasBornOnDate>".equals(factType)) {
-                    ensureYagoIdToYagoPerson(yagoId).setBornOnDate(foundDate);
-                } else if ("<diedOnDate>".equals(factType)) {
-                    ensureYagoIdToYagoPerson(yagoId).setDiedOnDate(foundDate);
-                }
-            }
-        }
-        br.close();
-    }
-
-    // handles yagoFacts
-    public void parseYagoLocationFile(File yagoLocationFile) throws IOException {
-        BufferedReader br = new BufferedReader(new FileReader(yagoLocationFile));
-        String line;
-        while ((line = br.readLine()) != null) {
-            String[] cols = line.trim().split("\\t");
-            if (cols.length < 4) {
-                continue;
-            }
-
-            long yagoId = yagoIdToHash(cols[1]);
-            String factType = cols[2];
-            String factValue = cols[3];
-            YagoPerson yagoPerson = personsMap.get(yagoId);
-            if ("<hasGender>".equals(factType) && yagoPerson != null) {
-                if ("<female>".equals(factValue)) {
-                    yagoPerson.setIsFemale(true);
-                }
-            } else if ("<wasBornIn>".equals(factType) && yagoPerson != null) {
-                yagoPerson.setBornInLocation(yagoIdToHash(factValue));
-            } else if ("<diedIn>".equals(factType) && yagoPerson != null) {
-                yagoPerson.setDiedInLocation(yagoIdToHash(factValue));
-            }
-        }
-        br.close();
-    }
-
-    // TODO: not sure about this.. removing while iterating
     private void validatePersonsMap() {
         for (Iterator<Entry<Long, YagoPerson>> it = personsMap.entrySet().iterator(); it.hasNext(); ) {
             Entry<Long, YagoPerson> entry = it.next();
@@ -188,6 +122,66 @@ public class YagoParser {
             locationsMap.put(geoId, yagoLocation);
         }
         return yagoLocation;
+    }
+
+    // handles yagoDateFacts
+    public void parseYagoDateFile(File yagoDateFile) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(yagoDateFile));
+        Pattern pattern = Pattern.compile(DATE_REGEX);
+
+        String line;
+        while ((line = br.readLine()) != null) {
+            String[] cols = line.trim().split("\\t");
+            if (cols.length < 5) {
+                continue;
+            }
+
+            long yagoId = yagoIdToHash(cols[1]);
+            String factType = cols[2];
+            String factValue = cols[3];
+            java.sql.Date foundDate;
+            final Matcher matcher = pattern.matcher(factValue);
+            if (matcher.find()) {
+                try {
+                    foundDate = java.sql.Date.valueOf(matcher.group().replace("##", "01").replace("00", "01"));
+                } catch (java.lang.IllegalArgumentException e) {
+                    continue;
+                }
+                if ("<wasBornOnDate>".equals(factType)) {
+                    ensureYagoIdToYagoPerson(yagoId).setBornOnDate(foundDate);
+                } else if ("<diedOnDate>".equals(factType)) {
+                    ensureYagoIdToYagoPerson(yagoId).setDiedOnDate(foundDate);
+                }
+            }
+        }
+        br.close();
+    }
+
+    // handles yagoFacts
+    public void parseYagoLocationFile(File yagoLocationFile) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(yagoLocationFile));
+        String line;
+        while ((line = br.readLine()) != null) {
+            String[] cols = line.trim().split("\\t");
+            if (cols.length < 4) {
+                continue;
+            }
+
+            long yagoId = yagoIdToHash(cols[1]);
+            String factType = cols[2];
+            String factValue = cols[3];
+            YagoPerson yagoPerson = personsMap.get(yagoId);
+            if ("<hasGender>".equals(factType) && yagoPerson != null) {
+                if ("<female>".equals(factValue)) {
+                    yagoPerson.setIsFemale(true);
+                }
+            } else if ("<wasBornIn>".equals(factType) && yagoPerson != null) {
+                yagoPerson.setBornInLocation(yagoIdToHash(factValue));
+            } else if ("<diedIn>".equals(factType) && yagoPerson != null) {
+                yagoPerson.setDiedInLocation(yagoIdToHash(factValue));
+            }
+        }
+        br.close();
     }
 
     // handles yagoTransitiveType
@@ -314,15 +308,14 @@ public class YagoParser {
         br.close();
     }
 
-    public void parseFiles(char from, char to) throws IOException {
+    public void parseFiles() throws IOException {
         System.out.println("Parser started");
         /*if (!validateFiles()) {
             System.out.println("Terminating parser");
 //            throw new IOException("Bad input file");
         }*/
         System.out.print("Parsing YAGO dates..");
-
-        parseYagoDateFile(yagoDateFile, from, to);
+        parseYagoDateFile(yagoDateFile);
         System.out.println("   Done");
         System.out.println(personsMap.size());
         System.out.print("Parsing YAGO locations..");
@@ -361,10 +354,7 @@ public class YagoParser {
                 new File("/Users/admin/Downloads/yagoGeonamesEntityIds.tsv"),
                 new File("/Users/admin/Downloads/cities1000.txt"), "/Users/admin/Downloads/Test");
 
-        //yagoParser.parseFiles('a', 'e');
-        yagoParser.parseFiles('f', 'k');
-        //yagoParser.parseFiles('l', 'p');
-        //yagoParser.parseFiles('q', 'z');
+        yagoParser.parseFiles();
     }
 
     private boolean validateFiles() {
