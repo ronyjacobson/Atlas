@@ -208,15 +208,16 @@ public class MapBrowserListeners {
 						String favorites = ((String) map.getBrowser().evaluate("return getFavorites()"));
 						String removeFromFavorites = ((String) map.getBrowser().evaluate("return getRemoveFromFavorites()"));
 						List<String> favoritesList = Arrays.asList(favorites.split(","));
+						List<String> removeList = Arrays.asList(removeFromFavorites.split(","));
 						String msg;
 						try {
-							//TODO(rony): add remove list
-							Main.queries.storeFavoriteIDs(favoritesList);
+							// TODO(rony): add remove list
+							Main.queries.storeFavoriteIDs(favoritesList, removeList);
 							String favList = "[" + favorites + "]";
 							map.getBrowser().execute("updateFavorites("+ favList +");");
 							msg = "Favorites synced to database successfully.";
 						} catch (AtlasServerException e) {
-							msg = "Favorites failed to synced to database.";
+							msg = "Favorites failed to sync to database.";
 						}
 						map.getBrowser().execute("error(\"" + msg + "\");");
 					} else {

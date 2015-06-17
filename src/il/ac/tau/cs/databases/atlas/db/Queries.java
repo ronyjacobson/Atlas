@@ -91,10 +91,11 @@ public interface Queries {
 	/**
 	 * Store all the chosen favorite IDs to the database
 	 * @param favoritesList
+	 * @param removeFromFavorites 
 	 * @return True if the favorites were stored successfully
 	 * @throws AtlasServerException 
 	 */
-	public void storeFavoriteIDs(List<String> favoritesList) throws AtlasServerException;
+	public void storeFavoriteIDs(List<String> favoritesList, List<String> removeFromFavorites) throws AtlasServerException;
 	
 	/**
 	 * TODO

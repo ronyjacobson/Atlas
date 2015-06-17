@@ -166,7 +166,7 @@ public class SearchResultsByNameQuery extends BaseDBCommand<ArrayList<Result>> {
 			
 			String favsWhere = basicWhere + withFavoritesWhere;
 			String userAddedWhere = basicWhere + withUserAddedWhere;
-			String limit = "LIMIT " + this.limitNumOfResults;
+			String limit = "ORDER BY RAND() LIMIT " + this.limitNumOfResults;
 		
 			if (isUserOriented) {
 				String q1 = select + from + withFavsFrom + favsWhere + limit;

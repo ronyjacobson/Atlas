@@ -31,6 +31,7 @@ public class Main {
 			// TODO - read from properties file
 			DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06", "127.0.0.1", "3306", "dbmysql06");
 			State.autoLoad();
+			//TODO(etan) - server exception
 		} catch (Exception e) {
 			// Throw exception to main screen
 			throw e;

@@ -193,10 +193,10 @@ public class DBQueries implements Queries {
 	 * @throws AtlasServerException
 	 */
 	@Override
-	public void storeFavoriteIDs(List<String> favoritesList)
+	public void storeFavoriteIDs(List<String> favoritesList, List<String> removeFromFavorits)
 			throws AtlasServerException {
 		// Initialize DB query
-		UpdateFavoritesQuery query = new UpdateFavoritesQuery(favoritesList);
+		UpdateFavoritesQuery query = new UpdateFavoritesQuery(favoritesList, removeFromFavorits);
 		System.out.println("Updating favorites...");
 
 		// Execute query

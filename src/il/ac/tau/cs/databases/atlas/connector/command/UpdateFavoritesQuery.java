@@ -16,20 +16,21 @@ import java.util.List;
  */
 public class UpdateFavoritesQuery extends BaseDBCommand<Void> {
 	List<String> favoritesList;
+	List<String> removeFromFavoritesList;
 
-
-	public UpdateFavoritesQuery(List<String> favoritesList) {
+	public UpdateFavoritesQuery(List<String> favoritesList, List<String> removeFromFavorits) {
 		this.favoritesList= favoritesList;
 	}
 
 	@Override
 	protected Void innerExecute(Connection con) throws AtlasServerException {
-		PreparedStatement statement = null;
+		PreparedStatement addStmt = null;
+		PreparedStatement removeStmt = null;
 		ResultSet resultSet = null;
 		try {
-			
+			// Generate add to favorites stmt
             con.setAutoCommit(false);
-            statement = con.prepareStatement(String.format("INSERT IGNORE INTO %s (%s, %s) VALUES (?,?)",
+            addStmt = con.prepareStatement(String.format("INSERT IGNORE INTO %s (%s, %s) VALUES (?,?)",
             		DBConstants.UserFavorites.TABLE_NAME,
             		DBConstants.PERSON_ID_L,
             		DBConstants.USER_ID_L));
@@ -38,21 +39,40 @@ public class UpdateFavoritesQuery extends BaseDBCommand<Void> {
             	if (fav == null) {
             		continue;
             	}
-            	statement.setInt(1, Integer.parseInt(fav));
-                statement.setInt(2, Main.user.getUserID());
-                statement.addBatch();
+            	addStmt.setInt(1, Integer.parseInt(fav));
+                addStmt.setInt(2, Main.user.getUserID());
+                addStmt.addBatch();
             }
+            System.out.println(String.format("Executing DB query:\n %s.",
+					addStmt.toString()));
+            addStmt.executeBatch();
             
-            System.out.println(String.format("Executing DB query: %s.",
-					statement.toString()));
-            statement.executeBatch();
+            // Generate remove from favorites stmt
+            removeStmt = con.prepareStatement(String.format(
+            		"DELETE FROM %s WHERE %s=? AND %s=?",
+            		DBConstants.UserFavorites.TABLE_NAME,
+            		DBConstants.PERSON_ID_L,
+            		DBConstants.USER_ID_L));
+             
+            for (String rmFav : removeFromFavoritesList) {
+            	if (rmFav == null) {
+            		continue;
+            	}
+            	removeStmt.setInt(1, Integer.parseInt(rmFav));
+            	removeStmt.setInt(2, Main.user.getUserID());
+            	removeStmt.addBatch();
+            }
+            System.out.println(String.format("Executing DB query:\n %s.",
+            		removeStmt.toString()));
+            removeStmt.executeBatch();
+            
             con.commit();
 			
 		} catch (SQLException e) {
 				e.printStackTrace();
 				throw new AtlasServerException(e.getMessage());
 		} finally {
-			safelyClose(statement, resultSet);
+			safelyClose(addStmt, resultSet);
 		}
 		System.out.println("Query executed properly.");
 		return null;
