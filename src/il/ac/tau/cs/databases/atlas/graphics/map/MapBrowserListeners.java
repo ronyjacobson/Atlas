@@ -12,6 +12,7 @@ import java.awt.event.AdjustmentListener;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.JComboBox;
 import javax.swing.JScrollBar;
@@ -98,7 +99,7 @@ public class MapBrowserListeners {
 						String category = categoriesComboBox.getSelectedItem().toString();
 						// Check category
 						if (category.equals(Map.DEFAULT_CATEGORY)) {
-							map.getBrowser().execute("error(\"" + "Please select a category." + "\");");
+							map.getBrowser().execute("notify(\"" + "Please select a category." + "\");");
 						} else if (category.equals(Map.FAVORITES_CATEGORY)){
 							try {
 								showResultsOnMap(Main.queries.getFavorites());
@@ -124,11 +125,16 @@ public class MapBrowserListeners {
 		
 		map.getBrowser().execute("deleteMarkers();");
 		if (results.isEmpty()) {
-			map.getBrowser().execute("alert(\"No Results Found!\");");
+			map.getBrowser().execute("notFound();");
 		} else {
 			for (Result result : results) {
-				double lat = result.getLocation().getLat();
-				double lng = result.getLocation().getLng();
+				// random offset so that pins wont hover each other
+				double r1 = new Random().nextInt(200)-100;
+				r1 = r1/1000;
+				double r2 = new Random().nextInt(200)-100;
+				r2 = r1/1000;
+				double lat = result.getLocation().getLat() + r1;
+				double lng = result.getLocation().getLng() + r2;
 				String imageIcon = "flag-";
 				if (result.isBirth()) {
 					imageIcon += "birth";
@@ -136,8 +142,6 @@ public class MapBrowserListeners {
 					// won't be in the exact mark on the map
 				} else {
 					imageIcon += "death";
-					// TODO can offset the coordinates a little so results in the same place
-					// won't be in the exact mark on the map
 				}
 				if (!result.getCategory().equalsIgnoreCase("")){
 					// Check for existing category flag
@@ -181,14 +185,17 @@ public class MapBrowserListeners {
 		public void actionPerformed(ActionEvent e) {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
+					String color = "<span style=\"color:#F8BB86\">";
+					String end = "</span>";
+					
 					if (map != null) {
-						String msg = " Showing "
-								+ Main.queries.getAmountOfLatestResults() + " results:\\n\\n " + 
-								Main.queries.getBirthsOfLatestResults() + " Births\\n "+ 
-								(Main.queries.getAmountOfLatestResults() - Main.queries.getStatsOfLatestResults()) + " Deaths\\n "+ 
-								Main.queries.getStatsOfLatestResults() + " Females\\n "+ 
-								(Main.queries.getAmountOfLatestResults() - Main.queries.getStatsOfLatestResults()) + " Males";
-						map.getBrowser().execute("error(\"" + msg + "\");");
+						String msg = " Showing " +
+								Main.queries.getAmountOfLatestResults() + " results:<br>" + 
+								Main.queries.getBirthsOfLatestResults()+  " Births<br>"+ 
+								(Main.queries.getAmountOfLatestResults() - Main.queries.getBirthsOfLatestResults())+ " Deaths<br>"+ 
+								Main.queries.getStatsOfLatestResults() + " Females<br>"+ 
+								(Main.queries.getAmountOfLatestResults() - Main.queries.getStatsOfLatestResults())+ " Males";
+						map.getBrowser().execute("showStats(\"" + msg + "\");");
 					} else {
 						// TODO Show message?
 					}
@@ -214,12 +221,12 @@ public class MapBrowserListeners {
 						try {
 							Main.queries.storeFavoriteIDs(favoritesList, removeList);
 							String favList = "[" + favorites + "]";
-							map.getBrowser().execute("updateFavorites("+ favList +");");
-							msg = "Favorites synced to database successfully.";
+							map.getBrowser().execute("updateFavorites("+ favList +");");							
 						} catch (AtlasServerException e) {
 							msg = "Favorites failed to sync to database.";
+							map.getBrowser().execute("error(\"" + msg + "\");");
 						}
-						map.getBrowser().execute("error(\"" + msg + "\");");
+						
 					} else {
 						// TODO Show message?
 					}

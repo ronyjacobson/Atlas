@@ -144,6 +144,7 @@ public class Map extends JFrame {
 		if (map.initialize()) {
 			// Navigate to the following URL
 			String mapURL = GrapicUtils.RESOURCES_MAP_FOLDER + "map.html";
+			
 			// Create a temporary map HTML file in the file system
 			InputStream in  =  Map.class.getResourceAsStream(mapURL);
 			File temp = File.createTempFile("mapAtlas", ".html");

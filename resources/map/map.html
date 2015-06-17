@@ -9,11 +9,15 @@
       html { height: 100% }
       body { height: 100%; margin: 0; padding: 0 }
       #map-canvas { height: 100% }
+      
     </style>
 
     <script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB7J1zsErb9_7jxNu5KU5kIENFObAQEbl0&sensor=false">
     </script>
+	<script src="http://t4t5.github.io/sweetalert/dist/sweetalert.min.js"></script> 
+
+	<link rel="stylesheet" type="text/css" href="http://t4t5.github.io/sweetalert/dist/sweetalert.css">
 
     <script type="text/javascript">
 	
@@ -26,9 +30,16 @@
       var infowindow;
       var timespanControlText;
 
+
+
       <!-- Error a custom message to the screen -->
       function error(msg) {
-	alert(msg);
+		swal("Error", msg, "warning");
+      }
+
+      <!-- Put custom message to the screen -->
+      function notify(msg) {
+		swal(msg);
       }
 
       <!-- Add a location marker to the map -->
@@ -114,13 +125,13 @@
                   	// This result was previously asked to be removed
                   	removeFromFavorites.splice(j, 1);
                   }
-                  alert("This person will be added to your favorites after you sync.");
+                  swal("Added To Favorties!", "This person will be added to your favorites after you sync.", "success");
             } else {
                   // This result is in favorites - REMOVE
                   element.querySelector('img').setAttribute("src","addfavorite.png");
                   favorites.splice(i, 1);
                   removeFromFavorites.push(resultid);
-                  alert("This person will be removed from your favorites after you sync.");
+                  swal("Removed From Favorites!", "This person will be removed from your favorites after you sync.", "error");
             }
       }
 
@@ -164,7 +175,27 @@
       function updateFavorites(favList) {
             favorites= favList;
             removeFromFavorites= [];
+            swal({title: "Sweet!",
+            	text: "Your favorites where synced to the database.",
+            	imageUrl: "https://30c858d169cf8921149a47e0fc664832bc912237.googledrive.com/host/0B-p0x7WmifiKfnN1VHlOLWhqeFRSenFUaWFEZWZsejU1RWtwTnZYWmMtSEVVVGVxcmdJSFU/example/images/thumbs-up.jpg" });
       }
+
+      <!-- Delete the all markers on the map and in memory -->
+      function notFound(favList) {
+            favorites= favList;
+            removeFromFavorites= [];
+            swal({title: "Oh well...", text: "Your query came back empty handed\nTry another?", imageUrl: "http://practicallyinspired.com/images/thumb-noitemsfound.png" });
+      }
+
+      
+
+ 	<!-- Show statistics of last query -->
+	function showStats(msg) {
+	  swal({
+	  	title: "<small>This is what you got:</small>",   
+	  	text: msg,   
+	  	html: true });
+  	}
 
       <!-- Define the center button -->
       function CenterControl(controlDiv, map) {
@@ -302,6 +333,8 @@
       <!-- Main -->
       // Load the map
       google.maps.event.addDomListener(window, 'load', initialize);
+
+
 
     </script>
 

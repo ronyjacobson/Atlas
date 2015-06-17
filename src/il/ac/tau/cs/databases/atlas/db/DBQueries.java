@@ -127,7 +127,7 @@ public class DBQueries implements Queries {
 	public int getStatsOfLatestResults() {
 		return amountOfFemaleResults;
 	}
-	
+
 	/**
 	 * @return The male/females statistics of the results found in the last
 	 *         results query
@@ -144,8 +144,8 @@ public class DBQueries implements Queries {
 		} else {
 			return null;
 		}
-	}	
-	
+	}
+
 	/**
 	 * @return true if the current user should be added to results set
 	 */
@@ -161,7 +161,8 @@ public class DBQueries implements Queries {
 		if (year >= startYear && year <= endYear) {
 			Location l = user.getLocation();
 			result = new Result(null, user.getUsername(), l,
-					user.getDateOfBirth(), true, "favorites", "This is you!", null);
+					user.getDateOfBirth(), true, "favorites", "This is you!",
+					null);
 		}
 		return result;
 	}
@@ -181,7 +182,7 @@ public class DBQueries implements Queries {
 		amountOfLatestResults = results.size();
 		return results;
 	}
-	
+
 	/**
 	 * @return A list of all the favorite id's in the database
 	 * @throws AtlasServerException
@@ -196,10 +197,12 @@ public class DBQueries implements Queries {
 				ids.add(id);
 			}
 		}
-		return ids;		
+		amountOfFemaleResults = 0;
+		amountOfBirthResults = 0;
+		amountOfLatestResults = 0;
+		return ids;
 	}
-	
-	
+
 	/**
 	 * Store all the chosen favorite IDs to the database
 	 * 
@@ -207,10 +210,11 @@ public class DBQueries implements Queries {
 	 * @throws AtlasServerException
 	 */
 	@Override
-	public void storeFavoriteIDs(List<String> favoritesList, List<String> removeFromFavorits)
-			throws AtlasServerException {
+	public void storeFavoriteIDs(List<String> favoritesList,
+			List<String> removeFromFavorits) throws AtlasServerException {
 		// Initialize DB query
-		UpdateFavoritesQuery query = new UpdateFavoritesQuery(favoritesList, removeFromFavorits);
+		UpdateFavoritesQuery query = new UpdateFavoritesQuery(favoritesList,
+				removeFromFavorits);
 		System.out.println("Updating favorites...");
 
 		// Execute query
@@ -252,21 +256,23 @@ public class DBQueries implements Queries {
 	}
 
 	/**
-	 * @return The start year of the latest search results fetched from the database 
+	 * @return The start year of the latest search results fetched from the
+	 *         database
 	 */
 	@Override
 	public int getLatestResultsStartTimeLine() {
 		return minYear;
 	}
-	
+
 	/**
-	 * @return The end year of the latest search results fetched from the database 
+	 * @return The end year of the latest search results fetched from the
+	 *         database
 	 */
 	@Override
 	public int getLatestResultsEndTimeLine() {
 		return maxYear;
 	}
-	
+
 	/**
 	 * @return A list of results of all the matching entries in the database
 	 * @throws AtlasServerException
@@ -278,13 +284,12 @@ public class DBQueries implements Queries {
 		amountOfFemaleResults = 0;
 		amountOfBirthResults = 0;
 		System.out.println("Fetching results by dates...");
-		SearchResultsByDatesQuery query = new SearchResultsByDatesQuery(sdate, edate);
+		SearchResultsByDatesQuery query = new SearchResultsByDatesQuery(sdate,
+				edate);
 		results.addAll(query.execute());
 		amountOfLatestResults = results.size();
 		return results;
 	}
-	
-
 
 	@Override
 	public List<Result> getResults(String name) throws AtlasServerException {
@@ -301,8 +306,6 @@ public class DBQueries implements Queries {
 		amountOfLatestResults = results.size();
 		return results;
 	}
-	
-
 
 	/**
 	 * @return A list of results of all the matching entries in the database
@@ -315,16 +318,11 @@ public class DBQueries implements Queries {
 		amountOfBirthResults = 0;
 		System.out.println("Fetching results by category and years...");
 		List<Result> results = new ArrayList<Result>();
-		GetResultsQuery query = new GetResultsQuery(startYear, endYear,	category);
+		GetResultsQuery query = new GetResultsQuery(startYear, endYear,
+				category);
 		results.addAll(query.execute());
 		amountOfLatestResults = results.size();
 		return results;
 	}
-
-	
-
-
-
-
 
 }
