@@ -5,7 +5,10 @@ import java.util.LinkedHashMap;
 public class TempTablesConstants {
     public static final LinkedHashMap<String, TempTableMetadata> tempFields = new LinkedHashMap<>();
 
+    public static final LinkedHashMap<String, String> tempLifetimeFields = new LinkedHashMap<>();
+
     static {
+        /*
         LinkedHashMap<String, String> tempCategoryFields = new LinkedHashMap<>();
         tempCategoryFields.put("yago_person_id", "varchar(200)");
         tempCategoryFields.put("category_name", "varchar(200)");
@@ -32,7 +35,6 @@ public class TempTablesConstants {
         TempTableMetadata tempGeoInfoMetadata = new TempTableMetadata(YagoParser.GEO_INFO_OUT_NAME, tempGeoInfoFields);
         tempFields.put("tempGeoInfoTable", tempGeoInfoMetadata);
 
-        /*
         LinkedHashMap<String, String> tempBornInFields = new LinkedHashMap<>();
         tempBornInFields.put("yago_person_id", "varchar(200)");
         tempBornInFields.put("wasBornInLocation", "varchar(200)");
@@ -57,7 +59,13 @@ public class TempTablesConstants {
         tempDiedOnFields.put("diedOnDate", "date");
         TempTableMetadata tempDiedOnMetadata = new TempTableMetadata(YagoParser.DATE_DIED_ON_DATE_OUT_NAME, tempDiedOnFields);
         tempFields.put("tempDiedOnTable", tempDiedOnMetadata);
-*/
+
+        tempLifetimeFields.put("yago_person_id", "bigint(8)");
+        tempLifetimeFields.put("bornOnDate", "date");
+        tempLifetimeFields.put("diedOnDate", "date");
+        tempLifetimeFields.put("bornIn", "bigint(8)");
+        tempLifetimeFields.put("diedIn", "bigint(8)");
+
         LinkedHashMap<String, String> tempGenderFields = new LinkedHashMap<>();
         tempGenderFields.put("yago_person_id", "varchar(200)");
         tempGenderFields.put("is_female", "bool");
@@ -75,6 +83,8 @@ public class TempTablesConstants {
         tempPrefLabelsFields.put("pref_label", "varchar(200)");
         TempTableMetadata tempPrefLabelsMetadata = new TempTableMetadata(YagoParser.PREF_LABELS_INFO_OUT_NAME, tempPrefLabelsFields);
         tempFields.put("tempPrefLabelsTable", tempPrefLabelsMetadata);
+
+        */
     }
 
 }

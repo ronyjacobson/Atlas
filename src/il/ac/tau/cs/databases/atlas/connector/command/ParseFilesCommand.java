@@ -1,18 +1,18 @@
 package il.ac.tau.cs.databases.atlas.connector.command;
 
-import il.ac.tau.cs.databases.atlas.State;
-import il.ac.tau.cs.databases.atlas.connector.ConnectionPool;
 import il.ac.tau.cs.databases.atlas.connector.DynamicConnectionPool;
 import il.ac.tau.cs.databases.atlas.connector.command.base.BaseDBCommand;
-import il.ac.tau.cs.databases.atlas.db.TempTableMetadata;
 import il.ac.tau.cs.databases.atlas.db.TempTablesConstants;
 import il.ac.tau.cs.databases.atlas.db.YagoParser;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
-import il.ac.tau.cs.databases.atlas.parsing.PersonLifetime;
+import il.ac.tau.cs.databases.atlas.parsing.YagoLocation;
+import il.ac.tau.cs.databases.atlas.parsing.YagoPerson;
 
 import java.io.*;
 import java.sql.*;
+import java.sql.Date;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,18 +50,21 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
     protected Boolean innerExecute(Connection con) throws AtlasServerException {
         // GUI should check if files exist
 
-        /*
+
         try {
-            yagoParser.parseFiles();
+            //yagoParser.parseFiles('a', 'e');
+            yagoParser.parseFiles('f', 'k');
+            //yagoParser.parseFiles('l', 'p');
+            //yagoParser.parseFiles('q', 'z');
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
 
         //progress.getAndIncrement(); // Increment progress for progress bar
 
         // parse yago datafile into temp tsv
 
-        //createTempTables(con);
+        // createTempTables(con);
         // create empty temp table
 
         // create final tables if not exists
@@ -72,14 +75,14 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
 
         //progress.getAndIncrement();
 
-
+        createLocationsTable(con);
+        int addedByUser = addYagoUser(con);
         // Insert data table to DB
         /*
         createCategoriesTable(con);
-        createLocationTable(con);
-        int addedByUser = addYagoUser(con);
+
         */
-        //createPersonTable(con, 8);
+        createPersonTable(con, addedByUser);
         //createPersonHasCategory(con);
         //createPersonLabelsTable(con);
 
@@ -154,21 +157,48 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
         }
     }
 
-    private void createTempPersonLifetimeTable(Connection con) throws AtlasServerException {
-        // TODO: create this table
-        Map<Long, PersonLifetime> personsMap = yagoParser.getPersonsMap();
+    private void createTempLifetimeTable(Connection con) throws AtlasServerException {
+        Map<Long, YagoPerson> personsMap = yagoParser.getPersonsMap();
         try (PreparedStatement pstmt = con
-                .prepareStatement("INSERT INTO lifetime" + timestamp + " (yago_id,bornOnDate, diedOnDate, bornIn, diedIn) VALUES(?,?,?,?,?)")) {
-            for (String yagoId : personsMap.keySet()) {
-                PersonLifetime personLifetime = personsMap.get(yagoId);
-                pstmt.setString(1, yagoId);
-                pstmt.setDate(2, personLifetime.getBornOnDate());
-                pstmt.setDate(3, personLifetime.getDiedOnDate());
-                pstmt.setLong(4, personLifetime.getBornInLocation());
-                pstmt.setLong(5, personLifetime.getDiedInLocation());
+                .prepareStatement("INSERT INTO tempLifetimeTable" + timestamp + " (yago_person_id, bornOnDate, diedOnDate, bornIn, diedIn) VALUES(?,?,?,?,?)")) {
+            int i = 0;
+            for (long yagoId : personsMap.keySet()) {
+                YagoPerson yagoPerson = personsMap.get(yagoId);
+                Long bornInLocation = yagoPerson.getBornInLocation();
+                Long diedInLocation = yagoPerson.getDiedInLocation();
+                java.sql.Date bornOnDate = yagoPerson.getBornOnDate();
+                java.sql.Date diedOnDate = yagoPerson.getDiedOnDate();
+
+                if (bornInLocation == null || bornOnDate == null) {
+                    continue;
+                }
+
+                pstmt.setLong(1, yagoId);
+
+                pstmt.setDate(2, bornOnDate);
+
+                if (diedOnDate == null) {
+                    pstmt.setNull(3, java.sql.Types.DATE);
+                } else {
+                    pstmt.setDate(3, diedOnDate);
+                }
+
+                pstmt.setLong(4, bornInLocation);
+
+                if (diedInLocation == null) {
+                    pstmt.setNull(5, java.sql.Types.BIGINT);
+                } else {
+                    pstmt.setLong(5, diedInLocation);
+                }
+
                 pstmt.addBatch();
+
+                if (++i % 10000 == 0) {
+                    System.out.println("record #" + i);
+                }
             }
             pstmt.executeBatch();
+            pstmt.clearBatch();
         } catch (SQLException e) {
             e.printStackTrace();
             throw new AtlasServerException("Failed to insert into 'lifetime' temp table");
@@ -176,6 +206,50 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
     }
 
     private void createPersonTable(Connection con, int addedByUser) throws AtlasServerException {
+        try (PreparedStatement pstmt = con
+                .prepareStatement("INSERT INTO person(wikiURL, diedOnDate, wasBornOnDate, addedByUser, wasBornInLocation, diedInLocation, isFemale, yago_ID, prefLabel) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+            for (YagoPerson yagoPerson : yagoParser.getPersonsMap().values()) {
+                String wikiUrl = yagoPerson.getWikiUrl();
+                if (wikiUrl == null) {
+                    pstmt.setNull(1, java.sql.Types.VARCHAR);
+                } else {
+                    pstmt.setString(1, wikiUrl);
+                }
+
+                Date diedOnDate = yagoPerson.getDiedOnDate();
+                if (diedOnDate == null) {
+                    pstmt.setNull(2, java.sql.Types.DATE);
+                } else {
+                    pstmt.setDate(2, diedOnDate);
+                }
+
+                pstmt.setDate(3, yagoPerson.getBornOnDate());
+
+                pstmt.setInt(4, addedByUser);
+
+                pstmt.setLong(5, yagoPerson.getBornInLocation());
+
+                Long diedInLocation = yagoPerson.getDiedInLocation();
+                if (diedInLocation == null) {
+                    pstmt.setNull(6, java.sql.Types.BIGINT);
+                } else {
+                    pstmt.setLong(6, diedInLocation);
+                }
+
+                pstmt.setBoolean(7, yagoPerson.isFemale());
+                pstmt.setLong(8, yagoPerson.getYagoId());
+                pstmt.setString(9, yagoPerson.getPrefLabel());
+
+                pstmt.addBatch();
+            }
+            pstmt.executeBatch();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new AtlasServerException("Failed to create 'person' table");
+        }
+    }
+
+    private void createPersonTableOld(Connection con, int addedByUser) throws AtlasServerException {
         StringBuilder sb = new StringBuilder();
         sb.append("REPLACE person SELECT");
         sb.append(" gender_t.person_ID,");
@@ -217,11 +291,12 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
         int newUserId;
         ResultSet rs = null;
         try (PreparedStatement pstmt = con
-                .prepareStatement("INSERT INTO user(username, password, wasBornInLocation) VALUES (?, ?, ?)",
+                .prepareStatement("INSERT IGNORE INTO user(username, password, wasBornInLocation) VALUES (?, ?, ?)",
                         Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, "YAGO");
             pstmt.setString(2, "yagohasnopassword");
-            pstmt.setInt(3, 293397); // Tel Aviv
+            long locationId = yagoParser.getLocationsMap().entrySet().iterator().next().getValue().getLocationId();
+            pstmt.setLong(3, locationId);
             pstmt.executeUpdate();
             rs = pstmt.getGeneratedKeys();
             rs.next();
@@ -251,13 +326,38 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
         }
     }
 
+    private void createLocationsTable(Connection con) throws AtlasServerException {
+        try (PreparedStatement pstmt = con
+                .prepareStatement("INSERT INTO location(geo_name, latitude, longitude, wikiURL, location_ID) VALUES (?, ?, ?, ?, ?)")) {
+            for (YagoLocation yagoLocation : yagoParser.getLocationsMap().values()) {
+                pstmt.setString(1, yagoLocation.getName());
+                pstmt.setDouble(2, yagoLocation.getLatitude());
+                pstmt.setDouble(3, yagoLocation.getLongitude());
+                pstmt.setString(4, yagoLocation.getWikiUrl());
+                pstmt.setLong(5, yagoLocation.getLocationId());
+                pstmt.addBatch();
+            }
+            pstmt.executeBatch();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new AtlasServerException("Failed to create 'location' table");
+        }
+    }
+
     private void createTempTables(Connection con) throws AtlasServerException {
+        /*
         LinkedHashMap<String, TempTableMetadata> tempFields = TempTablesConstants.tempFields;
         for (String tableName : tempFields.keySet()) {
             TempTableMetadata tempTableMetadata = tempFields.get(tableName);
             createEmptyTempTable(con, tableName + timestamp, tempTableMetadata.getFields());
             loadDataIntoTempTable(con, tableName + timestamp, concatToOutPath(tempTableMetadata.getDataFilePath()));
-        }
+        }*/ // TODO: uncomment
+
+        // create empty tempLifetimeTable
+        LinkedHashMap<String, String> tempLifetimeFields = TempTablesConstants.tempLifetimeFields;
+        createEmptyTempTable(con, "tempLifetimeTable" + timestamp, tempLifetimeFields);
+        // populate it
+        createTempLifetimeTable(con);
     }
 
     private void loadDataIntoTempTable(Connection con, String tableName, String dataFilePath) throws AtlasServerException {
@@ -265,7 +365,7 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
         StringBuilder sb = new StringBuilder();
         sb.append("LOAD DATA LOCAL INFILE '" + dataFilePath + "'IGNORE INTO TABLE " + tableName + " FIELDS TERMINATED BY '\\t'");
         try (Statement stmt = con.createStatement()) {
-            System.out.println("actual CMD is: " + sb.toString());
+            System.out.println("Actual CMD is: " + sb.toString());
             stmt.execute(sb.toString());
         } catch (SQLException e) {
             e.printStackTrace();
@@ -274,7 +374,7 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
     }
 
     private void createEmptyTempTable(Connection con, String tableName, LinkedHashMap<String, String> fields) throws AtlasServerException {
-        System.out.println("creating empty temp table " + tableName);
+        System.out.println("Creating empty temp table " + tableName);
         StringBuilder sb = new StringBuilder();
         sb.append("CREATE TABLE IF NOT EXISTS " + tableName);
         sb.append(schemaToString(fields));
