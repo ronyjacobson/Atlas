@@ -21,103 +21,124 @@ import java.util.HashMap;
  */
 public class SearchResultsByNameQuery extends BaseDBCommand<ArrayList<Result>> {
 	private String name;
-	private boolean isBirth;
-	private int limitNumOfResults = 100;
 	private int maxYear = -20000;
 	private int minYear= 20000;
+	
+	private int limitNumOfResults = DBConstants.LIMIT;
+	HashMap<String, Result> results = new HashMap<String, Result>();
+	PreparedStatement statement = null;
+	ResultSet resultSet = null;
 
-	public SearchResultsByNameQuery(String name, boolean isBirth) {
+	public SearchResultsByNameQuery(String name) {
 		this.name = name;
-		this.isBirth = isBirth;
 	}
 
 	@Override
 	protected ArrayList<Result> innerExecute(Connection con) throws AtlasServerException {
-		
-		PreparedStatement statement = null;
-		ResultSet resultSet = null;
-		HashMap<String, Result> results = new HashMap<String, Result>();
+		ArrayList<Result> finalResults = new ArrayList<Result>();
 
 		try {
-			
-			//Make Statement
-			String st = String.format("%s\nUNION ALL\n(%s)",
-					// Get user oriented results
-					makeStatment(true),
-					// Get all results
-					makeStatment(false));
-			
-			st = "SELECT DISTINCT * FROM ("+st+") AS results";
-			statement = con.prepareStatement(st);
-			
-			System.out.println(String.format("Executing DB query: %s.",
-					statement.toString()));
-			
-			//Execute:
-			resultSet = statement.executeQuery();
-
-			while (resultSet.next()) {
-				
-				// Create fetched Result
-				int personID = resultSet.getInt(DBConstants.PERSON_ID_L);
-				String name = resultSet.getString(DBConstants.PREF_LABEL_L);
-				String geoname = resultSet.getString(DBConstants.GEO_NAME_L); 
-				java.util.Date bornOn = resultSet.getDate(DBConstants.BORN_ON_DATE_L); 
-				java.util.Date diedOn =resultSet.getDate(DBConstants.DIED_ON_DATE_L);
-				String locUrl= resultSet.getString("LocURL");
-				String personUrl = resultSet.getString("PersonURL");
-				String category = resultSet.getString(DBConstants.CATEGORY_NAME_L);
-				double lng = resultSet.getDouble(DBConstants.LONG_L);
-				double lat = resultSet.getDouble(DBConstants.LAT_L);
-				boolean isFemale = resultSet.getBoolean(DBConstants.IS_FEMALE_L);
-				
-				if (isFemale) {
-					DBQueries.amountOfFemaleResults ++;
-				}
-				
-				Location location = new Location(0, geoname, lat, lng, locUrl);
-				java.util.Date date = (isBirth ? bornOn : diedOn);
-				
-				// Adjust Max year/Min Year to set in timeline
-				if (date != null) {
-					Calendar cal = Calendar.getInstance();
-					cal.setTime(date);
-					int year = cal.get(Calendar.YEAR);
-					if (year < minYear) {
-						minYear = year;
-					}
-					if (year > maxYear) {
-						maxYear = year;
-					}
-				}
-				
-				Result res = new Result(String.valueOf(personID), name, location, date, isBirth, category, personUrl, isFemale, category);
-				
-				// If this person has more then one category, add it.
-				if (results.containsKey(res.getID())) {
-					res= results.get(res.getID());
-					res.setSummary(category + ", " + res.getSummary());
-				} else {
-					results.put(res.getID(), res);
-				}
-			}
-
+			innerExecuteByBirths(con, true);
+			innerExecuteByBirths(con, false);
+			finalResults.addAll(results.values());
 		} catch (SQLException e) {
-			// TODO - handle Exception??
 			e.printStackTrace();
+			throw new AtlasServerException("Error: unable to fetch favorites");
 		} finally {
 			safelyClose(statement, resultSet);
 		}
-
-		System.out.println(String.format("Query executed properly.",
-				statement.toString()));
 		
-		ArrayList<Result> finalResults = new ArrayList<Result>(results.values());
 		return finalResults;
+	}
+
+
+	private void innerExecuteByBirths(Connection con, boolean isBirth) throws SQLException {
+		String hashIDPref;
+		
+		if (isBirth) {
+			System.out.println("Fetching births by name...");
+			hashIDPref = "birth";
+		} else {
+			System.out.println("Fetching deaths by name...");
+			hashIDPref = "death";
+		}
+		
+		// Make Statement
+		String st = String.format("%s\nUNION ALL\n(%s)",
+		// Get user oriented results
+				makeStatment(true, isBirth),
+				// Get all results
+				makeStatment(false, isBirth));
+
+		st = "SELECT DISTINCT * FROM (" + st + ") AS results";
+		statement = con.prepareStatement(st);
+
+		System.out.println(String.format("Executing DB query: %s.",
+				statement.toString()));
+
+		// Execute:
+		resultSet = statement.executeQuery();
+
+		while (resultSet.next()) {
+
+			// Create fetched Result
+			int personID = resultSet.getInt(DBConstants.PERSON_ID_L);
+			String name = resultSet.getString(DBConstants.PREF_LABEL_L);
+			String geoname = resultSet.getString(DBConstants.GEO_NAME_L);
+			java.util.Date bornOn = resultSet
+					.getDate(DBConstants.BORN_ON_DATE_L);
+			java.util.Date diedOn = resultSet
+					.getDate(DBConstants.DIED_ON_DATE_L);
+			String locUrl = resultSet.getString("LocURL");
+			String personUrl = resultSet.getString("PersonURL");
+			String category = resultSet.getString(DBConstants.CATEGORY_NAME_L);
+			double lng = resultSet.getDouble(DBConstants.LONG_L);
+			double lat = resultSet.getDouble(DBConstants.LAT_L);
+			boolean isFemale = resultSet.getBoolean(DBConstants.IS_FEMALE_L);
+			Location location = new Location(0, geoname, lat, lng, locUrl);
+			java.util.Date date = (isBirth ? bornOn : diedOn);
+
+			// Adjust Max year/Min Year to set in timeline
+			if (date != null) {
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(date);
+				int year = cal.get(Calendar.YEAR);
+				if (year < minYear) {
+					minYear = year;
+				}
+				if (year > maxYear) {
+					maxYear = year;
+				}
+			}
+
+			Result res = new Result(String.valueOf(personID), name, location,
+					date, isBirth, category, personUrl, isFemale, category);
+			
+			String hashID = hashIDPref + res.getID();
+			
+			if (results.containsKey(hashID)) {
+				res = results.get(hashID);
+				res.setSummary(category + ", " + res.getSummary());
+			} else {
+				if (isFemale) {
+					DBQueries.amountOfFemaleResults++;
+				}
+				if (isBirth) {
+					DBQueries.amountOfBirthResults++;
+				}
+				results.put(hashID, res);
+			}
+		}
 	}
 	
 	
-	private String makeStatment(boolean isUserOriented) {
+	private String makeStatment(boolean isUserOriented, boolean isBirth) {
+		
+		String bornOrDiedDate = (isBirth ? DBConstants.Person.BORN_ON_DATE
+				: DBConstants.Person.DIED_ON_DATE);
+		String bornOrDiedLocation = (isBirth ? DBConstants.Person.BORN_IN_LOCATION
+				: DBConstants.Person.DIED_IN_LOCATION);
+
 		
 			String select = String.format(
 					"SELECT DISTINCT %s, %s, %s, %s, %s, %s as LocURL, %s as PersonURL, %s, %s, %s, %s \n",
@@ -150,7 +171,9 @@ public class SearchResultsByNameQuery extends BaseDBCommand<ArrayList<Result>> {
 			
 			String basicWhere =
 					"\n" +
-					"WHERE "+ DBConstants.Person.BORN_IN_LOCATION 	+" = " + DBConstants.Location.LOCATION_ID				 + " \n" +
+					"WHERE "+ bornOrDiedLocation				 	+" = " + DBConstants.Location.LOCATION_ID			 + " \n" +
+					"AND "  + bornOrDiedLocation 					+" <> 'NULL' \n"+ 
+					"AND "  + bornOrDiedDate						+" <> 'NULL' \n" +
 					"AND "  + DBConstants.Person.PERSON_ID			+" = " + DBConstants.PersonLabels.PERSON_ID			 + " \n" +
 					"AND "  + DBConstants.Person.PERSON_ID			+" = " + DBConstants.PersonHasCategory.PERSON_ID 	 + " \n" +
 					"AND "  + DBConstants.Category.CATEGORY_ID		+" = " + DBConstants.PersonHasCategory.CATEGORY_ID 	 + " \n" +

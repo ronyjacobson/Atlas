@@ -13,8 +13,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -127,13 +125,12 @@ public class GetFavoritesResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 				DBConstants.Category.TABLE_NAME,
 				DBConstants.PersonHasCategory.TABLE_NAME);
 
-		String where = "\n" + "WHERE " + bornOrDiedLocation + " <> 'NULL' \n"
-				+ "AND " + bornOrDiedDate + " <> 'NULL' \n" + "AND "
-				+ bornOrDiedLocation + " = " + DBConstants.Location.LOCATION_ID
-				+ " \n" + "AND " + DBConstants.Person.PERSON_ID + " = "
-				+ DBConstants.UserFavorites.PERSON_ID + " \n" + "AND "
-				+ DBConstants.UserFavorites.USER_ID + " = "
-				+ Main.user.getUserID() + " \n";
+		String where = "\n" + 
+				"WHERE " + bornOrDiedLocation + 			" <> 'NULL' \n"+ 
+				"AND " + bornOrDiedDate + 					" <> 'NULL' \n" +
+				"AND "	+ bornOrDiedLocation + 				" = " + DBConstants.Location.LOCATION_ID	+ " \n" + 
+				"AND " + DBConstants.Person.PERSON_ID + 	" = "+ DBConstants.UserFavorites.PERSON_ID + " \n" +
+				"AND "+ DBConstants.UserFavorites.USER_ID + " = "+ Main.user.getUserID() + " \n";
 
 		String limit = "limit " + this.limitNumOfResults;
 
