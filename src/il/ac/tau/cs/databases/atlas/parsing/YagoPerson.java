@@ -6,11 +6,12 @@ import java.util.Set;
 
 public class YagoPerson {
     private long yagoId;
+    private int personId;
     private Long bornInLocation;
     private Long diedInLocation;
     private java.sql.Date bornOnDate;
     private java.sql.Date diedOnDate;
-    private Set<String> categories;
+    private Set<Integer> categories;
     private String wikiUrl;
     private boolean isFemale;
     private String prefLabel;
@@ -83,12 +84,12 @@ public class YagoPerson {
         this.prefLabel = prefLabel;
     }
 
-    public Set<String> getCategories() {
+    public Set<Integer> getCategories() {
         return categories;
     }
 
-    public void addCategory(String category) {
-        this.categories.add(category);
+    public void addCategory(int categoryId) {
+        this.categories.add(categoryId);
     }
 
     public boolean isValidPerson() {
@@ -109,5 +110,13 @@ public class YagoPerson {
             prefLabel = label;
         }
         return (label == null);
+    }
+
+    public int getPersonId() {
+        return personId;
+    }
+
+    public void setPersonId(int personId) {
+        this.personId = personId;
     }
 }

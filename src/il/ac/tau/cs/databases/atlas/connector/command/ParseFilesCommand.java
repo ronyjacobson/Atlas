@@ -50,87 +50,40 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
     protected Boolean innerExecute(Connection con) throws AtlasServerException {
         // GUI should check if files exist
 
-
         try {
-            //yagoParser.parseFiles('a', 'e');
-            yagoParser.parseFiles('f', 'k');
-            //yagoParser.parseFiles('l', 'p');
-            //yagoParser.parseFiles('q', 'z');
+            yagoParser.parseFiles();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         //progress.getAndIncrement(); // Increment progress for progress bar
 
-        // parse yago datafile into temp tsv
 
         // createTempTables(con);
-        // create empty temp table
-
-        // create final tables if not exists
-
-        // combine temp tables into final tables (transaction?)
-
-        // create temporary table to connect yago places and geonames
 
         //progress.getAndIncrement();
 
         createLocationsTable(con);
-        int addedByUser = addYagoUser(con);
+        int addedByUser = addYagoUser(con); // TODO: should only happen in the initial setup
         // Insert data table to DB
-        /*
-        createCategoriesTable(con);
 
-        */
+        createCategoriesTable(con);
         createPersonTable(con, addedByUser);
-        //createPersonHasCategory(con);
-        //createPersonLabelsTable(con);
+        createPersonHasCategoryTable(con);
+        createPersonLabelsTable(con);
 
         return true;
     }
 
-    private void createPersonHasCategory(Connection con) throws AtlasServerException {
-        StringBuilder sb = new StringBuilder();
-        sb.append("REPLACE person_has_category SELECT");
-        sb.append(" person.person_ID,");
-        sb.append(" category.category_ID,");
-        sb.append(" FROM");
-        sb.append(" tempCategoryTable" + timestamp + " tc_t,");
-        sb.append(" category, person,");
-        sb.append(" WHERE");
-        sb.append(" category.categoryName = tc_t.category_name");
-        sb.append(" AND tc_t.yago_person_id = person.yago_ID");
-        try (Statement stmt = con.createStatement()) {
-            System.out.println("actual CMD is: " + sb.toString());
-            stmt.execute(sb.toString());
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new AtlasServerException("Failed to insert into 'person' table");
-        }
-    }
-
-    private void dropTable(Connection con, String yagoToGeoTableName) throws AtlasServerException {
-        Statement stmt = null;
-        try {
-            stmt = con.createStatement();
-            stmt.executeUpdate("DROP TABLE " + yagoToGeoTableName);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new AtlasServerException("Could not drop temp table");
-        } finally {
-            safelyClose(stmt);
-        }
-    }
-
     private void createCategoriesTable(Connection con) throws AtlasServerException {
+        logger.info("Creating 'categories' table");
         try (PreparedStatement pstmt = con
                 .prepareStatement("REPLACE INTO category(category_ID,categoryName) VALUES(?,?)")) {
             Pattern p = Pattern.compile(YagoParser.CATEGORY_REGEX);
-            int i = 0;
-            for (String categoryType : YagoParser.categoryTypes) {
-                Matcher m = p.matcher(categoryType);
+            for (Entry<String, Integer> categoryEntry : YagoParser.categoryTypes.entrySet()) {
+                Matcher m = p.matcher(categoryEntry.getKey());
                 if (m.find()) {
-                    pstmt.setInt(1, i++);
+                    pstmt.setInt(1, categoryEntry.getValue());
                     pstmt.setString(2, m.group(1));
                     pstmt.addBatch();
                 }
@@ -140,75 +93,62 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
             e.printStackTrace();
             throw new AtlasServerException("Failed to insert into `categories` table");
         }
+        logger.info("'categories' table created successfully");
     }
 
     private void createPersonLabelsTable(Connection con) throws AtlasServerException {
-        StringBuilder sb = new StringBuilder();
-        sb.append("REPLACE person_labels SELECT");
-        sb.append(" label, person_ID");
-        sb.append(" FROM tempLabelsTable" + timestamp + " tl_t, person");
-        sb.append(" WHERE person.yago_ID=tl_t.yago_person_id");
-        try (Statement stmt = con.createStatement()) {
-            System.out.println("actual CMD is: " + sb.toString());
-            stmt.execute(sb.toString());
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new AtlasServerException("Failed to insert into 'person_labels' table");
-        }
-    }
-
-    private void createTempLifetimeTable(Connection con) throws AtlasServerException {
+        logger.info("Creating 'person_labels' table");
         Map<Long, YagoPerson> personsMap = yagoParser.getPersonsMap();
         try (PreparedStatement pstmt = con
-                .prepareStatement("INSERT INTO tempLifetimeTable" + timestamp + " (yago_person_id, bornOnDate, diedOnDate, bornIn, diedIn) VALUES(?,?,?,?,?)")) {
-            int i = 0;
-            for (long yagoId : personsMap.keySet()) {
-                YagoPerson yagoPerson = personsMap.get(yagoId);
-                Long bornInLocation = yagoPerson.getBornInLocation();
-                Long diedInLocation = yagoPerson.getDiedInLocation();
-                java.sql.Date bornOnDate = yagoPerson.getBornOnDate();
-                java.sql.Date diedOnDate = yagoPerson.getDiedOnDate();
-
-                if (bornInLocation == null || bornOnDate == null) {
-                    continue;
+                .prepareStatement("INSERT INTO person_labels(label, person_ID) VALUES (?, ?)")) {
+            for (YagoPerson yagoPerson : personsMap.values()) {
+                int personId = yagoPerson.getPersonId();
+                for (String label : yagoPerson.getLabels()) {
+                    pstmt.setString(1, label);
+                    pstmt.setInt(2, personId);
                 }
-
-                pstmt.setLong(1, yagoId);
-
-                pstmt.setDate(2, bornOnDate);
-
-                if (diedOnDate == null) {
-                    pstmt.setNull(3, java.sql.Types.DATE);
-                } else {
-                    pstmt.setDate(3, diedOnDate);
-                }
-
-                pstmt.setLong(4, bornInLocation);
-
-                if (diedInLocation == null) {
-                    pstmt.setNull(5, java.sql.Types.BIGINT);
-                } else {
-                    pstmt.setLong(5, diedInLocation);
-                }
-
                 pstmt.addBatch();
-
-                if (++i % 10000 == 0) {
-                    System.out.println("record #" + i);
-                }
             }
             pstmt.executeBatch();
-            pstmt.clearBatch();
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new AtlasServerException("Failed to insert into 'lifetime' temp table");
+            throw new AtlasServerException("Failed to create 'person_labels' table");
         }
+        logger.info("'person_labels' table created successfully");
+    }
+
+    private void createPersonHasCategoryTable(Connection con) throws AtlasServerException {
+        logger.info("Creating 'person_has_category' table");
+        Map<Long, YagoPerson> personsMap = yagoParser.getPersonsMap();
+        try (PreparedStatement pstmt = con
+                .prepareStatement("INSERT INTO person_has_category(person_ID, category_ID) VALUES (?, ?)")) {
+            for (YagoPerson yagoPerson : personsMap.values()) {
+                int personId = yagoPerson.getPersonId();
+                for (Integer categoryId : yagoPerson.getCategories()) {
+                    pstmt.setInt(1, personId);
+                    pstmt.setInt(2, categoryId);
+                }
+                pstmt.addBatch();
+            }
+            pstmt.executeBatch();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new AtlasServerException("Failed to create 'person_has_category' table");
+        }
+        logger.info("'person_has_category' table created successfully");
     }
 
     private void createPersonTable(Connection con, int addedByUser) throws AtlasServerException {
+        logger.info("Creating 'person' table");
+        Map<Long, YagoPerson> personsMap = yagoParser.getPersonsMap();
+        logger.info("Total number of records to be inserted: " + personsMap.size() + " persons");
+
+        ResultSet rs = null;
+
         try (PreparedStatement pstmt = con
-                .prepareStatement("INSERT INTO person(wikiURL, diedOnDate, wasBornOnDate, addedByUser, wasBornInLocation, diedInLocation, isFemale, yago_ID, prefLabel) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-            for (YagoPerson yagoPerson : yagoParser.getPersonsMap().values()) {
+                .prepareStatement("INSERT INTO person(wikiURL, diedOnDate, wasBornOnDate, addedByUser, wasBornInLocation, diedInLocation, isFemale, yago_ID, prefLabel) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE wikiURL=VALUES(wikiURL), diedOnDate=VALUES(diedOnDate), wasBornOnDate=VALUES(wasBornOnDate), addedByUser=VALUES(addedByUser), wasBornInLocation=VALUES(wasBornInLocation), diedInLocation=VALUES(diedInLocation), isFemale=VALUES(isFemale), prefLabel=VALUES(prefLabel)",
+                        Statement.RETURN_GENERATED_KEYS)) {
+            for (YagoPerson yagoPerson : personsMap.values()) {
                 String wikiUrl = yagoPerson.getWikiUrl();
                 if (wikiUrl == null) {
                     pstmt.setNull(1, java.sql.Types.VARCHAR);
@@ -240,54 +180,23 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
                 pstmt.setLong(8, yagoPerson.getYagoId());
                 pstmt.setString(9, yagoPerson.getPrefLabel());
 
-                pstmt.addBatch();
+                pstmt.executeUpdate();
+                rs = pstmt.getGeneratedKeys();
+                rs.next();
+                int personId = rs.getInt(1);
+                yagoPerson.setPersonId(personId);
             }
-            pstmt.executeBatch();
         } catch (SQLException e) {
             e.printStackTrace();
             throw new AtlasServerException("Failed to create 'person' table");
+        } finally {
+            safelyClose(rs);
         }
-    }
-
-    private void createPersonTableOld(Connection con, int addedByUser) throws AtlasServerException {
-        StringBuilder sb = new StringBuilder();
-        sb.append("REPLACE person SELECT");
-        sb.append(" gender_t.person_ID,");
-        sb.append(" wiki_t.wikiURL,");
-        sb.append(" died_on_t.diedOnDate,");
-        sb.append(" born_on_t.bornOnDate,");
-        sb.append(" " + addedByUser + ",");
-        sb.append(" born_in_t.wasBornInLocation,");
-        sb.append(" died_in_t.diedInLocation,");
-        sb.append(" gender_t.is_female,");
-        sb.append(" gender_t.yago_person_id,");
-        sb.append(" labels_t.pref_label");
-        sb.append(" FROM");
-        sb.append(" tempWikiTable" + timestamp + " wiki_t,");
-        sb.append(" tempBornInTable" + timestamp + " born_in_t,");
-        sb.append(" tempBornOnTable" + timestamp + " born_on_t,");
-        sb.append(" tempDiedOnTable" + timestamp + " died_on_t,");
-        sb.append(" tempDiedInTable" + timestamp + " died_in_t,");
-        sb.append(" tempGenderTable" + timestamp + " gender_t");
-        sb.append(" tempPrefLabelsTable" + timestamp + " labels_t");
-        sb.append(" WHERE");
-        sb.append(" died_in_t.yago_person_id = wiki_t.yago_id");
-        sb.append(" AND died_in_t.yago_person_id = born_in_t.yago_person_id");
-        sb.append(" AND died_in_t.yago_person_id = born_on_t.yago_person_id");
-        sb.append(" AND died_in_t.yago_person_id = died_on_t.yago_person_id");
-        sb.append(" AND died_in_t.yago_person_id = died_in_t.yago_person_id");
-        sb.append(" AND died_in_t.yago_person_id = gender_t.yago_person_id");
-        sb.append(" AND died_in_t.yago_person_id = labels_t.yago_person_id");
-        try (Statement stmt = con.createStatement()) {
-            System.out.println("actual CMD is: " + sb.toString());
-            stmt.execute(sb.toString());
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new AtlasServerException("Failed to insert into 'person' table");
-        }
+        logger.info("'person' table created successfully");
     }
 
     private int addYagoUser(Connection con) throws AtlasServerException {
+        logger.info("creating initial YAGO user for adding all Yago persons");
         int newUserId;
         ResultSet rs = null;
         try (PreparedStatement pstmt = con
@@ -301,7 +210,7 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
             rs = pstmt.getGeneratedKeys();
             rs.next();
             newUserId = rs.getInt(1);
-            System.out.println("YAGO user created with id=" + newUserId);
+            logger.info("YAGO user created with id=" + newUserId);
             return newUserId;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -311,25 +220,13 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
         }
     }
 
-    private void createLocationTable(Connection con) throws AtlasServerException {
-        StringBuilder sb = new StringBuilder();
-        sb.append("REPLACE location SELECT");
-        sb.append(" gct.location, gct.latitude, gct.longitude, wikit.wikiUrl, gct.geo_id, git.yago_id");
-        sb.append(" FROM tempGeoInfoTable" + timestamp + " git, tempGeoCitiesTable" + timestamp + " gct, tempWikiTable" + timestamp + " wikit");
-        sb.append(" WHERE gct.geo_id=git.geo_id AND git.yago_id=wikit.yago_id");
-        try (Statement stmt = con.createStatement()) {
-            System.out.println("actual CMD is: " + sb.toString());
-            stmt.execute(sb.toString());
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new AtlasServerException("Failed to insert into 'location' table");
-        }
-    }
-
     private void createLocationsTable(Connection con) throws AtlasServerException {
+        logger.info("Creating 'location' table");
+        Map<Long, YagoLocation> locationsMap = yagoParser.getLocationsMap();
+        logger.info("Total number of records to be inserted: " + locationsMap.size() + " locations");
         try (PreparedStatement pstmt = con
                 .prepareStatement("INSERT INTO location(geo_name, latitude, longitude, wikiURL, location_ID) VALUES (?, ?, ?, ?, ?)")) {
-            for (YagoLocation yagoLocation : yagoParser.getLocationsMap().values()) {
+            for (YagoLocation yagoLocation : locationsMap.values()) {
                 pstmt.setString(1, yagoLocation.getName());
                 pstmt.setDouble(2, yagoLocation.getLatitude());
                 pstmt.setDouble(3, yagoLocation.getLongitude());
@@ -342,67 +239,7 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
             e.printStackTrace();
             throw new AtlasServerException("Failed to create 'location' table");
         }
-    }
-
-    private void createTempTables(Connection con) throws AtlasServerException {
-        /*
-        LinkedHashMap<String, TempTableMetadata> tempFields = TempTablesConstants.tempFields;
-        for (String tableName : tempFields.keySet()) {
-            TempTableMetadata tempTableMetadata = tempFields.get(tableName);
-            createEmptyTempTable(con, tableName + timestamp, tempTableMetadata.getFields());
-            loadDataIntoTempTable(con, tableName + timestamp, concatToOutPath(tempTableMetadata.getDataFilePath()));
-        }*/ // TODO: uncomment
-
-        // create empty tempLifetimeTable
-        LinkedHashMap<String, String> tempLifetimeFields = TempTablesConstants.tempLifetimeFields;
-        createEmptyTempTable(con, "tempLifetimeTable" + timestamp, tempLifetimeFields);
-        // populate it
-        createTempLifetimeTable(con);
-    }
-
-    private void loadDataIntoTempTable(Connection con, String tableName, String dataFilePath) throws AtlasServerException {
-        System.out.println("populating temp table " + tableName);
-        StringBuilder sb = new StringBuilder();
-        sb.append("LOAD DATA LOCAL INFILE '" + dataFilePath + "'IGNORE INTO TABLE " + tableName + " FIELDS TERMINATED BY '\\t'");
-        try (Statement stmt = con.createStatement()) {
-            System.out.println("Actual CMD is: " + sb.toString());
-            stmt.execute(sb.toString());
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new AtlasServerException("Failed to load into temp table '" + tableName + "'");
-        }
-    }
-
-    private void createEmptyTempTable(Connection con, String tableName, LinkedHashMap<String, String> fields) throws AtlasServerException {
-        System.out.println("Creating empty temp table " + tableName);
-        StringBuilder sb = new StringBuilder();
-        sb.append("CREATE TABLE IF NOT EXISTS " + tableName);
-        sb.append(schemaToString(fields));
-        try (Statement stmt = con.createStatement()) {
-            System.out.println("actual CMD is: " + sb.toString());
-            stmt.execute(sb.toString());
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new AtlasServerException("Failed to create temp table '" + tableName + "'");
-        }
-    }
-
-
-    // last entry should be the primary key, e.g: PRIMARY KEY geo_ID
-    private String schemaToString(Map<String, String> schema) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("(");
-        for (String name : schema.keySet()) {
-            String type = schema.get(name);
-            sb.append(name);
-            sb.append(" ");
-            sb.append(type);
-            sb.append(", ");
-        }
-        sb.deleteCharAt(sb.length() - 1);
-        sb.deleteCharAt(sb.length() - 1);
-        sb.append(")");
-        return sb.toString();
+        logger.info("'location' table created successfully");
     }
 
     public static void main(String[] args) throws AtlasServerException {
@@ -417,9 +254,5 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
                 "/Users/admin/Downloads/Test",
                 new AtomicInteger(0));
         cmd.execute();
-    }
-
-    private String concatToOutPath(String fileName) {
-        return parserOutputPath + File.separator + fileName;
     }
 }
