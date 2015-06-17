@@ -33,13 +33,7 @@ public class MapBrowserListeners {
 					String msg;
 					try {
 						List<String> favs = Main.queries.getFavoritesIDs();
-						// create favs list: [id1, id2, id3 ... ]
-						String favList = "[";
-						int i;
-						for (i=0 ; i < favs.size()-1 ; i++) {
-							favList += favs.get(i) + ", ";
-						}
-						favList += favs.get(favs.size()-1) + "]";
+						String favList =favs.toString();
 						map.getBrowser().execute("updateFavorites("+ favList +");");
 						System.out.println("Favorites were sent to map: "+ favList);
 					} catch (AtlasServerException e) {
@@ -211,7 +205,6 @@ public class MapBrowserListeners {
 						List<String> removeList = Arrays.asList(removeFromFavorites.split(","));
 						String msg;
 						try {
-							// TODO(rony): add remove list
 							Main.queries.storeFavoriteIDs(favoritesList, removeList);
 							String favList = "[" + favorites + "]";
 							map.getBrowser().execute("updateFavorites("+ favList +");");

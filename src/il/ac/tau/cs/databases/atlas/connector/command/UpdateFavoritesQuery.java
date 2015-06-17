@@ -20,6 +20,7 @@ public class UpdateFavoritesQuery extends BaseDBCommand<Void> {
 
 	public UpdateFavoritesQuery(List<String> favoritesList, List<String> removeFromFavorits) {
 		this.favoritesList= favoritesList;
+		this.removeFromFavoritesList= removeFromFavorits;
 	}
 
 	@Override
@@ -36,13 +37,14 @@ public class UpdateFavoritesQuery extends BaseDBCommand<Void> {
             		DBConstants.USER_ID_L));
              
             for (String fav : favoritesList) {
-            	if (fav == null) {
+            	if (fav == null || fav.equals("")) {
             		continue;
             	}
             	addStmt.setInt(1, Integer.parseInt(fav));
                 addStmt.setInt(2, Main.user.getUserID());
                 addStmt.addBatch();
             }
+            
             System.out.println(String.format("Executing DB query:\n %s.",
 					addStmt.toString()));
             addStmt.executeBatch();

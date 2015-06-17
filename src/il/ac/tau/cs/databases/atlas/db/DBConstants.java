@@ -18,10 +18,10 @@ public class DBConstants {
 	public static final String GEO_NAME_L = "geo_name";
 	public static final String LONG_L = "latitude";
 	public static final String LAT_L = "longitude";
-	public static final String GEO_ID_L = "geo_ID";
+	public static final String LOCATION_ID_L = "location_ID";
 	public static final String YAGO_ID_L = "yago_ID";
 	public static final String LABEL_L = "label";
-	public static final String IS_PREFERED_L = "isPref";
+	public static final String PREF_LABEL_L = "prefLabel";
 	public static final String DIED_IN_LOCATION_L = "diedInLocation";
 	public static final String ADDED_BY_USER_L = "addedByUser";
 	public static final String IS_FEMALE_L = "isFemale";
@@ -59,6 +59,7 @@ public class DBConstants {
 		public static final String ADDED_BY_USER = TABLE_NAME + "." + ADDED_BY_USER_L;
 		public static final String IS_FEMALE = TABLE_NAME + "." + IS_FEMALE_L;
 		public static final String YAGO_ID = TABLE_NAME + "." + PERSON_YAGO_ID_L;
+		public static final String PREF_LABEL = TABLE_NAME + "." + PREF_LABEL_L;
 	}
 	
 	public static class Category {
@@ -70,8 +71,7 @@ public class DBConstants {
 	public static class PersonLabels {
 		public static final String TABLE_NAME = "person_labels";
 		public static final String PERSON_ID = TABLE_NAME + "." + PERSON_ID_L;
-		public static final String LABEL = TABLE_NAME + "." + LABEL_L;
-		public static final String IS_PREFERED = TABLE_NAME + "." + IS_PREFERED_L;	
+		public static final String LABEL = TABLE_NAME + "." + LABEL_L;	
 	}
 	
 	public static class Location {
@@ -79,7 +79,7 @@ public class DBConstants {
 		public static final String GEO_NAME = TABLE_NAME + "." + GEO_NAME_L;
 		public static final String LONG = TABLE_NAME + "." + LONG_L ;
 		public static final String LAT = TABLE_NAME + "." + LAT_L;
-		public static final String GEO_ID = TABLE_NAME + "." + GEO_ID_L;
+		public static final String LOCATION_ID = TABLE_NAME + "." + LOCATION_ID_L;
 		public static final String YAGO_ID = TABLE_NAME + "." + YAGO_ID_L;
 		public static final String WIKI_URL = TABLE_NAME + "." + WIKI_URL_L;
 	}

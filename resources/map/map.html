@@ -40,35 +40,7 @@
       function addMarker(resultid,lat,lng,name,img,summery,wikilink) {
             // Define the icon of the marker
             var image = img;
-            // Set favorite button
-            var isInFavorites = !(favorites.indexOf(resultid) === -1);
-            var favButton;
-            if (isInFavorites) {
-            	favButton = 
-                 '<button onclick="toggleFavorites(' + resultid + ', this)" ' +
-                 'style="font: 11px Century Gothic; color: transparent; background-color: transparent; border-color: transparent; cursor: default; padding: 0px 0px;">' +
-                 '<img src="removefavorite.png"/>' +
-                 '</button>'
-            } else {
-            	favButton = 
-                 '<button onclick="toggleFavorites(' + resultid + ', this)" ' +
-                 'style="font: 11px Century Gothic; color: transparent; background-color: transparent; border-color: transparent; cursor: default; padding: 0px 0px;">' +
-                 '<img src="addfavorite.png"/>' +
-                 '</button>'
-            }
-
-            // Define the content to be shown in the info screen
-            var contentString = '<div id="content">'+
-                 '<div id="siteNotice">'+
-                 '</div>'+
-                 '<h1 id="firstHeading" class="firstHeading">' + name + '</h1>' +
-                 '<div id="bodyContent">'+
-                 '<p>' + summery + '</p>'+
-                 '<p>Wikipedia link: ' + name + ', <a href="' + wikilink +'">'+
-                 wikilink + '</a> '+
-                 '</p>'+ favButton +
-                 '</div>'+
-                 '</div>';
+            
             // Define the marker and it's properties
             var marker = new google.maps.Marker({
                 position: new google.maps.LatLng(lat, lng),
@@ -76,17 +48,58 @@
                 title: name,
                 icon: image
             });
+
+            // Set favorite button
+            var favButton;
+            
+            var inFavButton = 
+                 '<button onclick="toggleFavorites(' + resultid + ', this)" ' +
+                 'style="font: 11px Century Gothic; color: transparent; background-color: transparent; border-color: transparent; cursor: default; padding: 0px 0px;">' +
+                 '<img src="removefavorite.png"/>' +
+                 '</button>'
+            var notInFavButton = 
+                 '<button onclick="toggleFavorites(' + resultid + ', this)" ' +
+                 'style="font: 11px Century Gothic; color: transparent; background-color: transparent; border-color: transparent; cursor: default; padding: 0px 0px;">' +
+                 '<img src="addfavorite.png"/>' +
+                 '</button>'
+            
+
+
+
+
             // Store marker in memory
             markers.push(marker);
             // Add on click listner to the marker si the info screen will be shown
             google.maps.event.addListener(marker, 'click', function() {
-                  // Define the info screen
-                  infowindow = new google.maps.InfoWindow({
-                      content: contentString,
-                      maxWidth: 450
-                  })
-                  infowindow.open(map,marker);
+
+            	// Define the info screen
+            	favButton = (isInFavorites(resultid) ? inFavButton : notInFavButton);
+            	// Define the content to be shown in the info screen
+            	var contentString = '<div id="content">'+
+	                 '<div id="siteNotice">'+
+	                 '</div>'+
+	                 '<h1 id="firstHeading" class="firstHeading">' + name + '</h1>' +
+	                 '<div id="bodyContent">'+
+	                 '<p>' + summery + '</p>'+
+	                 '<p>Wikipedia link: ' + name + ', <a href="' + wikilink +'">'+
+	                 wikilink + '</a> '+
+	                 '</p>'+ favButton +
+	                 '</div>'+
+	                 '</div>';
+
+                infowindow = new google.maps.InfoWindow({
+                    content: contentString,
+                    maxWidth: 450
+                })
+                infowindow.open(map,marker);
             });
+      }
+
+
+
+      <!-- Add id to favorites -->
+      function isInFavorites(id) {
+      		return (!(favorites.indexOf(id) == -1));
       }
 
       <!-- Add id to favorites -->

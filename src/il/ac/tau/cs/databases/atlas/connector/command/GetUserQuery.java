@@ -32,8 +32,9 @@ public class GetUserQuery extends BaseDBCommand<User> {
         	statement = con.prepareStatement(
         			"SELECT * FROM "+
         						DBConstants.User.TABLE_NAME + ", " +
-        						DBConstants.Location.TABLE_NAME +
-        			" WHERE "+ DBConstants.USERNAME_L+" = ? AND "+ DBConstants.BORN_IN_LOCATION_L +" = "+DBConstants.GEO_ID_L);
+        						DBConstants.Location.TABLE_NAME + "\n" +
+        			"WHERE "+  DBConstants.USERNAME_L+" = ? \n" +
+        			"AND "+ DBConstants.BORN_IN_LOCATION_L +" = "+DBConstants.LOCATION_ID_L);
         	statement.setString(1, user.getUsername());
         	logger.info(String.format("Executing DB query: %s.", statement.toString()));
         	resultSet = statement.executeQuery();

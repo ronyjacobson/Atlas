@@ -322,12 +322,12 @@ public class DBQueries implements Queries {
 
 		// Get Births
 		GetResultsQuery query = new GetResultsQuery(startYear, endYear,
-				category, null, true);
+				category, true);
 		System.out.println("Fetching births results by category and years");
 		results.addAll(query.execute());
 
 		// Get Deaths
-		query = new GetResultsQuery(startYear, endYear, category, null, false);
+		query = new GetResultsQuery(startYear, endYear, category, false);
 		System.out.println("Fetching deaths results by category and years");
 		results.addAll(query.execute());
 

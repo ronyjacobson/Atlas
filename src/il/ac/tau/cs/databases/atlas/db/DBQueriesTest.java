@@ -27,9 +27,8 @@ public class DBQueriesTest {
 			DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06",
 					"127.0.0.1", "3306", "dbmysql06");
 		}
-
 	}
-
+	
 	// @Test
 	public void isRegisteredUserTest() throws AtlasServerException {
 		if (tester != "Rony") {
@@ -51,7 +50,8 @@ public class DBQueriesTest {
 			return;
 		}
 		User existingUser = new User("rony", "0000", new Date(), 1, true);
-		User nonExistingUser = new User("newUser3", "password", new Date(), 1, false);
+		User nonExistingUser = new User("newUser3", "password", new Date(), 1,
+				false);
 		try {
 			assertFalse(queries.registerUser(existingUser));
 		} catch (AtlasServerException e) {
@@ -83,17 +83,21 @@ public class DBQueriesTest {
 		System.out.println(cat.toString());
 	}
 
-	// @Test
+	@Test
 	public void getResultsTest() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
 		}
+		// By category and time
 		Main.user = new User(1, "erer", "Sfsf", new Date(), 5, false);
-		List<Result> res = queries.getResults(1900, 1950, "Actores");
+		List<Result> res = queries.getResults(1000, 1100, "Kings And Queens");
 		assertFalse(res.isEmpty());
-		res = queries.getResults("dsd");
+		System.out.println("Test Results:" + res.toString()+"\n\n\n");
+		// By name
+		res = queries.getResults("p");
 		assertFalse(res.isEmpty());
-		System.out.println("Results: \n" + res.toString());
+		System.out.println("Test Results:" + res.toString());
+		
 	}
 
 	// @Test
@@ -130,32 +134,31 @@ public class DBQueriesTest {
 			return;
 		}
 		Main.user = new User(1, "erer", "Sfsf", new Date(), 5, false);
-		List<String> fav= new ArrayList<String>();
+		List<String> fav = new ArrayList<String>();
 		fav.add("2");
 		fav.add("4");
-		List<String> rmfav= new ArrayList<String>();
+		List<String> rmfav = new ArrayList<String>();
 		fav.add("2");
 		fav.add("4");
-		queries.storeFavoriteIDs(fav,rmfav);
+		queries.storeFavoriteIDs(fav, rmfav);
 	}
 
 	@SuppressWarnings("deprecation")
-	//@Test
+	// @Test
 	public void getResultsByDatesTest() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
 		}
 		Main.user = new User(1, "erer", "Sfsf", new Date(), 5, true);
 		@SuppressWarnings("deprecation")
-		List<Result> res = queries.getResults(new Date(0, 5, 1),
-				new Date(200, 5, 1));
-		assertFalse(res.isEmpty());
-		res = queries.getResults(new Date(1300, 5, 1), new Date(1500,
+		List<Result> res = queries.getResults(new Date(0, 5, 1), new Date(200,
 				5, 1));
+		assertFalse(res.isEmpty());
+		res = queries.getResults(new Date(1300, 5, 1), new Date(1500, 5, 1));
 		assertTrue(res.isEmpty());
 	}
 
-	@Test
+	// @Test
 	public void getFavs() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
