@@ -65,35 +65,38 @@ public class AddPersonQuery extends BaseDBCommand<Void> {
 			// Add the new person to DB
 			if (deathDate == null && deathLocID == null) {
 			statement = con.prepareStatement(
-					String.format("INSERT INTO %s (%s, %s, %s, %s, %s) VALUES (?, ?, ?, ?, ?)",
+					String.format("INSERT INTO %s (%s, %s, %s, %s, %s, %s) VALUES (?, ?, ?, ?, ?, ?)",
 							 DBConstants.Person.TABLE_NAME
 							 , DBConstants.WIKI_URL_L
 							 , DBConstants.BORN_ON_DATE_L
 							 , DBConstants.ADDED_BY_USER_L
 							 , DBConstants.BORN_IN_LOCATION_L
-							 , DBConstants.IS_FEMALE_L)
+							 , DBConstants.IS_FEMALE_L
+							 , DBConstants.PREF_LABEL_L)
 					, new String[]{DBConstants.Person.PERSON_ID});
 			} else {
 				statement = con.prepareStatement(
-						String.format("INSERT INTO %s (%s, %s, %s, %s, %s, %s, %s) VALUES (?, ?, ?, ?, ?, ?, ?)",
+						String.format("INSERT INTO %s (%s, %s, %s, %s, %s, %s, %s, %s) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 								 DBConstants.Person.TABLE_NAME
 								 , DBConstants.WIKI_URL_L
 								 , DBConstants.BORN_ON_DATE_L
 								 , DBConstants.ADDED_BY_USER_L
 								 , DBConstants.BORN_IN_LOCATION_L
 								 , DBConstants.IS_FEMALE_L
+								 , DBConstants.PREF_LABEL_L
 								 , DBConstants.DIED_ON_DATE_L
 								 , DBConstants.DIED_IN_LOCATION_L)
 						, new String[]{DBConstants.Person.PERSON_ID});
 
-				statement.setDate(6, new java.sql.Date(deathDate.getTime()));
-				statement.setInt(7, deathLocID);
+				statement.setDate(7, new java.sql.Date(deathDate.getTime()));
+				statement.setInt(8, deathLocID);
 			}
 			statement.setString(1, wikiLink);
 			statement.setDate(2, new java.sql.Date(birthDate.getTime()));
 			statement.setInt(3, Main.user.getUserID());
 			statement.setInt(4, birthLocID);
 			statement.setBoolean(5, isFemale);
+			statement.setString(6, name);
 			
 			System.out.println(String.format("Executing DB query: %s.",
 					statement.toString()));
@@ -106,15 +109,13 @@ public class AddPersonQuery extends BaseDBCommand<Void> {
             
             // Add Label relation:
             statement = con.prepareStatement(String.format(
-            		"INSERT INTO %s (%s, %s, %s) VALUES (?, ?, ?)",
+            		"INSERT INTO %s (%s, %s) VALUES (?, ?)",
 					DBConstants.PersonLabels.TABLE_NAME,
 					DBConstants.PERSON_ID_L,
-					DBConstants.LABEL_L,
-					DBConstants.IS_PREFERED_L)
+					DBConstants.LABEL_L)
 					);            
             statement.setInt(1, genID);
             statement.setString(2, name);
-            statement.setBoolean(3, true);
             
             System.out.println(String.format("Executing DB query: %s.",
 					statement.toString()));

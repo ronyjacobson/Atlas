@@ -1,7 +1,16 @@
 package il.ac.tau.cs.databases.atlas.db;
 
 import il.ac.tau.cs.databases.atlas.Main;
-import il.ac.tau.cs.databases.atlas.connector.command.*;
+import il.ac.tau.cs.databases.atlas.connector.command.AddPersonQuery;
+import il.ac.tau.cs.databases.atlas.connector.command.GetCategoriesQuery;
+import il.ac.tau.cs.databases.atlas.connector.command.GetFavoritesResultsQuery;
+import il.ac.tau.cs.databases.atlas.connector.command.GetGeoLocationsQuery;
+import il.ac.tau.cs.databases.atlas.connector.command.GetResultsQuery;
+import il.ac.tau.cs.databases.atlas.connector.command.GetUserQuery;
+import il.ac.tau.cs.databases.atlas.connector.command.RegisterUserQuery;
+import il.ac.tau.cs.databases.atlas.connector.command.SearchResultsByDatesQuery;
+import il.ac.tau.cs.databases.atlas.connector.command.SearchResultsByNameQuery;
+import il.ac.tau.cs.databases.atlas.connector.command.UpdateFavoritesQuery;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
 import java.util.ArrayList;
@@ -16,6 +25,7 @@ public class DBQueries implements Queries {
 	protected final Logger logger = Logger.getLogger(this.getClass().getName());
 	public static int amountOfLatestResults = 0;
 	public static int amountOfFemaleResults = 0;
+	public static int amountOfBirthResults = 0;
 	private static int maxYear = 0;
 	private static int minYear = 0;
 
@@ -117,6 +127,15 @@ public class DBQueries implements Queries {
 	public int getStatsOfLatestResults() {
 		return amountOfFemaleResults;
 	}
+	
+	/**
+	 * @return The male/females statistics of the results found in the last
+	 *         results query
+	 */
+	@Override
+	public int getBirthsOfLatestResults() {
+		return amountOfBirthResults;
+	}
 
 	@Override
 	public Integer getLocationId(String locationName) {
@@ -125,7 +144,9 @@ public class DBQueries implements Queries {
 		} else {
 			return null;
 		}
-	}	/**
+	}	
+	
+	/**
 	 * @return true if the current user should be added to results set
 	 */
 	private Result AddUserToResults(int startYear, int endYear) {
@@ -153,17 +174,10 @@ public class DBQueries implements Queries {
 	public List<Result> getFavorites() throws AtlasServerException {
 		List<Result> results = new ArrayList<Result>();
 		amountOfFemaleResults = 0;
-
-		// Get Births
-		GetFavoritesResultsQuery query = new GetFavoritesResultsQuery(true);
-		System.out.println("Fetching births favorite results...s");
+		amountOfBirthResults = 0;
+		GetFavoritesResultsQuery query = new GetFavoritesResultsQuery();
+		System.out.println("Fetching Favorites...");
 		results.addAll(query.execute());
-
-		// Get Deaths
-		query = new GetFavoritesResultsQuery(false);
-		System.out.println("Fetching deaths favorite results...");
-		results.addAll(query.execute());
-
 		amountOfLatestResults = results.size();
 		return results;
 	}
@@ -262,18 +276,10 @@ public class DBQueries implements Queries {
 			throws AtlasServerException {
 		List<Result> results = new ArrayList<Result>();
 		amountOfFemaleResults = 0;
-
-		// Get Births
-		SearchResultsByDatesQuery query = new SearchResultsByDatesQuery(sdate,
-				edate, true);
-		System.out.println("Fetching births results by dates...");
+		amountOfBirthResults = 0;
+		System.out.println("Fetching results by dates...");
+		SearchResultsByDatesQuery query = new SearchResultsByDatesQuery(sdate, edate);
 		results.addAll(query.execute());
-
-		// Get Deaths
-		query = new SearchResultsByDatesQuery(sdate, edate, false);
-		System.out.println("Fetching deaths results by dates...");
-		results.addAll(query.execute());
-
 		amountOfLatestResults = results.size();
 		return results;
 	}
@@ -284,28 +290,16 @@ public class DBQueries implements Queries {
 	public List<Result> getResults(String name) throws AtlasServerException {
 		List<Result> results = new ArrayList<Result>();
 		amountOfFemaleResults = 0;
+		amountOfBirthResults = 0;
 		maxYear = 0;
 		minYear = 0;
-
-		// Get Births
-		SearchResultsByNameQuery query = new SearchResultsByNameQuery(name,
-				true);
-		System.out.println("Fetching births results by name");
+		SearchResultsByNameQuery query = new SearchResultsByNameQuery(name);
+		System.out.println("Fetching results by name...");
 		results.addAll(query.execute());
 		maxYear = query.getMaxYear();
 		minYear = query.getMinYear();
-
-		// Get Deaths
-		query = new SearchResultsByNameQuery(name, false);
-		System.out.println("Fetching deaths results by name");
-		results.addAll(query.execute());
-
-		maxYear = query.getMaxYear() > maxYear ? query.getMaxYear() : maxYear;
-		minYear = query.getMinYear() < minYear ? query.getMinYear() : minYear;
-
 		amountOfLatestResults = results.size();
 		return results;
-
 	}
 	
 
@@ -317,26 +311,13 @@ public class DBQueries implements Queries {
 	@Override
 	public List<Result> getResults(int startYear, int endYear, String category)
 			throws AtlasServerException {
-		List<Result> results = new ArrayList<Result>();
 		amountOfFemaleResults = 0;
-
-		// Get Births
-		GetResultsQuery query = new GetResultsQuery(startYear, endYear,
-				category, true);
-		System.out.println("Fetching births results by category and years");
+		amountOfBirthResults = 0;
+		System.out.println("Fetching results by category and years...");
+		List<Result> results = new ArrayList<Result>();
+		GetResultsQuery query = new GetResultsQuery(startYear, endYear,	category);
 		results.addAll(query.execute());
-
-		// Get Deaths
-		query = new GetResultsQuery(startYear, endYear, category, false);
-		System.out.println("Fetching deaths results by category and years");
-		results.addAll(query.execute());
-
 		amountOfLatestResults = results.size();
-		System.out.print("Results: ");
-		for (Result res : results) {
-			System.out.print(String.format("%s, ", res.getName()));
-		}
-		System.out.println("");
 		return results;
 	}
 

@@ -123,35 +123,39 @@ public class MapBrowserListeners {
 	public static void showResultsOnMap(List<Result> results) {
 		
 		map.getBrowser().execute("deleteMarkers();");
-		for (Result result : results) {
-			double lat = result.getLocation().getLat();
-			double lng = result.getLocation().getLng();
-			String imageIcon = "flag-";
-			if (result.isBirth()) {
-				imageIcon += "birth";
-				// TODO can offset the coordinates a little so results in the same place
-				// won't be in the exact mark on the map
-			} else {
-				imageIcon += "death";
-				// TODO can offset the coordinates a little so results in the same place
-				// won't be in the exact mark on the map
-			}
-			if (!result.getCategory().equalsIgnoreCase("")){
-				// Check for existing category flag
-				String categoryPostfix = result.getCategory().toLowerCase().replace(" ", "-");
-				String flagFilename = imageIcon + "-" + categoryPostfix + ".png";
-				String tempDir = System.getProperty("java.io.tmpdir");
-				String flagFilePath = tempDir + flagFilename;
-				File file = new File(flagFilePath);
-				if(file.exists() && !file.isDirectory()) {
-					imageIcon += "-" + categoryPostfix;
+		if (results.isEmpty()) {
+			map.getBrowser().execute("alert(\"No Results Found!\");");
+		} else {
+			for (Result result : results) {
+				double lat = result.getLocation().getLat();
+				double lng = result.getLocation().getLng();
+				String imageIcon = "flag-";
+				if (result.isBirth()) {
+					imageIcon += "birth";
+					// TODO can offset the coordinates a little so results in the same place
+					// won't be in the exact mark on the map
+				} else {
+					imageIcon += "death";
+					// TODO can offset the coordinates a little so results in the same place
+					// won't be in the exact mark on the map
 				}
+				if (!result.getCategory().equalsIgnoreCase("")){
+					// Check for existing category flag
+					String categoryPostfix = result.getCategory().toLowerCase().replace(" ", "-");
+					String flagFilename = imageIcon + "-" + categoryPostfix + ".png";
+					String tempDir = System.getProperty("java.io.tmpdir");
+					String flagFilePath = tempDir + flagFilename;
+					File file = new File(flagFilePath);
+					if(file.exists() && !file.isDirectory()) {
+						imageIcon += "-" + categoryPostfix;
+					}
+				}
+				imageIcon += ".png";
+				map.getBrowser().execute(
+						"addMarker(" + result.getID() + "," + lat + "," + lng + ",\""
+								+ result.getName() + "\",\"" + imageIcon + "\",\"" + result.getSummary() + "\",\"" + result.getWikiLink()
+								+ "\");");
 			}
-			imageIcon += ".png";
-			map.getBrowser().execute(
-					"addMarker(" + result.getID() + "," + lat + "," + lng + ",\""
-							+ result.getName() + "\",\"" + imageIcon + "\",\"" + result.getSummary() + "\",\"" + result.getWikiLink()
-							+ "\");");
 		}
 	}
 
@@ -179,8 +183,11 @@ public class MapBrowserListeners {
 				public void run() {
 					if (map != null) {
 						String msg = " Showing "
-								+ Main.queries.getAmountOfLatestResults() + " results:\\n\\n " + Main.queries.getStatsOfLatestResults() + " Females\\n "
-								+ (Main.queries.getAmountOfLatestResults() - Main.queries.getStatsOfLatestResults()) + " Males";
+								+ Main.queries.getAmountOfLatestResults() + " results:\\n\\n " + 
+								Main.queries.getBirthsOfLatestResults() + " Births\\n "+ 
+								(Main.queries.getAmountOfLatestResults() - Main.queries.getStatsOfLatestResults()) + " Deaths\\n "+ 
+								Main.queries.getStatsOfLatestResults() + " Females\\n "+ 
+								(Main.queries.getAmountOfLatestResults() - Main.queries.getStatsOfLatestResults()) + " Males";
 						map.getBrowser().execute("error(\"" + msg + "\");");
 					} else {
 						// TODO Show message?

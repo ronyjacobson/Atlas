@@ -29,7 +29,7 @@ public class DBQueriesTest {
 		}
 	}
 	
-	// @Test
+	@Test
 	public void isRegisteredUserTest() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
@@ -63,7 +63,7 @@ public class DBQueriesTest {
 				nonExistingUser.getUsername());
 	}
 
-	// @Test
+	@Test
 	public void getGeoLocationsHashMapTest() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
@@ -73,7 +73,7 @@ public class DBQueriesTest {
 		assertFalse(Queries.locationsMap.isEmpty());
 	}
 
-	// @Test
+	@Test
 	public void getCategoriesTest() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
@@ -97,19 +97,9 @@ public class DBQueriesTest {
 		res = queries.getResults("p");
 		assertFalse(res.isEmpty());
 		System.out.println("Test Results:" + res.toString());
-		
-	}
-
-	// @Test
-	public void SearchResultsOnlyByNameTest() throws AtlasServerException {
-		if (tester != "Rony") {
-			return;
-		}
-		Main.user = new User(1, "erer", "Sfsf", new Date(), 5, false);
-		List<Result> res = queries.getResults("dsd");
-		assertFalse(res.isEmpty());
 		res = queries.getResults("sdsdsdsdsdsdsdsdsd");
 		assertTrue(res.isEmpty());
+		
 	}
 
 	// @Test
@@ -117,15 +107,12 @@ public class DBQueriesTest {
 		if (tester != "Rony") {
 			return;
 		}
-		Queries.categoriesMap.put("Actores", 1);
+		Queries.categoriesMap.put("Kings And Queens", 1);
 		Main.user = new User(1, "erer", "Sfsf", new Date(), 5, false);
 		try {
-			queries.addNew("NewPersonTest3", "Actores", new Date(), 1,
-					new Date(), 1, "url", true);
+			queries.addNew("Test", "Kings And Queens", new Date(), 1,new Date(), 1, "TestUrl", true);
 		} catch (AtlasServerException e) {
 		}
-		queries.addNew("NewPersonTest5", "Actores", new Date(), 1, new Date(),
-				1, "url", true);
 	}
 
 	// @Test
@@ -144,7 +131,7 @@ public class DBQueriesTest {
 	}
 
 	@SuppressWarnings("deprecation")
-	// @Test
+	@Test
 	public void getResultsByDatesTest() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
@@ -158,7 +145,7 @@ public class DBQueriesTest {
 		assertTrue(res.isEmpty());
 	}
 
-	// @Test
+	@Test
 	public void getFavs() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;

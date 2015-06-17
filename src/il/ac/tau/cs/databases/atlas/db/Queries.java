@@ -131,4 +131,6 @@ public interface Queries {
 	 */
 	List<String> getFavoritesIDs() throws AtlasServerException;
 
+	int getBirthsOfLatestResults();
+
 }
