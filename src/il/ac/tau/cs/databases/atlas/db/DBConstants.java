@@ -17,7 +17,7 @@ public class DBConstants {
 	public static final String DIED_ON_DATE_L = "diedOnDate";
 	public static final String GEO_NAME_L = "geo_name";
 	public static final String LONG_L = "latitude";
-	public static final String LAT_L = "longtitude";
+	public static final String LAT_L = "longitude";
 	public static final String GEO_ID_L = "geo_ID";
 	public static final String YAGO_ID_L = "yago_ID";
 	public static final String LABEL_L = "label";
