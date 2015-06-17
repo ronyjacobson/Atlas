@@ -202,5 +202,12 @@ public class MockQueries implements Queries {
 	}
 
 
+	@Override
+	public int getBirthsOfLatestResults() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
 
 }
