@@ -216,12 +216,12 @@ public class MapBrowserListeners {
 						String msg;
 						try {
 							Main.queries.storeFavoriteIDs(favoritesList, removeList);
-							String favList = "[" + favorites + "]";
 							
 						} catch (AtlasServerException e) {
 							msg = "Favorites failed to sync to database.";
 							map.getBrowser().execute("error(\"" + msg + "\");");
 						} finally {
+							String favList = "[" + favorites + "]";
 							map.getBrowser().execute("updateFavorites("+ favList +");");
 							map.getBrowser().execute("syncComplete();");
 						}
