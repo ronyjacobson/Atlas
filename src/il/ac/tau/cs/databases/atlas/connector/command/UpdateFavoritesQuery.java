@@ -57,7 +57,7 @@ public class UpdateFavoritesQuery extends BaseDBCommand<Void> {
             		DBConstants.USER_ID_L));
              
             for (String rmFav : removeFromFavoritesList) {
-            	if (rmFav == null) {
+            	if (rmFav == null || rmFav.equals("")) {
             		continue;
             	}
             	removeStmt.setInt(1, Integer.parseInt(rmFav));
