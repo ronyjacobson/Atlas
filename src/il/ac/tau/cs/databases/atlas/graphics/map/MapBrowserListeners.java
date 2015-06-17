@@ -27,7 +27,7 @@ public class MapBrowserListeners {
 		MapBrowserListeners.map = map;
 	}
 	
-	public static void updateFavorites() {
+	public static void updateFavorites(final boolean firstQuery) {
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
 				if (map != null) {
@@ -36,7 +36,6 @@ public class MapBrowserListeners {
 						List<String> favs = Main.queries.getFavoritesIDs();
 						String favList =favs.toString();
 						map.getBrowser().execute("updateFavorites("+ favList +");");
-						System.out.println("Favorites were sent to map: "+ favList);
 					} catch (AtlasServerException e) {
 						msg = "Couldnt get favorites from database.";
 						map.getBrowser().execute("error(\"" + msg + "\");");
@@ -91,7 +90,7 @@ public class MapBrowserListeners {
 					if (firstQuery) {
 						firstQuery = false;
 						// Set up favorites list
-						MapBrowserListeners.updateFavorites();
+						MapBrowserListeners.updateFavorites(firstQuery);
 					}
 					if (map != null) {
 						int startYear = timeline.getModel().getValue();
@@ -125,7 +124,7 @@ public class MapBrowserListeners {
 		
 		map.getBrowser().execute("deleteMarkers();");
 		if (results.isEmpty()) {
-			map.getBrowser().execute("notFound();");
+			map.getBrowser().execute("noResults();");
 		} else {
 			for (Result result : results) {
 				// random offset so that pins wont hover each other
@@ -185,9 +184,6 @@ public class MapBrowserListeners {
 		public void actionPerformed(ActionEvent e) {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
-					String color = "<span style=\"color:#F8BB86\">";
-					String end = "</span>";
-					
 					if (map != null) {
 						String msg = " Showing " +
 								Main.queries.getAmountOfLatestResults() + " results:<br>" + 
@@ -221,7 +217,9 @@ public class MapBrowserListeners {
 						try {
 							Main.queries.storeFavoriteIDs(favoritesList, removeList);
 							String favList = "[" + favorites + "]";
-							map.getBrowser().execute("updateFavorites("+ favList +");");							
+							map.getBrowser().execute("updateFavorites("+ favList +");");
+							map.getBrowser().execute("syncComplete();");
+							
 						} catch (AtlasServerException e) {
 							msg = "Favorites failed to sync to database.";
 							map.getBrowser().execute("error(\"" + msg + "\");");
