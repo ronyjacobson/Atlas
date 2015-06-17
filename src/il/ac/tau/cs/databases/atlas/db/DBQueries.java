@@ -16,6 +16,7 @@ public class DBQueries implements Queries {
 	protected final Logger logger = Logger.getLogger(this.getClass().getName());
 	public static int amountOfLatestResults = 0;
 	public static int amountOfFemaleResults = 0;
+	public static int amountOfBirthResults = 0;
 	private static int maxYear = 0;
 	private static int minYear = 0;
 
@@ -117,6 +118,15 @@ public class DBQueries implements Queries {
 	public int getStatsOfLatestResults() {
 		return amountOfFemaleResults;
 	}
+	
+	/**
+	 * @return The male/females statistics of the results found in the last
+	 *         results query
+	 */
+	@Override
+	public int getBirthsOfLatestResults() {
+		return amountOfBirthResults;
+	}
 
 	@Override
 	public Integer getLocationId(String locationName) {
@@ -153,17 +163,10 @@ public class DBQueries implements Queries {
 	public List<Result> getFavorites() throws AtlasServerException {
 		List<Result> results = new ArrayList<Result>();
 		amountOfFemaleResults = 0;
-
-		// Get Births
-		GetFavoritesResultsQuery query = new GetFavoritesResultsQuery(true);
-		System.out.println("Fetching births favorite results...s");
+		amountOfBirthResults = 0;
+		GetFavoritesResultsQuery query = new GetFavoritesResultsQuery();
+		System.out.println("Fetching Favorites...");
 		results.addAll(query.execute());
-
-		// Get Deaths
-		query = new GetFavoritesResultsQuery(false);
-		System.out.println("Fetching deaths favorite results...");
-		results.addAll(query.execute());
-
 		amountOfLatestResults = results.size();
 		return results;
 	}
@@ -317,9 +320,10 @@ public class DBQueries implements Queries {
 	@Override
 	public List<Result> getResults(int startYear, int endYear, String category)
 			throws AtlasServerException {
-		List<Result> results = new ArrayList<Result>();
 		amountOfFemaleResults = 0;
 
+		List<Result> results = new ArrayList<Result>();
+		
 		// Get Births
 		GetResultsQuery query = new GetResultsQuery(startYear, endYear,
 				category, true);

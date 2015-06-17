@@ -27,7 +27,6 @@ public class UpdateFavoritesQuery extends BaseDBCommand<Void> {
 	protected Void innerExecute(Connection con) throws AtlasServerException {
 		PreparedStatement addStmt = null;
 		PreparedStatement removeStmt = null;
-		ResultSet resultSet = null;
 		try {
 			// Generate add to favorites stmt
             con.setAutoCommit(false);
@@ -74,7 +73,8 @@ public class UpdateFavoritesQuery extends BaseDBCommand<Void> {
 				e.printStackTrace();
 				throw new AtlasServerException(e.getMessage());
 		} finally {
-			safelyClose(addStmt, resultSet);
+			safelyClose(addStmt);
+			safelyClose(removeStmt);
 		}
 		System.out.println("Query executed properly.");
 		return null;
