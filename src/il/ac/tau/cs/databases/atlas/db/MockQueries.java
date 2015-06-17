@@ -124,17 +124,6 @@ public class MockQueries implements Queries {
 		}
 		return user;
 	}
-	
-	/**
-	 * Store all the chosen favorite IDs to the database
-	 * @param favoritesList
-	 * @return True if the favorites were stored successfully
-	 */
-	@Override
-	public void storeFavoriteIDs(List<String> favoritesList) {
-		System.out.println(Arrays.toString(favoritesList.toArray()));
-		return;
-	}
 
 
 	@Override
@@ -195,6 +184,21 @@ public class MockQueries implements Queries {
 	@Override
 	public int getLatestResultsEndTimeLine() {
 		return 1200;
+	}
+
+
+	@Override
+	public void storeFavoriteIDs(List<String> favoritesList,
+			List<String> removeFromFavorites) throws AtlasServerException {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public List<String> getFavoritesIDs() throws AtlasServerException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

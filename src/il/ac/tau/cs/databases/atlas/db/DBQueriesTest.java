@@ -91,7 +91,7 @@ public class DBQueriesTest {
 		Main.user = new User(1, "erer", "Sfsf", new Date(), 5, false);
 		List<Result> res = queries.getResults(1900, 1950, "Actores");
 		assertFalse(res.isEmpty());
-		res = queries.getResults(1900, 1950, "Actores", "dsd");
+		res = queries.getResults("dsd");
 		assertFalse(res.isEmpty());
 		System.out.println("Results: \n" + res.toString());
 	}
@@ -133,7 +133,10 @@ public class DBQueriesTest {
 		List<String> fav= new ArrayList<String>();
 		fav.add("2");
 		fav.add("4");
-		queries.storeFavoriteIDs(fav);
+		List<String> rmfav= new ArrayList<String>();
+		fav.add("2");
+		fav.add("4");
+		queries.storeFavoriteIDs(fav,rmfav);
 	}
 
 	@SuppressWarnings("deprecation")
