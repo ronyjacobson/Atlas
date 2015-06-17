@@ -1,7 +1,7 @@
 package il.ac.tau.cs.databases.atlas.db;
 
-import il.ac.tau.cs.databases.atlas.parsing.YagoLocation;
-import il.ac.tau.cs.databases.atlas.parsing.YagoPerson;
+import il.ac.tau.cs.databases.atlas.parsing.*;
+import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.util.*;
@@ -11,6 +11,8 @@ import java.util.regex.Pattern;
 
 public class YagoParser {
 
+    protected final Logger logger = Logger.getLogger(this.getClass().getName());
+
     // TODO: consider changing to private members
     public static final String GEONAMES_URL_REGEX = "http://sws.geonames.org/([0-9]+)";
     public static final String DATE_REGEX = "[0-9][0-9][0-9][0-9]-[#0-9][#0-9]-[#0-9][#0-9]";
@@ -18,7 +20,7 @@ public class YagoParser {
     public static final String LABEL_REGEX = "\"(.*)\"((@eng)?)";
     public static final String WIKI_REGEX = "<http://en\\.wikipedia\\.org/wiki/(.*)>";
 
-    public static final Set<String> categoryTypes = new HashSet<>();
+    public static final Map<String, Integer> categoryTypes = new HashMap<>();
 
     private final File yagoDateFile;
     private final File yagoLocationFile;
@@ -51,14 +53,14 @@ public class YagoParser {
         locationsMap = new HashMap<>();
         yagoToGeoMap = new HashMap<>();
 
-        categoryTypes.add("<wordnet_scientist_110560637>");
-        categoryTypes.add("<wordnet_philosopher_110423589>");
-        categoryTypes.add("<wordnet_politician_110450303>");
-        categoryTypes.add("<wordnet_composer_109947232>");
-        categoryTypes.add("<wordnet_football_player_110101634>");
-        categoryTypes.add("<wordnet_monarchist_110327824>");
-        categoryTypes.add("<wordnet_poet_110444194>");
-        categoryTypes.add("<wordnet_medalist_110305062>");
+        categoryTypes.put("<wordnet_scientist_110560637>", 1);
+        categoryTypes.put("<wordnet_philosopher_110423589>", 2);
+        categoryTypes.put("<wordnet_politician_110450303>", 3);
+        categoryTypes.put("<wordnet_composer_109947232>", 4);
+        categoryTypes.put("<wordnet_football_player_110101634>", 5);
+        categoryTypes.put("<wordnet_monarchist_110327824>", 6);
+        categoryTypes.put("<wordnet_poet_110444194>", 7);
+        categoryTypes.put("<wordnet_medalist_110305062>", 8);
     }
 
     public Map<Long, YagoPerson> getPersonsMap() {
@@ -187,7 +189,6 @@ public class YagoParser {
     // handles yagoTransitiveType
     public void parseYagoCategoryFile(File yagoCategoryFile) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(yagoCategoryFile));
-        Pattern p = Pattern.compile(CATEGORY_REGEX);
 
         String line;
         while ((line = br.readLine()) != null) {
@@ -196,13 +197,13 @@ public class YagoParser {
                 continue;
             }
 
-            String foundCategory = cols[3];
             long yagoId = yagoIdToHash(cols[1]);
-            if (categoryTypes.contains(foundCategory)) {
-                Matcher m = p.matcher(foundCategory);
+            String foundCategory = cols[3];
+            Integer categoryId = categoryTypes.get(foundCategory);
+            if (categoryId != null) {
                 YagoPerson yagoPerson = personsMap.get(yagoId);
-                if (yagoPerson != null && m.find()) {
-                    yagoPerson.addCategory(m.group(1).intern());
+                if (yagoPerson != null) {
+                    yagoPerson.addCategory(categoryId);
                 }
             }
         }
@@ -309,38 +310,32 @@ public class YagoParser {
     }
 
     public void parseFiles() throws IOException {
-        System.out.println("Parser started");
+        logger.info("Parser started");
         /*if (!validateFiles()) {
             System.out.println("Terminating parser");
 //            throw new IOException("Bad input file");
         }*/
-        System.out.print("Parsing YAGO dates..");
+        logger.info("Parsing YAGO dates..");
         parseYagoDateFile(yagoDateFile);
-        System.out.println("   Done");
-        System.out.println(personsMap.size());
-        System.out.print("Parsing YAGO locations..");
+        logger.info("Parsing YAGO locations..");
         parseYagoLocationFile(yagoLocationFile);
-        System.out.println("   Done");
+        logger.info("Filtering out persons without birth date/place");
         validatePersonsMap();
-        System.out.println(personsMap.size());
-        System.out.print("Parsing YAGO categories..");
+        logger.info("Parsing YAGO categories..");
         parseYagoCategoryFile(yagoCategoryFile);
-        System.out.println("   Done");
-        System.out.print("Parsing YAGO labels..");
+        logger.info("Parsing YAGO labels..");
         parseYagoLabelsFile(yagoLabelsFile);
-        System.out.println("   Done");
-        System.out.print("Parsing YAGO geonames info..");
+        logger.info("Parsing YAGO geonames info..");
         parseYagoGeonamesFile(yagoGeonamesFile);
-        System.out.println("   Done");
-        System.out.print("Parsing Geonames cities info..");
+        logger.info("Parsing Geonames cities info..");
         parseGeonamesCitiesFile(geonamesCitiesFile);
-        System.out.println("   Done");
-        System.out.print("Parsing YAGO wikipedia info..");
+        logger.info("Parsing YAGO wikipedia info..");
         parseYagoWikiFile(yagoWikiFile);
-        System.out.println("   Done");
+        logger.info("Validating locations..");
         validateLocationsMap();
+        logger.info("Ensuring labels..");
         ensureLabels(); // remove persons without prefLabel or no labels at all
-        System.out.println("Parsing complete");
+        logger.info("Parsing complete");
     }
 
     public static void main(String[] args) throws IOException {
