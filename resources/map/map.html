@@ -196,6 +196,16 @@
 	  	html: true });
   	}
 
+  	<!-- Show message when action sucseeded -->
+	function showSucessMsg(title, msg) {
+	  swal(title, msg, "success");
+  	}
+
+  	<!-- Show message when action failed -->
+	function showFailureMsg(title, msg) {
+	  swal(title, msg, "error");
+  	}
+
       <!-- Define the center button -->
       function CenterControl(controlDiv, map) {
         // Set CSS for the control border

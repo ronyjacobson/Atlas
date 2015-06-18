@@ -27,7 +27,7 @@ public class MapBrowserListeners {
 		MapBrowserListeners.map = map;
 	}
 	
-	public static void updateFavorites(final boolean firstQuery) {
+	public static void updateFavorites() {
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
 				if (map != null) {
@@ -90,7 +90,7 @@ public class MapBrowserListeners {
 					if (firstQuery) {
 						firstQuery = false;
 						// Set up favorites list
-						MapBrowserListeners.updateFavorites(firstQuery);
+						MapBrowserListeners.updateFavorites();
 					}
 					if (map != null) {
 						int startYear = timeline.getModel().getValue();
@@ -251,6 +251,22 @@ public class MapBrowserListeners {
 				}
 			});
 
+		}
+	}
+	
+	public static class BrowserAddPersonListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					if (map != null) {
+						map.getBrowser().execute("deleteMarkers();");
+					} else {
+						// TODO Show message?
+					}
+				}
+			});
 		}
 	}
 

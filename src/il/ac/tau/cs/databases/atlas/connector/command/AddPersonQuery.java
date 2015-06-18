@@ -139,7 +139,6 @@ public class AddPersonQuery extends BaseDBCommand<Void> {
             System.out.println("Person added successfully - The generated person ID is: "+ genID);
 			
 		} catch (SQLException|AtlasServerException e) {
-				e.printStackTrace();
 				throw new AtlasServerException(e.getMessage());
 		} finally {
 			safelyClose(statement, resultSet);
