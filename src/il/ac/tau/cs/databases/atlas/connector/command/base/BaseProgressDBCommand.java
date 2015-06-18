@@ -45,6 +45,7 @@ public abstract class BaseProgressDBCommand extends BaseDBCommand<Boolean> {
         mainFrame.setSize(400, 400);
         mainFrame.setResizable(false);
         mainFrame.setLayout(new GridLayout(3, 1));
+
         mainFrame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent windowEvent){
                 String ObjButtons[] = {"Yes","No"};
@@ -93,7 +94,7 @@ public abstract class BaseProgressDBCommand extends BaseDBCommand<Boolean> {
                     @Override
                     public void run() {
                         try {
-                            setUpdater(new ProgressUpdater(progressBar, outputTextArea));
+                            setUpdater(new ProgressUpdater(progressBar, outputTextArea, headerLabel));
                             runProgressCmd(con);
                         } catch (AtlasServerException ase) {
                             JOptionPane.showMessageDialog(null, ase.getMessage(), GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
