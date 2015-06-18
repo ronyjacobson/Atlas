@@ -95,7 +95,7 @@ public class Login extends JFrame {
 		setLayout(new BorderLayout());
 		setLayout(new FlowLayout());
 		GridLayout panelLayout = new GridLayout(NUM_OF_COMPONENTS, 1);
-		panelLayout.setVgap(GAP_BETWEEN_COMPONENTS);
+		panelLayout.setVgap(GAP_BETWEEN_COMPONENTS-5);
 		JPanel panel = new JPanel(panelLayout);
 		createLoginPanel(panel, width, height);
 		add(panel);
@@ -127,7 +127,7 @@ public class Login extends JFrame {
 		Font dateFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_DATE);
 
 		label = new JLabel("Log in or sign up:", SwingConstants.CENTER);
-		label.setForeground(Color.WHITE);
+		label.setForeground(Color.white);
 		label.setFont(labelFont);
 
 		username = new JTextField("Username");
@@ -174,16 +174,27 @@ public class Login extends JFrame {
 			// TODO handle exception
 		}
 
+		JLabel dateLabel = new JLabel("Birthday:", SwingConstants.LEFT);
+		dateLabel.setForeground(Color.DARK_GRAY);
+		dateLabel.setFont(fieldFont);
+		
+		JLabel placeLabel = new JLabel("Birth Place:", SwingConstants.LEFT);
+		placeLabel.setForeground(Color.DARK_GRAY);
+		placeLabel.setFont(fieldFont);
+		
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.weightx = gbc.weighty = 1.0;
 		gbc.gridx = 0;
 		gbc.fill = GridBagConstraints.BOTH;
+		
 		birthPanel = new JPanel(new GridBagLayout());
+		birthPanel.setBackground(new Color(1f, 1f, 1f, 0.5f));
+		birthPanel.add(dateLabel);
+		birthPanel.add(placeLabel);
 		birthPanel.add(wasBornOn, gbc);
 		gbc.insets = new Insets(0, GAP_BETWEEN_COMPONENTS, 0, 0);
 		gbc.gridx = 1;
 		birthPanel.add(wasBornIn, gbc);
-		birthPanel.setOpaque(false);
 
 		loginButton = new JButton("Glimpse into the past!");
 		loginButton.addActionListener(new LoginAction());
