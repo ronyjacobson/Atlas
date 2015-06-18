@@ -1,5 +1,6 @@
 package il.ac.tau.cs.databases.atlas.db;
 
+import il.ac.tau.cs.databases.atlas.ProgressUpdater;
 import il.ac.tau.cs.databases.atlas.parsing.*;
 
 import java.io.*;
@@ -9,6 +10,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class YagoParser {
+    private ProgressUpdater progressUpdater;
+
     private Map<Long, YagoPerson> personsMap; // yagoId -> Person
     private Map<Long, YagoLocation> locationsMap; // locationId -> Location
     private Map<Long, Long> geoIdToLocationIdMap; // geoId -> locationId
@@ -39,6 +42,10 @@ public class YagoParser {
         categoryTypes.put("<wordnet_medalist_110305062>", 8);
     }
 
+    public void setProgressUpdater(ProgressUpdater progressUpdater) {
+        this.progressUpdater = progressUpdater;
+    }
+
     public Map<Long, YagoPerson> getPersonsMap() {
         return personsMap;
     }
@@ -52,7 +59,14 @@ public class YagoParser {
     }
 
     public void validatePersonsMap() {
+        progressUpdater.resetProgress();
+        long numberOfRecords = personsMap.size();
+        long recordNumber = 0;
+        long interval = numberOfRecords / 100;
         for (Iterator<Entry<Long, YagoPerson>> it = personsMap.entrySet().iterator(); it.hasNext(); ) {
+            if (++recordNumber % interval == 0) {
+                updateProgress(numberOfRecords, recordNumber);
+            }
             Entry<Long, YagoPerson> entry = it.next();
             if (! entry.getValue().isValidPerson()) {
                 it.remove();
@@ -61,7 +75,14 @@ public class YagoParser {
     }
 
     public void ensureLabels() {
+        progressUpdater.resetProgress();
+        long numberOfRecords = personsMap.size();
+        long recordNumber = 0;
+        long interval = numberOfRecords / 100;
         for (Iterator<Entry<Long, YagoPerson>> it = personsMap.entrySet().iterator(); it.hasNext(); ) {
+            if (++recordNumber % interval == 0) {
+                updateProgress(numberOfRecords, recordNumber);
+            }
             Entry<Long, YagoPerson> entry = it.next();
             if (! entry.getValue().isValidPersonLabels()) {
                 it.remove();
@@ -69,8 +90,19 @@ public class YagoParser {
         }
     }
 
+    private void updateProgress(long numberOfRecords, long recordNumber) {
+        progressUpdater.updateProgress((int) (recordNumber * 100 / numberOfRecords), recordNumber + "/" + numberOfRecords + " processed");
+    }
+
     public void validateLocationsMap() {
+        progressUpdater.resetProgress();
+        long numberOfRecords = locationsMap.size();
+        long recordNumber = 0;
+        long interval = numberOfRecords / 100;
         for (Iterator<Entry<Long, YagoLocation>> it = locationsMap.entrySet().iterator(); it.hasNext(); ) {
+            if (++recordNumber % interval == 0) {
+                updateProgress(numberOfRecords, recordNumber);
+            }
             Entry<Long, YagoLocation> entry = it.next();
             if (! entry.getValue().isValidLocation()) {
                 it.remove();
@@ -115,13 +147,30 @@ public class YagoParser {
         return yagoLocation;
     }
 
+    private long numberOfLines(File file) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        long numberOfLines = 0;
+        while (br.readLine() != null) {
+            numberOfLines++;
+        }
+        return numberOfLines;
+    }
+
     // handles yagoDateFacts
     public void parseYagoDateFile(File yagoDateFile) throws IOException {
+        progressUpdater.updateProgress(0, "Reading file..");
+        long numberOfLines = numberOfLines(yagoDateFile);
+        long lineNumber = 0;
+        long interval = numberOfLines / 100;
+
         BufferedReader br = new BufferedReader(new FileReader(yagoDateFile));
         Pattern pattern = Pattern.compile(DATE_REGEX);
 
         String line;
         while ((line = br.readLine()) != null) {
+            if (++lineNumber % interval == 0) {
+                updateProgress(numberOfLines, lineNumber);
+            }
             String[] cols = line.trim().split("\\t");
             if (cols.length < 5) {
                 continue;
@@ -150,9 +199,17 @@ public class YagoParser {
 
     // handles yagoFacts
     public void parseYagoLocationFile(File yagoLocationFile) throws IOException {
+        progressUpdater.updateProgress(0, "Reading file..");
+        long numberOfLines = numberOfLines(yagoLocationFile);
+        long lineNumber = 0;
+        long interval = numberOfLines / 100;
+
         BufferedReader br = new BufferedReader(new FileReader(yagoLocationFile));
         String line;
         while ((line = br.readLine()) != null) {
+            if (++lineNumber % interval == 0) {
+                updateProgress(numberOfLines, lineNumber);
+            }
             String[] cols = line.trim().split("\\t");
             if (cols.length < 4) {
                 continue;
@@ -187,10 +244,18 @@ public class YagoParser {
 
     // handles yagoTransitiveType
     public void parseYagoCategoryFile(File yagoCategoryFile) throws IOException {
+        progressUpdater.updateProgress(0, "Reading file..");
+        long numberOfLines = numberOfLines(yagoCategoryFile);
+        long lineNumber = 0;
+        long interval = numberOfLines / 100;
+
         BufferedReader br = new BufferedReader(new FileReader(yagoCategoryFile));
 
         String line;
         while ((line = br.readLine()) != null) {
+            if (++lineNumber % interval == 0) {
+                updateProgress(numberOfLines, lineNumber);
+            }
             String[] cols = line.trim().split("\\t");
             if (cols.length < 4) {
                 continue;
@@ -212,10 +277,18 @@ public class YagoParser {
 
     // handles yagoGeonamesEntityIds
     public void parseYagoGeonamesFile(File yagoGeonamesFile) throws IOException {
+        progressUpdater.updateProgress(0, "Reading file..");
+        long numberOfLines = numberOfLines(yagoGeonamesFile);
+        long lineNumber = 0;
+        long interval = numberOfLines / 100;
+
         BufferedReader br = new BufferedReader(new FileReader(yagoGeonamesFile));
         Pattern p = Pattern.compile(GEONAMES_URL_REGEX);
         String line;
         while ((line = br.readLine()) != null) {
+            if (++lineNumber % interval == 0) {
+                updateProgress(numberOfLines, lineNumber);
+            }
             String[] cols = line.trim().split("\\t");
             if (cols.length < 3) {
                 continue;
@@ -237,9 +310,17 @@ public class YagoParser {
 
     // handles cities1000
     public void parseGeonamesCitiesFile(File geoCitiesFile) throws IOException {
+        progressUpdater.updateProgress(0, "Reading file..");
+        long numberOfLines = numberOfLines(geoCitiesFile);
+        long lineNumber = 0;
+        long interval = numberOfLines / 100;
+
         BufferedReader br = new BufferedReader(new FileReader(geoCitiesFile));
         String line;
         while ((line = br.readLine()) != null) {
+            if (++lineNumber % interval == 0) {
+                updateProgress(numberOfLines, lineNumber);
+            }
             String[] cols = line.trim().split("\\t");
             try {
                 long geoId = Long.parseLong(cols[0]);
@@ -272,10 +353,18 @@ public class YagoParser {
 
     // handles yagoWikipediaInfo
     public void parseYagoWikiFile(File yagoWiKiFile) throws IOException {
+        progressUpdater.updateProgress(0, "Reading file..");
+        long numberOfLines = numberOfLines(yagoWiKiFile);
+        long lineNumber = 0;
+        long interval = numberOfLines / 100;
+
         BufferedReader br = new BufferedReader(new FileReader(yagoWiKiFile));
         Pattern p = Pattern.compile(WIKI_REGEX);
         String line;
         while ((line = br.readLine()) != null) {
+            if (++lineNumber % interval == 0) {
+                updateProgress(numberOfLines, lineNumber);
+            }
             String[] cols = line.trim().split("\\t");
             if (cols.length < 3) {
                 continue;
@@ -298,9 +387,17 @@ public class YagoParser {
     }
 
     public void parseYagoLiteralFacts(File yagoLiteralFactsFile) throws IOException {
+        progressUpdater.updateProgress(0, "Reading file..");
+        long numberOfLines = numberOfLines(yagoLiteralFactsFile);
+        long lineNumber = 0;
+        long interval = numberOfLines / 100;
+
         BufferedReader br = new BufferedReader(new FileReader(yagoLiteralFactsFile));
         String line;
         while ((line = br.readLine()) != null) {
+            if (++lineNumber % interval == 0) {
+                updateProgress(numberOfLines, lineNumber);
+            }
             String[] cols = line.trim().split("\\t");
             if (cols.length < 5) {
                 continue;
@@ -323,10 +420,18 @@ public class YagoParser {
 
     // handles yagoLabels
     public void parseYagoLabelsFile(File yagoLabelsFile, boolean searchForLocation) throws IOException {
+        progressUpdater.updateProgress(0, "Reading file..");
+        long numberOfLines = numberOfLines(yagoLabelsFile);
+        long lineNumber = 0;
+        long interval = numberOfLines / 100;
+
         BufferedReader br = new BufferedReader(new FileReader(yagoLabelsFile));
         Pattern p = Pattern.compile(LABEL_REGEX);
         String line;
         while ((line = br.readLine()) != null) {
+            if (++lineNumber % interval == 0) {
+                updateProgress(numberOfLines, lineNumber);
+            }
             String[] cols = line.trim().split("\\t");
             if (cols.length < 4) {
                 continue;

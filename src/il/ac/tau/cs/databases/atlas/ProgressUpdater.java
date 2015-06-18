@@ -17,7 +17,12 @@ public class ProgressUpdater {
     }
 
     public void updateProgress(final int progress,final String lowerMessage) {
-        updateProgress(progress, lowerMessage, headerLabel.getText());
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                progressBar.setValue(progress);
+                outputTextArea.setText(lowerMessage);
+            }
+        });
     }
 
     public void updateProgress(final int progress,final String lowerMessage, final String header) {

@@ -73,7 +73,8 @@ public enum DynamicConnectionPool implements ConnectionPool {
         Connection connection;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection(dbBaseUrl + ip + ":" + port + "/" + dbName, userName, password);
+            // connection = DriverManager.getConnection(dbBaseUrl + ip + ":" + port + "/" + dbName, userName, password);
+            connection = DriverManager.getConnection(dbBaseUrl + ip + ":" + port + "/" + dbName + "?rewriteBatchedStatements=true", userName, password);
             System.out.println("Created new connection: " + connection);
         } catch (SQLException sqle) {
             System.err.println("SQLException: " + sqle);
