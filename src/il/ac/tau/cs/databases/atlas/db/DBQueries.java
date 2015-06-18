@@ -13,10 +13,8 @@ import il.ac.tau.cs.databases.atlas.connector.command.SearchResultsByNameQuery;
 import il.ac.tau.cs.databases.atlas.connector.command.UpdateFavoritesQuery;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.io.File;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 
@@ -223,11 +221,11 @@ public class DBQueries implements Queries {
 
 	/**
 	 * Update the DB with the Yago files in the given full path directory
+	 * @param fullPathDirectory
 	 */
 	@Override
-	public void update(String fullPathDirectory) {
-		// TODO PAZ
-
+	public void update(Map<String, File> fullPathDirectory) {
+		// TODO: Etan
 	}
 
 	/**

@@ -1,8 +1,8 @@
 package il.ac.tau.cs.databases.atlas;
 
-import il.ac.tau.cs.databases.atlas.State;
 import il.ac.tau.cs.databases.atlas.connector.DynamicConnectionPool;
 import il.ac.tau.cs.databases.atlas.db.DBQueries;
+import il.ac.tau.cs.databases.atlas.db.MockQueries;
 import il.ac.tau.cs.databases.atlas.db.Queries;
 import il.ac.tau.cs.databases.atlas.db.User;
 import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
@@ -13,7 +13,7 @@ import java.awt.Toolkit;
 public class Main {
 	private static final Logger log = Logger.getLogger(Main.class);
 	// DB queries object
-	public static final Queries queries = new DBQueries();
+	public static final Queries queries = new MockQueries();
 	public static User user;
 	
 	/**
