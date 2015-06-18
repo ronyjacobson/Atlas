@@ -459,7 +459,7 @@ public class Add extends JFrame {
 					GrapicUtils.PROJECT_NAME, 1);
 			return false;
 		} else if (hasDiedIn.getSelectedItem().toString()
-				.equals(DEFAULT_DEATH_LOCATION)) {
+				.equals(DEFAULT_DEATH_LOCATION) && hasDiedOn.getCalendar()!= null) {
 			JOptionPane.showMessageDialog(null,
 					"Please choose a death place from the list.",
 					GrapicUtils.PROJECT_NAME, 1);
