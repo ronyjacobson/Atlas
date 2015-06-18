@@ -31,7 +31,7 @@ public abstract class BaseProgressDBCommand extends BaseDBCommand<Boolean> {
     @Override
     protected Boolean innerExecute(Connection con) throws AtlasServerException {
         prepareGUI();
-        startTask();
+        startTask(con);
         return true;
     }
 
@@ -74,7 +74,7 @@ public abstract class BaseProgressDBCommand extends BaseDBCommand<Boolean> {
 
     protected abstract String getFrameLabel();
 
-    public void startTask(){
+    public void startTask(final Connection con){
         headerLabel.setText(getDisplayLabel());
 
         progressBar = new JProgressBar(0, 100);
@@ -94,7 +94,7 @@ public abstract class BaseProgressDBCommand extends BaseDBCommand<Boolean> {
                     public void run() {
                         try {
                             setUpdater(new ProgressUpdater(progressBar, outputTextArea));
-                            runProgressCmd();
+                            runProgressCmd(con);
                         } catch (AtlasServerException ase) {
                             JOptionPane.showMessageDialog(null, ase.getMessage(), GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
                             mainFrame.dispose();
@@ -111,7 +111,7 @@ public abstract class BaseProgressDBCommand extends BaseDBCommand<Boolean> {
 
     }
 
-    protected abstract void runProgressCmd() throws AtlasServerException;
+    protected abstract void runProgressCmd(Connection con) throws AtlasServerException;
 
     protected abstract String getDisplayLabel();
 }
