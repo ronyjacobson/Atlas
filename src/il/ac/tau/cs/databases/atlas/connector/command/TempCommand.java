@@ -4,6 +4,8 @@ import il.ac.tau.cs.databases.atlas.connector.DynamicConnectionPool;
 import il.ac.tau.cs.databases.atlas.connector.command.base.BaseProgressDBCommand;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
+import java.sql.Connection;
+
 
 /**
  * Created by user on 17/06/2015.
@@ -21,7 +23,7 @@ public class TempCommand extends BaseProgressDBCommand {
     }
 
     @Override
-    protected void runProgressCmd() throws AtlasServerException {
+    protected void runProgressCmd(Connection con) throws AtlasServerException {
         for (int i = 0; i < end; i++) {
             System.out.println(i);
             progressUpdater.updateProgress(4*i, "progress: " + i);
