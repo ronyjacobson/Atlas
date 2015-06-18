@@ -353,54 +353,46 @@ public class Add extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			if (isInputValidated()) {
-				Display.getDefault().syncExec(new Runnable() {
-					public void run() {
-						try {
-							// Get locations IDs
-							Integer birthLocaionID = Queries.locationsMap
-									.get(wasBornIn.getSelectedItem().toString());
-							Integer deathLocaionID = (hasDiedIn
-									.getSelectedItem().toString()
-									.equals(NOT_DEAD_LOCATION)) ? null
-									: Queries.locationsMap.get(hasDiedIn
-											.getSelectedItem().toString());
-							// Get dates
-							Date birthDate = wasBornOn.getDate();
-							Date deathDate = (deathLocaionID == null) ? null
-									: hasDiedOn.getDate();
-
-							Main.queries.addNew(name.getText(), category
-									.getSelectedItem().toString(), birthDate,
-									birthLocaionID, deathDate, deathLocaionID,
-									wikiLink.getText(), isFemale.isSelected());
-
-							// Succeeded- Show message.
-							if (MapBrowserListeners.map != null) {
-								MapBrowserListeners.map
-										.getBrowser()
-										.execute("personAdded('"+name.getText()+"');");
-							}
-
-						} catch (PersonExistsError e) {
-							// User Already Exists - Show message.
-							if (MapBrowserListeners.map != null) {
-								MapBrowserListeners.map
-								.getBrowser()
-								.execute("personExists('"+name.getText()+"');");
-							}
-						} catch (AtlasServerException e) {
-							// Failed- Show message.
-							if (MapBrowserListeners.map != null) {
-								MapBrowserListeners.map.getBrowser().execute(
-										"showError(\"" + e.getMessage() + "\");");
-							}
-
-						}
-					}
-				});
 				dispose();
+				MapBrowserListeners.showSpinner();
+				try {
+					// Get locations IDs
+					Integer birthLocaionID = Queries.locationsMap.get(wasBornIn
+							.getSelectedItem().toString());
+					Integer deathLocaionID = (hasDiedIn.getSelectedItem()
+							.toString().equals(NOT_DEAD_LOCATION)) ? null
+							: Queries.locationsMap.get(hasDiedIn
+									.getSelectedItem().toString());
+					// Get dates
+					Date birthDate = wasBornOn.getDate();
+					Date deathDate = (deathLocaionID == null) ? null
+							: hasDiedOn.getDate();
 
+					Main.queries.addNew(name.getText(), category
+							.getSelectedItem().toString(), birthDate,
+							birthLocaionID, deathDate, deathLocaionID, wikiLink
+									.getText(), isFemale.isSelected());
+
+					// Succeeded- Show message.
+					MapBrowserListeners.hideSpinner();
+					MapBrowserListeners.executeJS("personAdded('"
+							+ name.getText() + "');");
+
+				} catch (PersonExistsError e) {
+					// User Already Exists - Show message.
+					MapBrowserListeners.hideSpinner();
+					MapBrowserListeners.executeJS("personExists('"
+							+ name.getText() + "');");
+
+				} catch (AtlasServerException e) {
+					// Failed- Show message.
+					MapBrowserListeners.hideSpinner();
+					MapBrowserListeners.executeJS("showError(\""
+							+ e.getMessage() + "\");");
+
+				}
 			}
+
 		}
 	}
 
@@ -459,7 +451,8 @@ public class Add extends JFrame {
 					GrapicUtils.PROJECT_NAME, 1);
 			return false;
 		} else if (hasDiedIn.getSelectedItem().toString()
-				.equals(DEFAULT_DEATH_LOCATION) && hasDiedOn.getCalendar()!= null) {
+				.equals(DEFAULT_DEATH_LOCATION)
+				&& hasDiedOn.getCalendar() != null) {
 			JOptionPane.showMessageDialog(null,
 					"Please choose a death place from the list.",
 					GrapicUtils.PROJECT_NAME, 1);

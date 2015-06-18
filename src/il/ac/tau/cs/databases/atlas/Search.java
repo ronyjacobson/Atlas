@@ -31,8 +31,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import org.eclipse.swt.widgets.Display;
-
 import com.toedter.calendar.JDateChooser;
 
 /**
@@ -61,7 +59,8 @@ public class Search extends JFrame {
 		String searchImagePath = GrapicUtils.getSkin() + "SecondaryScreen.png";
 
 		// Get graphics attributes
-		InputStream imageStream = getClass().getResourceAsStream(searchImagePath);
+		InputStream imageStream = getClass().getResourceAsStream(
+				searchImagePath);
 		BufferedImage image = ImageIO.read(imageStream);
 		int width = image.getWidth();
 		int height = image.getHeight();
@@ -108,8 +107,10 @@ public class Search extends JFrame {
 
 		// Create buttons and text boxes
 		ClearTextBox clearTextBoxListner = new ClearTextBox();
-		Font labelFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_LABEL);
-		Font fieldFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_FIELD);
+		Font labelFont = new Font("Century Gothic", Font.PLAIN,
+				GrapicUtils.FONT_SIZE_LABEL);
+		Font fieldFont = new Font("Century Gothic", Font.PLAIN,
+				GrapicUtils.FONT_SIZE_FIELD);
 
 		nameLabel = new JLabel("Search by name:");
 		nameLabel.setForeground(Color.DARK_GRAY);
@@ -122,13 +123,13 @@ public class Search extends JFrame {
 		searchNameButton = new JButton("Search ATLAS");
 		searchNameButton.addActionListener(new SearchNameAction());
 		searchNameButton.setFont(fieldFont);
-		
+
 		datesLabel = new JLabel("Search by dates:");
 		datesLabel.setForeground(Color.DARK_GRAY);
 		datesLabel.setFont(labelFont);
-		
+
 		createDatesPanel();
-		
+
 		searchDatesButton = new JButton("Search ATLAS");
 		searchDatesButton.addActionListener(new SearchDatesAction());
 		searchDatesButton.setFont(fieldFont);
@@ -151,7 +152,7 @@ public class Search extends JFrame {
 	}
 
 	private void createDatesPanel() {
-		
+
 		GridLayout panelLayout = new GridLayout(1, 1);
 		panelLayout.setHgap(GAP_BETWEEN_COMPONENTS);
 		datesPanel = new JPanel(panelLayout);
@@ -170,8 +171,9 @@ public class Search extends JFrame {
 		toPanel.setBackground(new Color(1f, 1f, 1f, 0.5f));
 
 		// Define buttons attributes
-		Font fieldFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_FIELD);
-		
+		Font fieldFont = new Font("Century Gothic", Font.PLAIN,
+				GrapicUtils.FONT_SIZE_FIELD);
+
 		// Create labels
 		JLabel fromLabel = new JLabel("Search from:", SwingConstants.CENTER);
 		fromLabel.setForeground(Color.DARK_GRAY);
@@ -179,7 +181,7 @@ public class Search extends JFrame {
 		JLabel toLabel = new JLabel("To:", SwingConstants.CENTER);
 		toLabel.setForeground(Color.DARK_GRAY);
 		toLabel.setFont(fieldFont);
-		
+
 		// Create dates
 		Date today = new Date();
 		ClearTextBox clearTextBoxListner = new ClearTextBox();
@@ -201,11 +203,12 @@ public class Search extends JFrame {
 		toPanel.add(untilDate);
 		fromPanel.add(fromLabel);
 		fromPanel.add(fromDate);
-		
+
 		datesPanel.add(fromPanel);
 		datesPanel.add(toPanel);
 
 	}
+
 	/**
 	 * Clear text boxes
 	 */
@@ -235,7 +238,7 @@ public class Search extends JFrame {
 		public void mouseReleased(MouseEvent arg0) {
 		}
 	}
-	
+
 	/**
 	 * Search an entry in the database by name
 	 */
@@ -246,26 +249,33 @@ public class Search extends JFrame {
 
 			// Validate input
 			if (!wasNameEntered || name.getText().equalsIgnoreCase("")) {
-				JOptionPane.showMessageDialog(null, "Please enter the needed details.", GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null,
+						"Please enter the needed details.",
+						GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
 			} else {
-				Display.getDefault().syncExec(new Runnable() {
-				    public void run() {
-				    	try {
-				    		MapBrowserListeners.showResultsOnMap(Main.queries.getResults(name.getText()), "Search by name results:");
-				    		MapBrowserListeners.setTimespan(Main.queries.getLatestResultsStartTimeLine(), Main.queries.getLatestResultsEndTimeLine());
-				    		
-						} catch (AtlasServerException e) {
-							MapBrowserListeners.map.getBrowser().execute("showError(\"" + e.getMessage() + "\");");
-//							JOptionPane.showMessageDialog(null, e.getMessage(), GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
-//							e.printStackTrace();
-						}
-				    }
-				});
 				dispose();
+				try {
+					MapBrowserListeners.showSpinner();
+					MapBrowserListeners.showResultsOnMap(
+							Main.queries.getResults(name.getText()),
+							"Search by name results:");
+					MapBrowserListeners.setTimespan(
+							Main.queries.getLatestResultsStartTimeLine(),
+							Main.queries.getLatestResultsEndTimeLine());
+
+				} catch (AtlasServerException e) {
+					MapBrowserListeners.executeJS(
+							"showError(\"" + e.getMessage() + "\");");
+					MapBrowserListeners.hideSpinner();
+					// JOptionPane.showMessageDialog(null, e.getMessage(),
+					// GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
+					// e.printStackTrace();
+				}
+
 			}
 		}
 	}
-	
+
 	/**
 	 * Search an entry in the database by dates
 	 */
@@ -275,27 +285,33 @@ public class Search extends JFrame {
 		public void actionPerformed(ActionEvent arg0) {
 
 			// Validate input
-			if (DateUtils.isAfterDay(fromDate.getCalendar(), untilDate.getCalendar())) {
-				JOptionPane.showMessageDialog(null, "Please enter a valid dates range.", GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
+			if (DateUtils.isAfterDay(fromDate.getCalendar(),
+					untilDate.getCalendar())) {
+				JOptionPane.showMessageDialog(null,
+						"Please enter a valid dates range.",
+						GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
 			} else {
-				Display.getDefault().syncExec(new Runnable() {
-				    public void run() {
-				    	try {
-				    		if (MapBrowserListeners.map != null) {
-				    			Date from = fromDate.getCalendar().getTime();
-				    			Date to = untilDate.getCalendar().getTime();
-				    			String label = "Search by dates results:";
-				    			MapBrowserListeners.showResultsOnMap(Main.queries.getResults(from, to), label);
-					    		MapBrowserListeners.setTimespan(fromDate.getCalendar().get(Calendar.YEAR), untilDate.getCalendar().get(Calendar.YEAR));
-				    		}
-				    	} catch (AtlasServerException e) {
-				    		if (MapBrowserListeners.map != null) {
-				    			MapBrowserListeners.map.getBrowser().execute("showError(\"" + e.getMessage() + "\");");
-				    		}
-				    	}
-				    }
-				});
 				dispose();
+				try {
+					if (MapBrowserListeners.map != null) {
+						Date from = fromDate.getCalendar().getTime();
+						Date to = untilDate.getCalendar().getTime();
+						String label = "Search by dates results:";
+						MapBrowserListeners.showSpinner();
+						MapBrowserListeners.showResultsOnMap(
+								Main.queries.getResults(from, to), label);
+						MapBrowserListeners.setTimespan(fromDate.getCalendar()
+								.get(Calendar.YEAR), untilDate.getCalendar()
+								.get(Calendar.YEAR));
+					}
+				} catch (AtlasServerException e) {
+					if (MapBrowserListeners.map != null) {
+						MapBrowserListeners.executeJS(
+								"showError(\"" + e.getMessage() + "\");");
+						MapBrowserListeners.hideSpinner();
+					}
+				}
+
 			}
 		}
 	}

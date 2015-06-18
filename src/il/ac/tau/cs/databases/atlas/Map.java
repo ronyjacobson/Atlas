@@ -261,8 +261,7 @@ public class Map extends JFrame {
 				try {
 					new Add();
 				} catch (IOException e) {
-					JOptionPane.showMessageDialog(null, "Exception occured while using the add screen.", GrapicUtils.PROJECT_NAME,
-							JOptionPane.ERROR_MESSAGE);
+					MapBrowserListeners.executeJS("showError(\"Exception occured while using the add screen.\");");
 				}
 			}
 		});
@@ -272,8 +271,7 @@ public class Map extends JFrame {
 				try {
 					new Search();
 				} catch (IOException e) {
-					JOptionPane.showMessageDialog(null, "Exception occured while using the search screen.", GrapicUtils.PROJECT_NAME,
-							JOptionPane.ERROR_MESSAGE);
+					MapBrowserListeners.executeJS("showError(\"Exception occured while using the search screen.\");");
 				}
 			}
 		});

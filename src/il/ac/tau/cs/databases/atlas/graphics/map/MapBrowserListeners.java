@@ -103,17 +103,21 @@ public class MapBrowserListeners {
 				List<Result> results = null;
 				try {
 					if (category.equals(Map.DEFAULT_CATEGORY)) {
-						executeJS("showError(\"" + "Please select a category.\");");
+						executeJS("showError(\""
+								+ "Please select a category.\");");
 					} else if (category.equals(Map.FAVORITES_CATEGORY)) {
+						showSpinner();
 						results = Main.queries.getFavorites();
 					} else {
+						showSpinner();
 						results = Main.queries.getResults(startYear, endYear,
 								category);
 					}
 				} catch (AtlasServerException ase) {
+					hideSpinner();
+					executeJS("showError(\"" + ase.getMessage() + "\");");
 					ase.printStackTrace();
 				}
-				executeJS("hideSpinner();");
 				if (results != null) {
 					showResultsOnMap(results, category);
 				}
@@ -127,20 +131,25 @@ public class MapBrowserListeners {
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				map.getBrowser().execute(code);
+				if (map!=null) {
+					map.getBrowser().execute(code);
+				}
 			}
 		});
 	}
 
-	public static void showResultsOnMap(final List<Result> results, final String category) {
+	public static void showResultsOnMap(final List<Result> results,
+			final String category) {
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
 				map.getBrowser().execute("deleteMarkers();");
 				if (results.isEmpty()) {
 					map.getBrowser().execute("noResults();");
 					MapBrowserListeners.setCategory("");
+					hideSpinner();
 				} else {
 					MapBrowserListeners.setCategory(category);
+
 					for (Result result : results) {
 						double lat = result.getLocation().getLat();
 						double lng = result.getLocation().getLng();
@@ -179,6 +188,7 @@ public class MapBrowserListeners {
 										+ result.getWikiLink() + "\");");
 
 					}
+					hideSpinner();
 
 				}
 			}
@@ -208,6 +218,7 @@ public class MapBrowserListeners {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
 					if (map != null) {
+						showSpinner();
 						String msg = " Showing "
 								+ Main.queries.getAmountOfLatestResults()
 								+ " results:<br>"
@@ -220,6 +231,7 @@ public class MapBrowserListeners {
 								+ " Females<br>"
 								+ (Main.queries.getAmountOfLatestResults() - Main.queries
 										.getStatsOfLatestResults()) + " Males";
+						hideSpinner();
 						map.getBrowser().execute("showStats(\"" + msg + "\");");
 					} else {
 						// TODO Show message?
@@ -239,6 +251,7 @@ public class MapBrowserListeners {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
 					if (map != null) {
+						showSpinner();
 						String favorites = ((String) map.getBrowser().evaluate(
 								"return getFavorites()"));
 						String removeFromFavorites = ((String) map.getBrowser()
@@ -254,8 +267,10 @@ public class MapBrowserListeners {
 
 						} catch (AtlasServerException e) {
 							msg = "Favorites failed to sync to database.";
-							map.getBrowser().execute("showError(\"" + msg + "\");");
+							map.getBrowser().execute(
+									"showError(\"" + msg + "\");");
 						} finally {
+							hideSpinner();
 							String favList = "[" + favorites + "]";
 							map.getBrowser().execute(
 									"updateFavorites(" + favList + ");");
@@ -294,13 +309,22 @@ public class MapBrowserListeners {
 
 	public static void setTimespan(int startYear, int endYear) {
 		System.out.println("Adjusting timeSpan...");
-		map.getBrowser().execute(
-				"setTimespan(" + startYear + "," + endYear + ");");
+		executeJS("setTimespan(" + startYear + "," + endYear + ");");
+	}
+
+	public static void showSpinner() {
+		System.out.println("Showing Spinner...");
+		executeJS("showSpinner();");
+	}
+
+	public static void hideSpinner() {
+		System.out.println("Hiding Spinner...");
+		executeJS("hideSpinner();");
 	}
 
 	public static void setCategory(String cat) {
 		String exec = "setCategory(\"" + cat + "\");";
-		System.out.println("Adjusting category label...\nExecuting:"+exec);
+		System.out.println("Adjusting category label...\nExecuting:" + exec);
 		map.getBrowser().execute(exec);
 	}
 }
