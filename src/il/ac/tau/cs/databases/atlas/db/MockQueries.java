@@ -1,18 +1,14 @@
 package il.ac.tau.cs.databases.atlas.db;
 
-import il.ac.tau.cs.databases.atlas.ProgressBarDemo;
-import il.ac.tau.cs.databases.atlas.ProgressBarTask;
 import il.ac.tau.cs.databases.atlas.connector.DynamicConnectionPool;
 import il.ac.tau.cs.databases.atlas.connector.command.TempCommand;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.io.File;
 import java.util.*;
@@ -125,13 +121,13 @@ public class MockQueries implements Queries {
 	 * @param fullPathDirectory
 	 */
 	@Override
-	public void update(Map<String, File> fullPathDirectory) {
+	public void update(Map<String, File> fullPathDirectory) throws AtlasServerException {
 		try {
-			DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06", "127.0.0.1", "3305", "DbMysql06");
+			DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06", "127.0.0.1", "3306", "DbMysql06");
 		} catch (AtlasServerException e) {
 			e.printStackTrace();
 		}
-		new ProgressBarTask(new TempCommand(100)).startTask();
+		new TempCommand(100).execute();
 	}
 
 	/**

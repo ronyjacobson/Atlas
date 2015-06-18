@@ -35,7 +35,7 @@ public abstract class BaseProgressDBCommand extends BaseDBCommand<Boolean> {
         return true;
     }
 
-    public void setUpdater(ProgressUpdater progressUpdater) {
+    private void setUpdater(ProgressUpdater progressUpdater) {
         this.progressUpdater = progressUpdater;
     }
 
@@ -74,7 +74,7 @@ public abstract class BaseProgressDBCommand extends BaseDBCommand<Boolean> {
 
     protected abstract String getFrameLabel();
 
-    public void startTask(final Connection con){
+    private void startTask(final Connection con){
         headerLabel.setText(getDisplayLabel());
 
         progressBar = new JProgressBar(0, 100);

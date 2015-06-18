@@ -8,13 +8,13 @@ import java.util.*;
 public interface Queries {
 	
 	//Maps between location names and id's
-	public static HashMap<String, Integer> locationsMap= new HashMap<String, Integer>();
+	Map<String, Integer> locationsMap= new HashMap<>();
 	
 	//Location names list
-	public static ArrayList<String> locationsNames= new ArrayList<String>();
+	List<String> locationsNames= new ArrayList<>();
 	
 	//Maps between category names and ids
-	public static HashMap<String, Integer> categoriesMap= new HashMap<String, Integer>();
+	Map<String, Integer> categoriesMap= new HashMap<>();
 	
 	
 	/**
@@ -74,7 +74,7 @@ public interface Queries {
 	 * Update the DB with the Yago files in the given full path directory
 	 * @param fullPathDirectory
 	 */
-	public void update(Map<String, File> fullPathDirectory);
+	public void update(Map<String, File> fullPathDirectory) throws AtlasServerException;
 
 	/**
 	 * @return a User from the DB that matches the user given
