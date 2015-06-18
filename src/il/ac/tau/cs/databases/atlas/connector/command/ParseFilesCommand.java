@@ -27,7 +27,7 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
 
     @Override
     protected String getDisplayLabel() {
-        return "To begin press 'Start'";
+        return "Press 'Start' to begin";
     }
 
     @Override
@@ -37,7 +37,6 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
 
     @Override
     protected void runProgressCmd(Connection con) throws AtlasServerException {
-        // GUI should check if files exist
 
         yagoParser.setProgressUpdater(progressUpdater);
         try {
@@ -70,12 +69,12 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
             yagoParser.ensureLabels(); // remove persons without prefLabel or no labels at all
             logger.info("Parsing complete");
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("", e);
+            throw new AtlasServerException(e.getMessage());
         }
 
         createLocationsTable(con);
-        int addedByUser = addYagoUser(con); // TODO: should only happen in the initial setup
-        // Insert data table to DB
+        int addedByUser = addYagoUser(con);
         createCategoriesTable(con);
         createPersonTable(con, addedByUser);
         createPersonHasCategoryTable(con);
@@ -84,12 +83,22 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
 
     private void progressLogger(int step, int numberOfSteps, String msg) {
         String outMsg = "Step " + step + "/" + numberOfSteps + ": " + msg;
-        logger.info(outMsg);
-        progressUpdater.updateHeader(outMsg);
+        progressLogger(outMsg);
+    }
+
+    private void progressLogger(String msg) {
+        progressUpdater.resetProgress();
+        logger.info(msg);
+        progressUpdater.updateHeader(msg);
+    }
+
+    public void updateProgress(long numberOfRecords, long recordNumber) {
+        progressUpdater.updateProgress((int) (recordNumber * 100 / numberOfRecords), recordNumber + "/" + numberOfRecords + " processed");
     }
 
     private void createCategoriesTable(Connection con) throws AtlasServerException {
-        logger.info("Creating 'categories' table");
+        progressLogger("Populating 'categories' table");
+        progressUpdater.updateProgress(50, "Creating categories in DB");
         try (PreparedStatement pstmt = con
                 .prepareStatement("REPLACE INTO category(category_ID,categoryName) VALUES(?,?)")) {
             Pattern p = Pattern.compile(YagoParser.CATEGORY_REGEX);
@@ -103,15 +112,16 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
             }
             pstmt.executeBatch();
         } catch (SQLException e) {
-            logger.error("Failed to create 'categories' table", e);
-            throw new AtlasServerException("Failed to insert into `categories` table");
+            logger.error("Failed to populate 'categories' table", e);
+            throw new AtlasServerException("Failed to populate `categories` table");
         }
-        logger.info("'categories' table created successfully");
+        logger.info("'categories' table populated successfully");
     }
 
     private void createPersonLabelsTable(Connection con) throws AtlasServerException {
-        logger.info("Creating 'person_labels' table");
+        progressLogger("Populating 'person_labels' table");
         Map<Long, YagoPerson> personsMap = yagoParser.getPersonsMap();
+        progressUpdater.updateProgress(50, "Updating labels in DB");
         try (PreparedStatement pstmt = con
                 .prepareStatement("REPLACE INTO person_labels(label, person_ID) VALUES (?, ?)")) {
             for (YagoPerson yagoPerson : personsMap.values()) {
@@ -124,15 +134,16 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
             }
             pstmt.executeBatch();
         } catch (SQLException e) {
-            logger.error("Failed to create 'person_labels' table", e);
-            throw new AtlasServerException("Failed to create 'person_labels' table");
+            logger.error("Failed to populate 'person_labels' table", e);
+            throw new AtlasServerException("Failed to populate 'person_labels' table");
         }
-        logger.info("'person_labels' table created successfully");
+        logger.info("'person_labels' table populated successfully");
     }
 
     private void createPersonHasCategoryTable(Connection con) throws AtlasServerException {
-        logger.info("Creating 'person_has_category' table");
+        progressLogger("Populating 'person_has_category' table");
         Map<Long, YagoPerson> personsMap = yagoParser.getPersonsMap();
+        progressUpdater.updateProgress(50, "Updating categories in DB");
         try (PreparedStatement pstmt = con
                 .prepareStatement("REPLACE INTO person_has_category(person_ID, category_ID) VALUES (?, ?)")) {
             for (YagoPerson yagoPerson : personsMap.values()) {
@@ -145,19 +156,23 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
             }
             pstmt.executeBatch();
         } catch (SQLException e) {
-            logger.error("Failed to create 'person_has_category' table", e);
-            throw new AtlasServerException("Failed to create 'person_has_category' table");
+            logger.error("Failed to populate 'person_has_category' table", e);
+            throw new AtlasServerException("Failed to populate 'person_has_category' table");
         }
-        logger.info("'person_has_category' table created successfully");
+        logger.info("'person_has_category' table populated successfully");
     }
 
     private void createPersonTable(Connection con, int addedByUser) throws AtlasServerException {
-        logger.info("Creating 'person' table");
+        progressLogger("Populating 'person' table");
         Map<Long, YagoPerson> personsMap = yagoParser.getPersonsMap();
         logger.info("Total number of records to be inserted: " + personsMap.size() + " persons");
 
         ResultSet rs = null;
         Statement stmt = null;
+
+        progressUpdater.updateProgress(0, "Uploading persons..");
+        long interval = personsMap.size() / 100;
+        long recordCount = 0;
 
         try (PreparedStatement pstmt = con
                 .prepareStatement("INSERT INTO person(wikiURL, diedOnDate, wasBornOnDate, addedByUser, wasBornInLocation, diedInLocation, isFemale, yago_ID, prefLabel) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE wikiURL=VALUES(wikiURL), diedOnDate=VALUES(diedOnDate), wasBornOnDate=VALUES(wasBornOnDate), addedByUser=VALUES(addedByUser), wasBornInLocation=VALUES(wasBornInLocation), diedInLocation=VALUES(diedInLocation), isFemale=VALUES(isFemale), prefLabel=VALUES(prefLabel)",
@@ -202,14 +217,17 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
                 }
                 int personId = rs.getInt(1);
                 yagoPerson.setPersonId(personId);
+                if (++recordCount % interval == 0) {
+                    updateProgress(personsMap.size(), recordCount);
+                }
             }
         } catch (SQLException e) {
-            logger.error("Failed to create 'person' table", e);
-            throw new AtlasServerException("Failed to create 'person' table");
+            logger.error("Failed to populate 'person' table", e);
+            throw new AtlasServerException("Failed to populate 'person' table");
         } finally {
             safelyClose(rs, stmt);
         }
-        logger.info("'person' table created successfully");
+        logger.info("'person' table populated successfully");
     }
 
     private int addYagoUser(Connection con) throws AtlasServerException {
@@ -238,7 +256,8 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
     }
 
     private void createLocationsTable(Connection con) throws AtlasServerException {
-        logger.info("Creating 'location' table");
+        progressLogger("Populating 'location' table");
+        progressUpdater.updateProgress(50, "Updating locations in DB");
         Map<Long, YagoLocation> locationsMap = yagoParser.getLocationsMap();
         logger.info("Total number of records to be inserted: " + locationsMap.size() + " locations");
         try (PreparedStatement pstmt = con
@@ -253,10 +272,10 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
             }
             pstmt.executeBatch();
         } catch (SQLException e) {
-            logger.error("Failed to create 'location' table", e);
-            throw new AtlasServerException("Failed to create 'location' table");
+            logger.error("Failed to populate 'location' table", e);
+            throw new AtlasServerException("Failed to populate 'location' table");
         }
-        logger.info("'location' table created successfully");
+        logger.info("'location' table populated successfully");
     }
 
     public static void main(String[] args) throws AtlasServerException {
