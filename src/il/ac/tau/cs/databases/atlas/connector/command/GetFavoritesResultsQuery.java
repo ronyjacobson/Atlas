@@ -34,7 +34,6 @@ public class GetFavoritesResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 			innerExecuteByBirths(con, false);
 			finalResults.addAll(results.values());
 		} catch (SQLException e) {
-			e.printStackTrace();
 			throw new AtlasServerException("Error: unable to fetch favorites");
 		} finally {
 			safelyClose(statement, resultSet);

@@ -50,6 +50,8 @@ public class Add extends JFrame {
 	private static final String DEFAULT_CATEGORY = "Choose a category...";
 	private static final String DEFAULT_BIRTH_LOCATION = "Choose birth place...";
 	private static final String DEFAULT_DEATH_LOCATION = "Choose death place...";
+	private static final String DEFAULT_BIRTH_DATE = "Enter birthday";
+	private static final String DEFAULT_DEATH_DATE = "Enter death date";
 	private static final String NOT_DEAD_LOCATION = "NOT DEAD";
 
 	private JLabel label;
@@ -206,6 +208,7 @@ public class Add extends JFrame {
 		ClearTextBox clearTextBoxListner = new ClearTextBox();
 
 		wasBornOn = new JDateChooser();
+		wasBornOn.setToolTipText(DEFAULT_BIRTH_DATE);
 		wasBornOn.setDate(null);
 		wasBornOn.setMaxSelectableDate(today);
 		wasBornOn.addMouseListener(clearTextBoxListner);
@@ -213,6 +216,7 @@ public class Add extends JFrame {
 
 		hasDiedOn = new JDateChooser();
 		hasDiedOn.setDate(null);
+		hasDiedOn.setToolTipText(DEFAULT_DEATH_DATE);
 		hasDiedOn.setMaxSelectableDate(today);
 		hasDiedOn.addMouseListener(clearTextBoxListner);
 		hasDiedOn.setFont(fieldFont);
@@ -246,7 +250,7 @@ public class Add extends JFrame {
 					locations.toArray(new String[locations.size()]));
 
 			locations.set(0, DEFAULT_DEATH_LOCATION);
-			locations.add(NOT_DEAD_LOCATION);
+			locations.add(1, NOT_DEAD_LOCATION);
 			hasDiedIn = new JComboBox<String>(
 					locations.toArray(new String[locations.size()]));
 
