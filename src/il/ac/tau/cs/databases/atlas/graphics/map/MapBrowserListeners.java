@@ -103,7 +103,7 @@ public class MapBrowserListeners {
 				List<Result> results = null;
 				try {
 					if (category.equals(Map.DEFAULT_CATEGORY)) {
-						map.getBrowser().execute("showError(\"" + "Please select a category.\");");
+						executeJS("showError(\"" + "Please select a category.\");");
 					} else if (category.equals(Map.FAVORITES_CATEGORY)) {
 						results = Main.queries.getFavorites();
 					} else {
@@ -113,7 +113,7 @@ public class MapBrowserListeners {
 				} catch (AtlasServerException ase) {
 					ase.printStackTrace();
 				}
-				executeJS("hideSpinner()");
+				executeJS("hideSpinner();");
 				if (results != null) {
 					showResultsOnMap(results, category);
 				}
