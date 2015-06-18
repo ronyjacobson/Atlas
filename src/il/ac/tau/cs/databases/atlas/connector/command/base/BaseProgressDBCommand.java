@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.URL;
 import java.sql.Connection;
 
 /**
@@ -41,20 +42,21 @@ public abstract class BaseProgressDBCommand extends BaseDBCommand<Boolean> {
 
     private void prepareGUI(){
         mainFrame = new JFrame(getFrameLabel());
+        final URL bgURL = getClass().getResource("/map/progress-bg.png");
+        mainFrame.setContentPane(new JLabel(new ImageIcon(bgURL)));
         mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        mainFrame.setSize(400, 400);
+        mainFrame.setSize(400, 240);
         mainFrame.setResizable(false);
         mainFrame.setLayout(new GridLayout(3, 1));
 
         mainFrame.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent windowEvent){
-                String ObjButtons[] = {"Yes","No"};
+            public void windowClosing(WindowEvent windowEvent) {
+                String ObjButtons[] = {"Yes", "No"};
                 int PromptResult = JOptionPane.showOptionDialog(null,
                         "Exiting will not stop the update, if it already started. Are you sure you want to exit?", "Atlas updater",
                         JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null,
-                        ObjButtons,ObjButtons[1]);
-                if(PromptResult == 0)
-                {
+                        ObjButtons, ObjButtons[1]);
+                if (PromptResult == 0) {
                     mainFrame.dispose();
                 }
             }
@@ -62,10 +64,11 @@ public abstract class BaseProgressDBCommand extends BaseDBCommand<Boolean> {
         headerLabel = new JLabel("", JLabel.CENTER);
         statusLabel = new JLabel("",JLabel.CENTER);
 
-        statusLabel.setSize(350,100);
+        statusLabel.setSize(350, 100);
 
         controlPanel = new JPanel();
         controlPanel.setLayout(new FlowLayout());
+        controlPanel.setOpaque(false);
 
         mainFrame.add(headerLabel);
         mainFrame.add(controlPanel);
@@ -96,6 +99,8 @@ public abstract class BaseProgressDBCommand extends BaseDBCommand<Boolean> {
                         try {
                             setUpdater(new ProgressUpdater(progressBar, outputTextArea, headerLabel));
                             runProgressCmd(con);
+                            popFinishDialog();
+                            mainFrame.dispose();
                         } catch (AtlasServerException ase) {
                             JOptionPane.showMessageDialog(null, ase.getMessage(), GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
                             mainFrame.dispose();
@@ -103,13 +108,21 @@ public abstract class BaseProgressDBCommand extends BaseDBCommand<Boolean> {
                     }
                 };
                 new Thread(task).start();
-            }});
+            }
+        });
 
         controlPanel.add(startButton);
         controlPanel.add(progressBar);
         controlPanel.add(scrollPane);
+        progressBar.setPreferredSize(new Dimension(progressBar.getPreferredSize().width * 2, (progressBar.getPreferredSize().height * 5) / 4));
+        scrollPane.setPreferredSize(new Dimension((scrollPane.getPreferredSize().width * 3) / 2, (scrollPane.getPreferredSize().height * 2) / 4));
         mainFrame.setVisible(true);
 
+    }
+
+    private void popFinishDialog() {
+        JOptionPane.showMessageDialog(mainFrame,
+                "Finished successfully");
     }
 
     protected abstract void runProgressCmd(Connection con) throws AtlasServerException;

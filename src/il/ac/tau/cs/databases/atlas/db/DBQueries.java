@@ -1,16 +1,8 @@
 package il.ac.tau.cs.databases.atlas.db;
 
 import il.ac.tau.cs.databases.atlas.Main;
-import il.ac.tau.cs.databases.atlas.connector.command.AddPersonQuery;
-import il.ac.tau.cs.databases.atlas.connector.command.GetCategoriesQuery;
-import il.ac.tau.cs.databases.atlas.connector.command.GetFavoritesResultsQuery;
-import il.ac.tau.cs.databases.atlas.connector.command.GetGeoLocationsQuery;
-import il.ac.tau.cs.databases.atlas.connector.command.GetResultsQuery;
-import il.ac.tau.cs.databases.atlas.connector.command.GetUserQuery;
-import il.ac.tau.cs.databases.atlas.connector.command.RegisterUserQuery;
-import il.ac.tau.cs.databases.atlas.connector.command.SearchResultsByDatesQuery;
-import il.ac.tau.cs.databases.atlas.connector.command.SearchResultsByNameQuery;
-import il.ac.tau.cs.databases.atlas.connector.command.UpdateFavoritesQuery;
+import il.ac.tau.cs.databases.atlas.ParserConstants;
+import il.ac.tau.cs.databases.atlas.connector.command.*;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
 import java.io.File;
@@ -224,8 +216,9 @@ public class DBQueries implements Queries {
 	 * @param fullPathDirectory
 	 */
 	@Override
-	public void update(Map<String, File> fullPathDirectory) {
-		// TODO: Etan
+	public void update(File fullPathDirectory) throws AtlasServerException {
+		Map<String,File> filesMap = checkAndGetFiles(fullPathDirectory);
+		new ParseFilesCommand(filesMap).execute();
 	}
 
 	/**
@@ -321,6 +314,36 @@ public class DBQueries implements Queries {
 		results.addAll(query.execute());
 		amountOfLatestResults = results.size();
 		return results;
+	}
+
+	private Map<String,File> checkAndGetFiles(File fullPath) throws AtlasServerException {
+		final File[] files = fullPath.listFiles();
+		if (files == null) {
+			throw new AtlasServerException(fullPath + ": The path doesn't exist");
+		}
+		Map<String, File> fileMap = new HashMap<>();
+		Set<String> required = new HashSet<>(Arrays.asList(ParserConstants.REQUIRED_FILES));
+		for (File file : files) {
+			final String relevantFileName = file.getName();
+			if (required.remove(relevantFileName)) {
+				fileMap.put(relevantFileName, file);
+			}
+		}
+		if (!required.isEmpty()) {
+			String msg = "The following files are missing:";
+			for (String missing : required) {
+				msg += "\n" + missing;
+			}
+			throw new AtlasServerException(msg);
+		}
+
+		for (Map.Entry<String, File> stringFileEntry : fileMap.entrySet()) {
+			final File file = stringFileEntry.getValue();
+			if (!(file.exists() && !file.isDirectory() && file.canRead())) {
+				throw new AtlasServerException("The file: " + stringFileEntry.getKey() + ", is not valid");
+			}
+		}
+		return fileMap;
 	}
 
 }

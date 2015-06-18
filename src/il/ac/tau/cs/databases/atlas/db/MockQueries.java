@@ -3,13 +3,7 @@ package il.ac.tau.cs.databases.atlas.db;
 import il.ac.tau.cs.databases.atlas.connector.DynamicConnectionPool;
 import il.ac.tau.cs.databases.atlas.connector.command.TempCommand;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.ProgressBar;
-import org.eclipse.swt.widgets.Shell;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.File;
 import java.util.*;
 import java.util.List;
@@ -121,7 +115,7 @@ public class MockQueries implements Queries {
 	 * @param fullPathDirectory
 	 */
 	@Override
-	public void update(Map<String, File> fullPathDirectory) throws AtlasServerException {
+	public void update(File fullPathDirectory) throws AtlasServerException {
 		try {
 			DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06", "127.0.0.1", "3306", "DbMysql06");
 		} catch (AtlasServerException e) {

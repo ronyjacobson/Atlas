@@ -74,7 +74,7 @@ public interface Queries {
 	 * Update the DB with the Yago files in the given full path directory
 	 * @param fullPathDirectory
 	 */
-	public void update(Map<String, File> fullPathDirectory) throws AtlasServerException;
+	public void update(File fullPathDirectory) throws AtlasServerException;
 
 	/**
 	 * @return a User from the DB that matches the user given
