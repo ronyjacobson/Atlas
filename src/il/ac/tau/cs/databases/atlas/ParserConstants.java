@@ -10,8 +10,8 @@ public class ParserConstants {
     public static final String YAGO_LABELS_TSV = "yagoLabels.tsv";
     public static final String YAGO_WIKIPEDIA_INFO_TSV = "yagoWikipediaInfo.tsv";
     public static final String YAGO_LITERAL_FACTS_TSV = "yagoLiteralFacts.tsv";
-    public static final String YAGO_GEONAMES_ENTITY_IDS_TSV = "yagoGeonamesEntityIds.tsv"; // TODO: remove
-    public static final String CITIES1000_TXT = "cities1000.txt"; // TODO: remove
+    public static final String YAGO_GEONAMES_ENTITY_IDS_TSV = "yagoGeonamesEntityIds.tsv";
+    public static final String CITIES1000_TXT = "cities1000.txt";
     public static final String[] REQUIRED_FILES = {
             YAGO_DATE_FACTS_TSV,
             YAGO_FACTS_TSV,

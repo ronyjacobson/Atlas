@@ -1,8 +1,8 @@
 package il.ac.tau.cs.databases.atlas.connector.command;
 
+import il.ac.tau.cs.databases.atlas.ParserConstants;
 import il.ac.tau.cs.databases.atlas.connector.DynamicConnectionPool;
-import il.ac.tau.cs.databases.atlas.connector.command.base.BaseDBCommand;
-import il.ac.tau.cs.databases.atlas.db.TempTablesConstants;
+import il.ac.tau.cs.databases.atlas.connector.command.base.BaseProgressDBCommand;
 import il.ac.tau.cs.databases.atlas.db.YagoParser;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 import il.ac.tau.cs.databases.atlas.parsing.YagoLocation;
@@ -13,36 +13,61 @@ import java.sql.*;
 import java.sql.Date;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ParseFilesCommand extends BaseDBCommand<Boolean>{
-    private AtomicInteger progress;
+public class ParseFilesCommand extends BaseProgressDBCommand {
     private YagoParser yagoParser;
+    private Map<String, File> files;
 
-    public ParseFilesCommand(File yagoDateFile, File yagoLocationFile, File yagoCategoryFile, File yagoLabelsFile, File yagoWikiFile, File yagoGeonamesFile, File geonamesCitiesFile, File yagoLiteralFactsFile, AtomicInteger progress) {
-        this.progress = progress;
-        this.yagoParser = new YagoParser(yagoDateFile, yagoLocationFile, yagoCategoryFile, yagoLabelsFile, yagoWikiFile, yagoGeonamesFile, geonamesCitiesFile, yagoLiteralFactsFile);
+    public ParseFilesCommand(Map<String, File> files) {
+        yagoParser = new YagoParser();
+        this.files = files;
     }
 
     @Override
-    protected Boolean innerExecute(Connection con) throws AtlasServerException {
+    protected String getFrameLabel() {
+        return "Yago Updater";
+    }
+
+    @Override
+    protected void runProgressCmd(Connection con) throws AtlasServerException {
         // GUI should check if files exist
 
         try {
-            yagoParser.parseFiles();
+            logger.info("Parser started");
+            progressUpdater.updateProgress(5, "A");
+            logger.info("Parsing YAGO literal facts info..");
+            yagoParser.parseYagoLiteralFacts(files.get(ParserConstants.YAGO_LITERAL_FACTS_TSV));
+            progressUpdater.updateProgress(10, "B");
+            logger.info("Parsing YAGO labels for locations..");
+            yagoParser.parseYagoLabelsFile(files.get(ParserConstants.YAGO_LABELS_TSV), true);
+            progressUpdater.updateProgress(15, "C");
+            logger.info("Parsing YAGO geonames info..");
+            yagoParser.parseYagoGeonamesFile(files.get(ParserConstants.YAGO_GEONAMES_ENTITY_IDS_TSV));
+            progressUpdater.updateProgress(20, "D");
+            logger.info("Parsing Geonames cities info..");
+            yagoParser.parseGeonamesCitiesFile(files.get(ParserConstants.CITIES1000_TXT));
+            logger.info("Validating locations..");
+            yagoParser.validateLocationsMap();
+            logger.info("Parsing YAGO dates..");
+            yagoParser.parseYagoDateFile(files.get(ParserConstants.YAGO_DATE_FACTS_TSV));
+            logger.info("Parsing YAGO locations facts..");
+            yagoParser.parseYagoLocationFile(files.get(ParserConstants.YAGO_FACTS_TSV));
+            logger.info("Filtering out persons without birth date/place..");
+            yagoParser.validatePersonsMap();
+            logger.info("Parsing YAGO categories..");
+            yagoParser.parseYagoCategoryFile(files.get(ParserConstants.YAGO_TRANSITIVE_TYPE_TSV));
+            logger.info("Parsing YAGO labels for persons..");
+            yagoParser.parseYagoLabelsFile(files.get(ParserConstants.YAGO_LABELS_TSV), false);
+            logger.info("Parsing YAGO wikipedia info..");
+            yagoParser.parseYagoWikiFile(files.get(ParserConstants.YAGO_WIKIPEDIA_INFO_TSV));
+            logger.info("Ensuring labels..");
+            yagoParser.ensureLabels(); // remove persons without prefLabel or no labels at all
+            logger.info("Parsing complete");
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        //progress.getAndIncrement(); // Increment progress for progress bar
-
-
-        // createTempTables(con);
-
-        //progress.getAndIncrement();
-
 
         createLocationsTable(con);
 
@@ -53,8 +78,11 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
         createPersonTable(con, addedByUser);
         createPersonHasCategoryTable(con);
         createPersonLabelsTable(con);
+    }
 
-        return true;
+    @Override
+    protected String getDisplayLabel() {
+        return "To begin press 'Start'";
     }
 
     private void createCategoriesTable(Connection con) throws AtlasServerException {
@@ -62,7 +90,7 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
         try (PreparedStatement pstmt = con
                 .prepareStatement("REPLACE INTO category(category_ID,categoryName) VALUES(?,?)")) {
             Pattern p = Pattern.compile(YagoParser.CATEGORY_REGEX);
-            for (Entry<String, Integer> categoryEntry : YagoParser.categoryTypes.entrySet()) {
+            for (Entry<String, Integer> categoryEntry : yagoParser.getCategoryTypes().entrySet()) {
                 Matcher m = p.matcher(categoryEntry.getKey());
                 if (m.find()) {
                     pstmt.setInt(1, categoryEntry.getValue());
@@ -88,8 +116,8 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
                 for (String label : yagoPerson.getLabels()) {
                     pstmt.setString(1, label);
                     pstmt.setInt(2, personId);
+                    pstmt.addBatch();
                 }
-                pstmt.addBatch();
             }
             pstmt.executeBatch();
         } catch (SQLException e) {
@@ -109,8 +137,8 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
                 for (Integer categoryId : yagoPerson.getCategories()) {
                     pstmt.setInt(1, personId);
                     pstmt.setInt(2, categoryId);
+                    pstmt.addBatch();
                 }
-                pstmt.addBatch();
             }
             pstmt.executeBatch();
         } catch (SQLException e) {
@@ -230,15 +258,15 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
 
     public static void main(String[] args) throws AtlasServerException {
         DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06","localhost", "3306", "DbMysql06");
-        ParseFilesCommand cmd = new ParseFilesCommand(new File("/Users/admin/Downloads/yagoDateFacts.tsv"),
-                new File("/Users/admin/Downloads/yagoFacts.tsv"),
-                new File("/Users/admin/Downloads/yagoTransitiveType.tsv"),
-                new File("/Users/admin/Downloads/yagoLabels.tsv"),
-                new File("/Users/admin/Downloads/yagoWikipediaInfo.tsv"),
-                new File("/Users/admin/Downloads/yagoGeonamesEntityIds.tsv"),
-                new File("/Users/admin/Downloads/cities1000.txt"),
-                new File("/Users/admin/Downloads/yagoLiteralFacts.tsv"),
-                new AtomicInteger(0));
-        cmd.execute();
+        Map<String, File> files = new HashMap<>();
+        files.put(ParserConstants.YAGO_DATE_FACTS_TSV, new File("/Users/admin/Downloads/yagoDateFacts.tsv"));
+        files.put(ParserConstants.YAGO_LITERAL_FACTS_TSV, new File("/Users/admin/Downloads/yagoLiteralFacts.tsv"));
+        files.put(ParserConstants.YAGO_LABELS_TSV, new File("/Users/admin/Downloads/yagoLabels.tsv"));
+        files.put(ParserConstants.YAGO_FACTS_TSV, new File("/Users/admin/Downloads/yagoFacts.tsv"));
+        files.put(ParserConstants.YAGO_TRANSITIVE_TYPE_TSV, new File("/Users/admin/Downloads/yagoTransitiveType.tsv"));
+        files.put(ParserConstants.YAGO_WIKIPEDIA_INFO_TSV, new File("/Users/admin/Downloads/yagoWikipediaInfo.tsv"));
+        files.put(ParserConstants.YAGO_GEONAMES_ENTITY_IDS_TSV, new File("/Users/admin/Downloads/yagoGeonamesEntityIds.tsv"));
+        files.put(ParserConstants.CITIES1000_TXT, new File("/Users/admin/Downloads/cities1000.txt"));
+        new ParseFilesCommand(files).execute();
     }
 }
