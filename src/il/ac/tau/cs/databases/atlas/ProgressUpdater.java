@@ -39,5 +39,14 @@ public class ProgressUpdater {
         });
     }
 
+    public void resetProgress() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                progressBar.setValue(0);
+            }
+        });
+    }
+
 
 }
