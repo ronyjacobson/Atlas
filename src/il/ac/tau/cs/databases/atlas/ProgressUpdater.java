@@ -44,6 +44,7 @@ public class ProgressUpdater {
             @Override
             public void run() {
                 progressBar.setValue(0);
+                outputTextArea.setText("");
             }
         });
     }
