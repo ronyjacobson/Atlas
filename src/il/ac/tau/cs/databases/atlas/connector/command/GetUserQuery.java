@@ -31,12 +31,13 @@ public class GetUserQuery extends BaseDBCommand<User> {
         try {
         	statement = con.prepareStatement(
         			"SELECT * FROM "+
-        						DBConstants.User.TABLE_NAME + ", " +
-        						DBConstants.Location.TABLE_NAME + "\n" +
+        			DBConstants.User.TABLE_NAME + ", " +
+        			DBConstants.Location.TABLE_NAME + "\n" +
         			"WHERE "+  DBConstants.USERNAME_L+" = ? \n" +
-        			"AND "+ DBConstants.BORN_IN_LOCATION_L +" = "+DBConstants.LOCATION_ID_L);
+        			"AND "+ DBConstants.BORN_IN_LOCATION_L +" = "+DBConstants.LOCATION_ID_L+"\n"+
+        			"OR "+ DBConstants.BORN_IN_LOCATION_L +" = 'NULL'");
         	statement.setString(1, user.getUsername());
-        	logger.info(String.format("Executing DB query: %s.", statement.toString()));
+        	logger.info(String.format("Executing DB query:\n %s.", statement.toString()));
         	resultSet = statement.executeQuery();
             
             while (resultSet.next()) {

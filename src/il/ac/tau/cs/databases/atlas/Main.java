@@ -43,7 +43,7 @@ public class Main {
 	 * Main running method
 	 */
 	public static void main(String[] args) {
-		boolean DEBUG = true;
+		boolean DEBUG = false;
 		try {
 			// Initialize the program
 			initialize();
