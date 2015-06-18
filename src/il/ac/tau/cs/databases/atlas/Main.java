@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 public class Main {
 	private static final Logger log = Logger.getLogger(Main.class);
 	// DB queries object
-	public static final Queries queries = new MockQueries();
+	public static final Queries queries = new DBQueries();
 	public static User user;
 	
 	/**
