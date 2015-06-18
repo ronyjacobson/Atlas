@@ -136,7 +136,7 @@ public class MapBrowserListeners {
 			public void run() {
 				map.getBrowser().execute("deleteMarkers();");
 				if (results.isEmpty()) {
-					map.getBrowser().execute("alert(\"No Results Found!\");");
+					map.getBrowser().execute("noResults();");
 				} else {
 					for (Result result : results) {
 						double lat = result.getLocation().getLat();

@@ -1,5 +1,6 @@
 package il.ac.tau.cs.databases.atlas;
 
+import il.ac.tau.cs.databases.atlas.db.DBConstants;
 import il.ac.tau.cs.databases.atlas.db.Queries;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 import il.ac.tau.cs.databases.atlas.graphics.map.MapBrowserListeners;
@@ -362,6 +363,9 @@ public class Add extends JFrame {
 			} else if (name.getText().equalsIgnoreCase("")) {
 				JOptionPane.showMessageDialog(null, "Name can not be blank.",
 						GrapicUtils.PROJECT_NAME, 1);
+			} else if (name.getText().length() > DBConstants.PREF_LABEL_SIZE) {
+				JOptionPane.showMessageDialog(null, "Name can not exceed "+DBConstants.PREF_LABEL_SIZE+" characters.",
+						GrapicUtils.PROJECT_NAME, 1);
 			} else if (category.getSelectedItem().toString()
 					.equals(DEFAULT_CATEGORY)) {
 				JOptionPane.showMessageDialog(null,
@@ -397,6 +401,10 @@ public class Add extends JFrame {
 			} else if (wikiLink.getText().equalsIgnoreCase("")) {
 				JOptionPane.showMessageDialog(null,
 						"Wikipedia link can not be blank.",
+						GrapicUtils.PROJECT_NAME, 1);
+			} else if (wikiLink.getText().length() > DBConstants.WIKI_URL_SIZE) {
+				JOptionPane.showMessageDialog(null,
+						"Wikipedia link can not exceed "+DBConstants.WIKI_URL_SIZE+" characters.",
 						GrapicUtils.PROJECT_NAME, 1);
 			} else if (hasDiedIn.getSelectedItem().toString()
 					.equals(NOT_DEAD_LOCATION)) {

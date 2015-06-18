@@ -1,5 +1,6 @@
 package il.ac.tau.cs.databases.atlas;
 
+import il.ac.tau.cs.databases.atlas.db.DBConstants;
 import il.ac.tau.cs.databases.atlas.db.Queries;
 import il.ac.tau.cs.databases.atlas.db.User;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
@@ -181,7 +182,6 @@ public class Login extends JFrame {
 		JLabel placeLabel = new JLabel("Birth Place (optional):", SwingConstants.LEFT);
 		placeLabel.setForeground(Color.DARK_GRAY);
 		placeLabel.setFont(fieldFont);
-		
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.weightx = gbc.weighty = 1.0;
 		gbc.gridx = 0;
@@ -282,8 +282,12 @@ public class Login extends JFrame {
 				JOptionPane.showMessageDialog(null, "Please enter login credentials.", GrapicUtils.PROJECT_NAME, 1);
 			} else if (username.getText().equalsIgnoreCase("")) {
 				JOptionPane.showMessageDialog(null, "Username can not be blank.", GrapicUtils.PROJECT_NAME, 1);
+			} else if (username.getText().length() > DBConstants.USERNAME_SIZE) {
+				JOptionPane.showMessageDialog(null, "<HTML>Username can not exceed "+DBConstants.USERNAME_SIZE+" characters.</HTML>", GrapicUtils.PROJECT_NAME, 1);
 			} else if (password.getPassword().length == 0) {
 				JOptionPane.showMessageDialog(null, "Password can not be blank.", GrapicUtils.PROJECT_NAME, 1);
+			} else if (password.getPassword().length  > DBConstants.PASSWORD_SIZE) {
+				JOptionPane.showMessageDialog(null, "<HTML>Password can not exceed "+DBConstants.PASSWORD_SIZE+" characters.</HTML>", GrapicUtils.PROJECT_NAME, 1);
 			} else if (DateUtils.isToday(wasBornOn.getCalendar()) && signupEnabled) {
 				JOptionPane.showMessageDialog(null, "No way you were born today, enter a valid birthday.", GrapicUtils.PROJECT_NAME, 1);
 			} else if (!isFemale.isSelected() && !isMale.isSelected() && signupEnabled) {
