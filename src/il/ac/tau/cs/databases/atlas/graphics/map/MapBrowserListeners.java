@@ -12,12 +12,16 @@ import java.awt.event.AdjustmentListener;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 import javax.swing.JComboBox;
 import javax.swing.JScrollBar;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.ProgressBar;
+import org.eclipse.swt.widgets.Shell;
 
 public class MapBrowserListeners {
 
@@ -35,7 +39,7 @@ public class MapBrowserListeners {
 					try {
 						List<String> favs = Main.queries.getFavoritesIDs();
 						String favList =favs.toString();
-						map.getBrowser().execute("updateFavorites("+ favList +");");
+						map.getBrowser().execute("updateFavorites(" + favList + ");");
 					} catch (AtlasServerException e) {
 						msg = "Couldnt get favorites from database.";
 						map.getBrowser().execute("error(\"" + msg + "\");");
@@ -85,81 +89,89 @@ public class MapBrowserListeners {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					if (firstQuery) {
-						firstQuery = false;
-						// Set up favorites list
-						MapBrowserListeners.updateFavorites(firstQuery);
-					}
-					if (map != null) {
-						int startYear = timeline.getModel().getValue();
-						int endYear = timeline.getModel().getValue() + timeline.getModel().getExtent();
-						String category = categoriesComboBox.getSelectedItem().toString();
-						// Check category
-						if (category.equals(Map.DEFAULT_CATEGORY)) {
-							map.getBrowser().execute("notify(\"" + "Please select a category." + "\");");
-						} else if (category.equals(Map.FAVORITES_CATEGORY)){
-							try {
-								showResultsOnMap(Main.queries.getFavorites());
-							} catch (AtlasServerException e) {
-								e.printStackTrace();
-							}
-						} else {
-							try {
-								showResultsOnMap(Main.queries.getResults(startYear, endYear, category));
-							} catch (AtlasServerException e) {
-								e.printStackTrace();
-							}
-						}
+			if (firstQuery) {
+				firstQuery = false;
+				// Set up favorites list
+				MapBrowserListeners.updateFavorites(true); // TODO: Rony
+			}
+			if (map != null) {
+				executeJS("showSpinner()");
+				int startYear = timeline.getModel().getValue();
+				int endYear = timeline.getModel().getValue() + timeline.getModel().getExtent();
+				String category = categoriesComboBox.getSelectedItem().toString();
+				// Check category
+				List<Result> results = null;
+				try {
+					if (category.equals(Map.DEFAULT_CATEGORY)) {
+						map.getBrowser().execute("error(\"" + "Please select a category." + "\");");
+					} else if (category.equals(Map.FAVORITES_CATEGORY)){
+						results = Main.queries.getFavorites();
 					} else {
-						// TODO Show message?
+						results = Main.queries.getResults(startYear, endYear, category);
 					}
+				} catch (AtlasServerException ase) {
+				ase.printStackTrace();
+			}
+				executeJS("hideSpinner()");
+				if (results != null){
+					showResultsOnMap(results);
 				}
-			});
-		}
-	}
-	
-	public static void showResultsOnMap(List<Result> results) {
-		
-		map.getBrowser().execute("deleteMarkers();");
-		if (results.isEmpty()) {
-			map.getBrowser().execute("noResults();");
-		} else {
-			for (Result result : results) {
-				// random offset so that pins wont hover each other
-				double r1 = new Random().nextInt(200)-100;
-				r1 = r1/1000;
-				double r2 = new Random().nextInt(200)-100;
-				r2 = r1/1000;
-				double lat = result.getLocation().getLat() + r1;
-				double lng = result.getLocation().getLng() + r2;
-				String imageIcon = "flag-";
-				if (result.isBirth()) {
-					imageIcon += "birth";
-					// TODO can offset the coordinates a little so results in the same place
-					// won't be in the exact mark on the map
-				} else {
-					imageIcon += "death";
-				}
-				if (!result.getCategory().equalsIgnoreCase("")){
-					// Check for existing category flag
-					String categoryPostfix = result.getCategory().toLowerCase().replace(" ", "-");
-					String flagFilename = imageIcon + "-" + categoryPostfix + ".png";
-					String tempDir = System.getProperty("java.io.tmpdir");
-					String flagFilePath = tempDir + flagFilename;
-					File file = new File(flagFilePath);
-					if(file.exists() && !file.isDirectory()) {
-						imageIcon += "-" + categoryPostfix;
-					}
-				}
-				imageIcon += ".png";
-				map.getBrowser().execute(
-						"addMarker(" + result.getID() + "," + lat + "," + lng + ",\""
-								+ result.getName() + "\",\"" + imageIcon + "\",\"" + result.getSummary() + "\",\"" + result.getWikiLink()
-								+ "\");");
+			} else {
+				// TODO Show message?
 			}
 		}
+	}
+
+	public static void executeJS(final String code) {
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				map.getBrowser().execute(code);
+			}
+		});
+	}
+	
+	public static void showResultsOnMap(final List<Result> results) {
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				map.getBrowser().execute("deleteMarkers();");
+				if (results.isEmpty()) {
+					map.getBrowser().execute("alert(\"No Results Found!\");");
+				} else {
+					for (Result result : results) {
+						double lat = result.getLocation().getLat();
+						double lng = result.getLocation().getLng();
+						String imageIcon = "flag-";
+						if (result.isBirth()) {
+							imageIcon += "birth";
+							// TODO can offset the coordinates a little so results in the same place
+							// won't be in the exact mark on the map
+						} else {
+							imageIcon += "death";
+							// TODO can offset the coordinates a little so results in the same place
+							// won't be in the exact mark on the map
+						}
+						if (!result.getCategory().equalsIgnoreCase("")) {
+							// Check for existing category flag
+							String categoryPostfix = result.getCategory().toLowerCase().replace(" ", "-");
+							String flagFilename = imageIcon + "-" + categoryPostfix + ".png";
+							String tempDir = System.getProperty("java.io.tmpdir");
+							String flagFilePath = tempDir + flagFilename;
+							File file = new File(flagFilePath);
+							if (file.exists() && !file.isDirectory()) {
+								imageIcon += "-" + categoryPostfix;
+							}
+						}
+						imageIcon += ".png";
+						map.getBrowser().execute(
+								"addMarker(" + result.getID() + "," + lat + "," + lng + ",\""
+										+ result.getName() + "\",\"" + imageIcon + "\",\"" + result.getSummary() + "\",\"" + result.getWikiLink()
+										+ "\");");
+					}
+
+				}
+			}
+		});
 	}
 
 	public static class BrowserDeleteMarkersActionListener implements ActionListener {

@@ -372,7 +372,7 @@ public class YagoParser {
 /*
         yagoParser.parseFiles();
 */
-        yagoParser.literalFacts(new File("/Users/admin/Downloads/yagoDateFacts.tsv"));
+        yagoParser.literalFacts(new File("C:\\tmp\\yagoLiteralFacts.tsv"));
     }
 
     private boolean validateFiles() {

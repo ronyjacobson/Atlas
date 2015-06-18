@@ -2,10 +2,8 @@ package il.ac.tau.cs.databases.atlas.db;
 
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.io.File;
+import java.util.*;
 
 public interface Queries {
 	
@@ -74,8 +72,9 @@ public interface Queries {
 
 	/**
 	 * Update the DB with the Yago files in the given full path directory
+	 * @param fullPathDirectory
 	 */
-	public void update(String fullPathDirectory);
+	public void update(Map<String, File> fullPathDirectory);
 
 	/**
 	 * @return a User from the DB that matches the user given

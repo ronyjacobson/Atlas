@@ -1,13 +1,20 @@
 package il.ac.tau.cs.databases.atlas.db;
 
+import il.ac.tau.cs.databases.atlas.ProgressBarDemo;
+import il.ac.tau.cs.databases.atlas.ProgressBarTask;
+import il.ac.tau.cs.databases.atlas.connector.DynamicConnectionPool;
+import il.ac.tau.cs.databases.atlas.connector.command.TempCommand;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.ProgressBar;
+import org.eclipse.swt.widgets.Shell;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
 
 public class MockQueries implements Queries {
 	
@@ -61,9 +68,14 @@ public class MockQueries implements Queries {
 	 * @return A list of results of all the matching entries in the database
 	 */
 	@Override
-	public ArrayList<Result> getResults(int startYear, int endYear, String category) {
+	public List<Result> getResults(int startYear, int endYear, String category) {
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		List<Location> geoLocations = getAllGeoLocations();
-		ArrayList<Result> results = new ArrayList<>();
+		List<Result> results = new ArrayList<>();
 		if (startYear % 1000 == 0 )results.add(new Result("1", "a", geoLocations.get(0), null, true, "scientists","summary a", "https://en.wikipedia.org/w/index.php?title=A"));
 		results.add(new Result("2", "b", geoLocations.get(1), null, false, "kings-and-queens", "summary b", "https://en.wikipedia.org/w/index.php?title=B"));
 		if (startYear == 1300) results.add(new Result("3", "c", geoLocations.get(2), null, true, "philosophers", "summary c", "https://en.wikipedia.org/w/index.php?title=C"));
@@ -108,12 +120,18 @@ public class MockQueries implements Queries {
 
 	/**
 	 * Update the DB with the Yago files in the given full path directoty
+	 * @param fullPathDirectory
 	 */
 	@Override
-	public void update(String fullPathDirectory) {
-		System.out.println(fullPathDirectory);
+	public void update(Map<String, File> fullPathDirectory) {
+		try {
+			DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06", "127.0.0.1", "3305", "DbMysql06");
+		} catch (AtlasServerException e) {
+			e.printStackTrace();
+		}
+		new ProgressBarTask(new TempCommand(100)).startTask();
 	}
-	
+
 	/**
 	 * @returns a User from the DB that matches the user param
 	 */
@@ -167,6 +185,12 @@ public class MockQueries implements Queries {
 
 	@Override
 	public List<Result> getFavorites() throws AtlasServerException {
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		System.out.println("here");
 		return getResults("");
 	}
 

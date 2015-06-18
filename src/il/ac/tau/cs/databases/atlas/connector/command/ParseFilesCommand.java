@@ -42,7 +42,7 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
         this.progress = progress;
         //this.timestamp = System.currentTimeMillis();
         this.timestamp = 1433944465995l; // TODO: revert
-        this.yagoParser = new YagoParser(yagoDateFile, yagoLocationFile, yagoCategoryFile, yagoLabelsFile, yagoWikiFile, yagoGeonamesFile, geonamesCitiesFile, parserOutputPath);
+//        this.yagoParser = new YagoParser(yagoDateFile, yagoLocationFile, yagoCategoryFile, yagoLabelsFile, yagoWikiFile, yagoGeonamesFile, geonamesCitiesFile, parserOutputPath);
     }
 
 
