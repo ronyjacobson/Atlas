@@ -251,12 +251,13 @@ public class Search extends JFrame {
 				Display.getDefault().syncExec(new Runnable() {
 				    public void run() {
 				    	try {
-				    		MapBrowserListeners.showResultsOnMap(Main.queries.getResults(name.getText()));
+				    		MapBrowserListeners.showResultsOnMap(Main.queries.getResults(name.getText()), "Search by name results:");
 				    		MapBrowserListeners.setTimespan(Main.queries.getLatestResultsStartTimeLine(), Main.queries.getLatestResultsEndTimeLine());
+				    		
 						} catch (AtlasServerException e) {
-							// TODO Auto-generated catch block
-							JOptionPane.showMessageDialog(null, e.getMessage(), GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
-							e.printStackTrace();
+							MapBrowserListeners.map.getBrowser().execute("showError(\"" + e.getMessage() + "\");");
+//							JOptionPane.showMessageDialog(null, e.getMessage(), GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
+//							e.printStackTrace();
 						}
 				    }
 				});
@@ -280,10 +281,17 @@ public class Search extends JFrame {
 				Display.getDefault().syncExec(new Runnable() {
 				    public void run() {
 				    	try {
-				    		MapBrowserListeners.showResultsOnMap(Main.queries.getResults(fromDate.getCalendar().getTime(), untilDate.getCalendar().getTime()));
-				    		MapBrowserListeners.setTimespan(fromDate.getCalendar().get(Calendar.YEAR), untilDate.getCalendar().get(Calendar.YEAR));
+				    		if (MapBrowserListeners.map != null) {
+				    			Date from = fromDate.getCalendar().getTime();
+				    			Date to = untilDate.getCalendar().getTime();
+				    			String label = "Search by dates results:";
+				    			MapBrowserListeners.showResultsOnMap(Main.queries.getResults(from, to), label);
+					    		MapBrowserListeners.setTimespan(fromDate.getCalendar().get(Calendar.YEAR), untilDate.getCalendar().get(Calendar.YEAR));
+				    		}
 				    	} catch (AtlasServerException e) {
-				    		// TODO handle Exception
+				    		if (MapBrowserListeners.map != null) {
+				    			MapBrowserListeners.map.getBrowser().execute("showError(\"" + e.getMessage() + "\");");
+				    		}
 				    	}
 				    }
 				});

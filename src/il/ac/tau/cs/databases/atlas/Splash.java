@@ -1,6 +1,5 @@
 package il.ac.tau.cs.databases.atlas;
 
-import il.ac.tau.cs.databases.atlas.graphics.map.MapBrowserListeners;
 import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
 
 import java.awt.image.BufferedImage;

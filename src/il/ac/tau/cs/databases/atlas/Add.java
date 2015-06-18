@@ -3,6 +3,7 @@ package il.ac.tau.cs.databases.atlas;
 import il.ac.tau.cs.databases.atlas.db.DBConstants;
 import il.ac.tau.cs.databases.atlas.db.Queries;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
+import il.ac.tau.cs.databases.atlas.exception.PersonExistsError;
 import il.ac.tau.cs.databases.atlas.graphics.map.MapBrowserListeners;
 import il.ac.tau.cs.databases.atlas.utils.DateUtils;
 import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
@@ -35,6 +36,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+
+import org.eclipse.swt.widgets.Display;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -70,7 +73,6 @@ public class Add extends JFrame {
 	private JPanel sexPanel;
 	private JButton addButton;
 	private boolean wereDetailsEntered = false;
-	private String status = "";
 	public String stringName;
 
 	public Add() throws IOException {
@@ -350,74 +352,9 @@ public class Add extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-
-			// Validate input
-			if (!wereDetailsEntered) {
-				JOptionPane.showMessageDialog(null,
-						"Please enter the needed details.",
-						GrapicUtils.PROJECT_NAME, 1);
-			} else if (!isFemale.isSelected() && !isMale.isSelected()) {
-				JOptionPane.showMessageDialog(null,
-						"Please choose male or female.",
-						GrapicUtils.PROJECT_NAME, 1);
-			} else if (name.getText().equalsIgnoreCase("")) {
-				JOptionPane.showMessageDialog(null, "Name can not be blank.",
-						GrapicUtils.PROJECT_NAME, 1);
-			} else if (name.getText().length() > DBConstants.PREF_LABEL_SIZE) {
-				JOptionPane.showMessageDialog(null, "Name can not exceed "+DBConstants.PREF_LABEL_SIZE+" characters.",
-						GrapicUtils.PROJECT_NAME, 1);
-			} else if (category.getSelectedItem().toString()
-					.equals(DEFAULT_CATEGORY)) {
-				JOptionPane.showMessageDialog(null,
-						"Please choose a category place from the list.",
-						GrapicUtils.PROJECT_NAME, 1);
-			} else if (wasBornOn.getCalendar() == null) {
-				JOptionPane.showMessageDialog(null,
-						"Please choose a birth date", GrapicUtils.PROJECT_NAME,
-						1);
-			} else if ( (hasDiedOn.getCalendar() != null) &&
-						 DateUtils.isSameDay(wasBornOn.getCalendar(), hasDiedOn.getCalendar()) 
-						 && (!hasDiedIn.getSelectedItem().toString().equals(NOT_DEAD_LOCATION))) {
-				JOptionPane.showMessageDialog(null,
-						"No way that the birth and death dates are the same.",
-						GrapicUtils.PROJECT_NAME, 1);
-			} else if (hasDiedOn.getCalendar() != null
-					&& DateUtils.isAfterDay(wasBornOn.getCalendar(),
-							hasDiedOn.getCalendar()) &&
-							(!hasDiedIn.getSelectedItem().toString().equals(NOT_DEAD_LOCATION))) {
-				JOptionPane.showMessageDialog(null,
-						"No way that the birth date is after the death date.",
-						GrapicUtils.PROJECT_NAME, 1);
-			} else if (wasBornIn.getSelectedItem().toString()
-					.equals(DEFAULT_BIRTH_LOCATION)) {
-				JOptionPane.showMessageDialog(null,
-						"Please choose a birth place from the list.",
-						GrapicUtils.PROJECT_NAME, 1);
-			} else if (hasDiedIn.getSelectedItem().toString()
-					.equals(DEFAULT_DEATH_LOCATION)) {
-				JOptionPane.showMessageDialog(null,
-						"Please choose a death place from the list.",
-						GrapicUtils.PROJECT_NAME, 1);
-			} else if (wikiLink.getText().equalsIgnoreCase("")) {
-				JOptionPane.showMessageDialog(null,
-						"Wikipedia link can not be blank.",
-						GrapicUtils.PROJECT_NAME, 1);
-			} else if (wikiLink.getText().length() > DBConstants.WIKI_URL_SIZE) {
-				JOptionPane.showMessageDialog(null,
-						"Wikipedia link can not exceed "+DBConstants.WIKI_URL_SIZE+" characters.",
-						GrapicUtils.PROJECT_NAME, 1);
-			} else if (hasDiedIn.getSelectedItem().toString()
-					.equals(NOT_DEAD_LOCATION)) {
-				if (hasDiedOn.getCalendar() != null) {
-					int reply = JOptionPane
-							.showConfirmDialog(
-									null,
-									"<html>You mentioned this person is not dead but entered a death date.<br>"
-											+ "This person will be added without the death date.<br>Continue anyway?</html>",
-									GrapicUtils.PROJECT_NAME,
-									JOptionPane.YES_NO_OPTION);
-
-					if (reply == JOptionPane.YES_OPTION) {
+			if (isInputValidated()) {
+				Display.getDefault().syncExec(new Runnable() {
+					public void run() {
 						try {
 							// Get locations IDs
 							Integer birthLocaionID = Queries.locationsMap
@@ -431,39 +368,130 @@ public class Add extends JFrame {
 							Date birthDate = wasBornOn.getDate();
 							Date deathDate = (deathLocaionID == null) ? null
 									: hasDiedOn.getDate();
-							// Add entry
-							stringName = name.getText();
-							Main.queries.addNew(stringName, category
+
+							Main.queries.addNew(name.getText(), category
 									.getSelectedItem().toString(), birthDate,
 									birthLocaionID, deathDate, deathLocaionID,
 									wikiLink.getText(), isFemale.isSelected());
-							status = "";
-							JOptionPane.showMessageDialog(null,
-									"New entry added to the data base.",
-									GrapicUtils.PROJECT_NAME,
-									JOptionPane.INFORMATION_MESSAGE);
+
+							// Succeeded- Show message.
+							if (MapBrowserListeners.map != null) {
+								MapBrowserListeners.map
+										.getBrowser()
+										.execute("personAdded('"+name.getText()+"');");
+							}
+
+						} catch (PersonExistsError e) {
+							// User Already Exists - Show message.
+							if (MapBrowserListeners.map != null) {
+								MapBrowserListeners.map
+								.getBrowser()
+								.execute("personExists('"+name.getText()+"');");
+							}
 						} catch (AtlasServerException e) {
-							JOptionPane.showMessageDialog(
-									null,
-									"Failed to add new entry: "
-											+ e.getMessage() + ".",
-									GrapicUtils.PROJECT_NAME,
-									JOptionPane.ERROR_MESSAGE);
-							status = e.getMessage();
-							// Close the windows
-							dispose();
+							// Failed- Show message.
+							if (MapBrowserListeners.map != null) {
+								MapBrowserListeners.map.getBrowser().execute(
+										"showError(\"" + e.getMessage() + "\");");
+							}
+
 						}
 					}
-				}
+				});
+				dispose();
+
 			}
 		}
 	}
 
-	public String getStatus() {
-		return status;
-	}
-
-	public String getName() {
-		return stringName;
+	private boolean isInputValidated() {
+		if (!wereDetailsEntered) {
+			JOptionPane.showMessageDialog(null,
+					"Please enter the needed details.",
+					GrapicUtils.PROJECT_NAME, 1);
+			return false;
+		} else if (!isFemale.isSelected() && !isMale.isSelected()) {
+			JOptionPane.showMessageDialog(null,
+					"Please choose male or female.", GrapicUtils.PROJECT_NAME,
+					1);
+			return false;
+		} else if (name.getText().equalsIgnoreCase("")) {
+			JOptionPane.showMessageDialog(null, "Name can not be blank.",
+					GrapicUtils.PROJECT_NAME, 1);
+			return false;
+		} else if (name.getText().length() > DBConstants.PREF_LABEL_SIZE) {
+			JOptionPane.showMessageDialog(null, "Name can not exceed "
+					+ DBConstants.PREF_LABEL_SIZE + " characters.",
+					GrapicUtils.PROJECT_NAME, 1);
+			return false;
+		} else if (category.getSelectedItem().toString()
+				.equals(DEFAULT_CATEGORY)) {
+			JOptionPane.showMessageDialog(null,
+					"Please choose a category place from the list.",
+					GrapicUtils.PROJECT_NAME, 1);
+			return false;
+		} else if (wasBornOn.getCalendar() == null) {
+			JOptionPane.showMessageDialog(null, "Please choose a birth date",
+					GrapicUtils.PROJECT_NAME, 1);
+			return false;
+		} else if ((hasDiedOn.getCalendar() != null)
+				&& DateUtils.isSameDay(wasBornOn.getCalendar(),
+						hasDiedOn.getCalendar())
+				&& (!hasDiedIn.getSelectedItem().toString()
+						.equals(NOT_DEAD_LOCATION))) {
+			JOptionPane.showMessageDialog(null,
+					"No way that the birth and death dates are the same.",
+					GrapicUtils.PROJECT_NAME, 1);
+			return false;
+		} else if (hasDiedOn.getCalendar() != null
+				&& DateUtils.isAfterDay(wasBornOn.getCalendar(),
+						hasDiedOn.getCalendar())
+				&& (!hasDiedIn.getSelectedItem().toString()
+						.equals(NOT_DEAD_LOCATION))) {
+			JOptionPane.showMessageDialog(null,
+					"No way that the birth date is after the death date.",
+					GrapicUtils.PROJECT_NAME, 1);
+			return false;
+		} else if (wasBornIn.getSelectedItem().toString()
+				.equals(DEFAULT_BIRTH_LOCATION)) {
+			JOptionPane.showMessageDialog(null,
+					"Please choose a birth place from the list.",
+					GrapicUtils.PROJECT_NAME, 1);
+			return false;
+		} else if (hasDiedIn.getSelectedItem().toString()
+				.equals(DEFAULT_DEATH_LOCATION)) {
+			JOptionPane.showMessageDialog(null,
+					"Please choose a death place from the list.",
+					GrapicUtils.PROJECT_NAME, 1);
+			return false;
+		} else if (wikiLink.getText().equalsIgnoreCase("")) {
+			JOptionPane.showMessageDialog(null,
+					"Wikipedia link can not be blank.",
+					GrapicUtils.PROJECT_NAME, 1);
+			return false;
+		} else if (wikiLink.getText().length() > DBConstants.WIKI_URL_SIZE) {
+			JOptionPane.showMessageDialog(null,
+					"Wikipedia link can not exceed "
+							+ DBConstants.WIKI_URL_SIZE + " characters.",
+					GrapicUtils.PROJECT_NAME, 1);
+			return false;
+		} else if (hasDiedIn.getSelectedItem().toString()
+				.equals(NOT_DEAD_LOCATION)) {
+			if (hasDiedOn.getCalendar() != null) {
+				int reply = JOptionPane
+						.showConfirmDialog(
+								null,
+								"<html>You mentioned this person is not dead but entered a death date.<br>"
+										+ "This person will be added without the death date.<br>Continue anyway?</html>",
+								GrapicUtils.PROJECT_NAME,
+								JOptionPane.YES_NO_OPTION);
+				if (reply == JOptionPane.YES_OPTION) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 }

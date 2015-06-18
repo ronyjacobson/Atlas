@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 /**
  * Created by user on 13/05/2015.
  */
+
 public class AtlasServerException extends Exception {
 
     protected static final Logger logger = Logger.getLogger(AtlasServerException.class.getName());
@@ -14,4 +15,8 @@ public class AtlasServerException extends Exception {
         super(msg);
     	logger.error(msg);
     }
+
+	public AtlasServerException() {
+		super();
+	}
 }

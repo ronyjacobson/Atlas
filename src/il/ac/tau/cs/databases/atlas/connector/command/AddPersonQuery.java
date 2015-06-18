@@ -4,6 +4,7 @@ import il.ac.tau.cs.databases.atlas.Main;
 import il.ac.tau.cs.databases.atlas.connector.command.base.BaseDBCommand;
 import il.ac.tau.cs.databases.atlas.db.DBConstants;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
+import il.ac.tau.cs.databases.atlas.exception.PersonExistsError;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -56,7 +57,7 @@ public class AddPersonQuery extends BaseDBCommand<Void> {
 			
 			resultSet.next();
 			if (resultSet.getInt(1) != 0) {
-				throw new AtlasServerException(String.format("Person %s already exists", name));
+				throw new PersonExistsError(name);
 			}
 			
 			statement.close();
@@ -137,9 +138,10 @@ public class AddPersonQuery extends BaseDBCommand<Void> {
 			statement.executeUpdate();
 
             System.out.println("Person added successfully - The generated person ID is: "+ genID);
-			
-		} catch (SQLException|AtlasServerException e) {
-				throw new AtlasServerException(e.getMessage());
+		} catch (PersonExistsError e) {
+    			throw e;
+		} catch (SQLException e) {
+			throw new AtlasServerException(e.getMessage());
 		} finally {
 			safelyClose(statement, resultSet);
 		}

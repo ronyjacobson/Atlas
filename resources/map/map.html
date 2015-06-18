@@ -33,11 +33,12 @@
       var mapCenter = new google.maps.LatLng(31.0000, 35.0000);
       var infowindow;
       var timespanControlText;
+      var categoryControlText;
 
 
 
       <!-- Error a custom message to the screen -->
-      function error(msg) {
+      function showError(msg) {
 		swal("Error", msg, "warning");
       }
 
@@ -185,9 +186,26 @@
             	imageUrl: "https://30c858d169cf8921149a47e0fc664832bc912237.googledrive.com/host/0B-p0x7WmifiKfnN1VHlOLWhqeFRSenFUaWFEZWZsejU1RWtwTnZYWmMtSEVVVGVxcmdJSFU/example/images/thumbs-up.jpg" });
       }
 
-      <!-- Delete the all markers on the map and in memory -->
+      <!--Show a message telling no results where found -->
       function noResults() {
-      	swal({title: "Oh well...", text: "Your query came back empty handed\nTry another?", imageUrl: "http://practicallyinspired.com/images/thumb-noitemsfound.png" });
+      	swal({title: "Oh well...",
+      		text: "Your query came back empty handed.\nTry another?",
+      	imageUrl: "http://orig06.deviantart.net/96a1/f/2012/151/b/d/meme_forever_alone_png_by_agustifran-d51rx9a.png" });
+      }
+
+      <!--Show a message telling a person was added successfuly-->
+      function personAdded(name) {
+      	swal({title: "You Rock!",
+      		text: "Thank you for adding " + name + " to Atlas!",
+      	imageUrl: "http://i0.kym-cdn.com/photos/images/masonry/000/162/317/2vA1a.png" });
+      }
+
+       <!--Show a message telling a person added already exists -->
+      function personExists(name) {
+      	swal({title: "No duplicates please!",
+      		text: name + " aready exists on Atlas!",
+      		imageUrl: "https://boardgamegeek.com/camo/92efe55f09563d7b7ecf41db1d914b6941eb18df/687474703a2f2f63646e2e6d656d6567656e657261746f722e6e65742f696d616765732f313630782f363636383232382e6a7067"});
+      		//"http://memeorama.com/wp-content/uploads/2012/02/you-got-it-obama-meme.png"*/
       }
 
       
@@ -302,9 +320,52 @@
         controlUI.appendChild(timespanControlText);
       }
 
+      function CateogryControl(controlDiv, map) {
+        // Set CSS for the control border
+        var controlUI = document.createElement('div');
+        // controlUI.style.backgroundColor = '#fff';
+        // controlUI.style.border = '2px solid #fff';
+        controlUI.style.borderRadius = '3px';
+        // controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+        controlUI.style.cursor = 'pointer';
+        controlUI.style.marginLeft = '20px';
+        controlUI.style.textAlign = 'center';
+        controlUI.title = 'Currnet category';
+        controlDiv.appendChild(controlUI);
+
+        // Set CSS for the control interior
+        categoryControlText = document.createElement('div');
+        categoryControlText.style.color = 'rgb(255,255,255)';
+        categoryControlText.style.border = 'rgb(255,255,255)';
+        //categoryControlText.style.textShadow = "3px 3px 1px #000000"
+        categoryControlText.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
+        categoryControlText.style.borderRadius = "25px";
+        categoryControlText.style.fontFamily = 'Century Gothic';
+        categoryControlText.style.fontSize = '40px';
+        categoryControlText.style.lineHeight = '38px';
+        categoryControlText.style.paddingLeft = '5px';
+        categoryControlText.style.paddingRight = '5px';
+        categoryControlText.style.marginTop = '5px';
+        categoryControlText.style.paddingBottom = '5px';
+        categoryControlText.innerHTML = '';
+        controlUI.appendChild(categoryControlText);
+      }
+
       <!-- Set timespan to new range -->
       function setTimespan(start,end) {
             timespanControlText.innerHTML = start + '-' + end;
+      }
+
+
+      <!-- Set category -->
+      function setCategory(cat) {
+
+	        map.controls[google.maps.ControlPosition.TOP].pop();
+	        var categoryControlDiv = document.createElement('div');
+	        var cateogryControl = new CateogryControl(categoryControlDiv, map);
+            categoryControlText.innerHTML = cat;
+	        categoryControlDiv.index = 1;
+	        map.controls[google.maps.ControlPosition.TOP].push(categoryControlDiv);
       }
 
       function showSpinner() {
@@ -381,6 +442,12 @@
         var timespanControl = new TimespanControl(timespanControlDiv, map);
         timespanControlDiv.index = 1;
         map.controls[google.maps.ControlPosition.BOTTOM].push(timespanControlDiv);
+
+        // Add Category label
+        var categoryControlDiv = document.createElement('div');
+        var cateogryControl = new CateogryControl(categoryControlDiv, map);
+        categoryControlDiv.index = 1;
+        map.controls[google.maps.ControlPosition.TOP].push(categoryControlDiv);
       }
 
       <!-- Main -->

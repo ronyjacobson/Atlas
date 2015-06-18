@@ -2,15 +2,14 @@ package il.ac.tau.cs.databases.atlas;
 
 import il.ac.tau.cs.databases.atlas.connector.DynamicConnectionPool;
 import il.ac.tau.cs.databases.atlas.db.DBQueries;
-import il.ac.tau.cs.databases.atlas.db.MockQueries;
 import il.ac.tau.cs.databases.atlas.db.Queries;
 import il.ac.tau.cs.databases.atlas.db.User;
 import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
 
-import org.apache.log4j.Logger;
-
 import java.awt.Toolkit;
 import java.util.Date;
+
+import org.apache.log4j.Logger;
 
 public class Main {
 	private static final Logger log = Logger.getLogger(Main.class);
@@ -44,7 +43,7 @@ public class Main {
 	 * Main running method
 	 */
 	public static void main(String[] args) {
-		boolean DEBUG = false;
+		boolean DEBUG = true;
 		try {
 			// Initialize the program
 			initialize();

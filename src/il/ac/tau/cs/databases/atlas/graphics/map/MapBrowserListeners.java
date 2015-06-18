@@ -16,12 +16,7 @@ import java.util.List;
 import javax.swing.JComboBox;
 import javax.swing.JScrollBar;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.ProgressBar;
-import org.eclipse.swt.widgets.Shell;
 
 public class MapBrowserListeners {
 
@@ -30,7 +25,7 @@ public class MapBrowserListeners {
 	public static void setMap(MapBrowser map) {
 		MapBrowserListeners.map = map;
 	}
-	
+
 	public static void updateFavorites() {
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
@@ -39,10 +34,11 @@ public class MapBrowserListeners {
 					try {
 						List<String> favs = Main.queries.getFavoritesIDs();
 						String favList = favs.toString();
-						map.getBrowser().execute("updateFavorites(" + favList + ");");
+						map.getBrowser().execute(
+								"updateFavorites(" + favList + ");");
 					} catch (AtlasServerException e) {
 						msg = "Couldnt get favorites from database.";
-						map.getBrowser().execute("error(\"" + msg + "\");");
+						map.getBrowser().execute("showError(\"" + msg + "\");");
 					}
 				} else {
 					// TODO Show message?
@@ -68,7 +64,7 @@ public class MapBrowserListeners {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
 					if (map != null) {
-						map.getBrowser().execute("error(\"" + msg + "\");");
+						map.getBrowser().execute("showError(\"" + msg + "\");");
 					} else {
 						// TODO Show message?
 					}
@@ -77,12 +73,14 @@ public class MapBrowserListeners {
 		}
 	}
 
-	public static class BrowserAddMarkerActionListener implements ActionListener {
+	public static class BrowserAddMarkerActionListener implements
+			ActionListener {
 		static boolean firstQuery = true;
 		JScrollBar timeline;
 		JComboBox<String> categoriesComboBox;
 
-		public BrowserAddMarkerActionListener(JScrollBar timeline, JComboBox<String> categoriesComboBox) {
+		public BrowserAddMarkerActionListener(JScrollBar timeline,
+				JComboBox<String> categoriesComboBox) {
 			this.timeline = timeline;
 			this.categoriesComboBox = categoriesComboBox;
 		}
@@ -95,26 +93,29 @@ public class MapBrowserListeners {
 				MapBrowserListeners.updateFavorites();
 			}
 			if (map != null) {
-				
+
 				int startYear = timeline.getModel().getValue();
-				int endYear = timeline.getModel().getValue() + timeline.getModel().getExtent();
-				String category = categoriesComboBox.getSelectedItem().toString();
+				int endYear = timeline.getModel().getValue()
+						+ timeline.getModel().getExtent();
+				String category = categoriesComboBox.getSelectedItem()
+						.toString();
 				// Check category
 				List<Result> results = null;
 				try {
 					if (category.equals(Map.DEFAULT_CATEGORY)) {
-						map.getBrowser().execute("error(\"" + "Please select a category." + "\");");
-					} else if (category.equals(Map.FAVORITES_CATEGORY)){
+						map.getBrowser().execute("showError(\"" + "Please select a category.\");");
+					} else if (category.equals(Map.FAVORITES_CATEGORY)) {
 						results = Main.queries.getFavorites();
 					} else {
-						results = Main.queries.getResults(startYear, endYear, category);
+						results = Main.queries.getResults(startYear, endYear,
+								category);
 					}
 				} catch (AtlasServerException ase) {
-				ase.printStackTrace();
-			}
+					ase.printStackTrace();
+				}
 				executeJS("hideSpinner()");
-				if (results != null){
-					showResultsOnMap(results);
+				if (results != null) {
+					showResultsOnMap(results, category);
 				}
 			} else {
 				// TODO Show message?
@@ -130,32 +131,39 @@ public class MapBrowserListeners {
 			}
 		});
 	}
-	
-	public static void showResultsOnMap(final List<Result> results) {
+
+	public static void showResultsOnMap(final List<Result> results, final String category) {
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
 				map.getBrowser().execute("deleteMarkers();");
 				if (results.isEmpty()) {
 					map.getBrowser().execute("noResults();");
+					MapBrowserListeners.setCategory("");
 				} else {
+					MapBrowserListeners.setCategory(category);
 					for (Result result : results) {
 						double lat = result.getLocation().getLat();
 						double lng = result.getLocation().getLng();
 						String imageIcon = "flag-";
 						if (result.isBirth()) {
 							imageIcon += "birth";
-							// TODO can offset the coordinates a little so results in the same place
+							// TODO can offset the coordinates a little so
+							// results in the same place
 							// won't be in the exact mark on the map
 						} else {
 							imageIcon += "death";
-							// TODO can offset the coordinates a little so results in the same place
+							// TODO can offset the coordinates a little so
+							// results in the same place
 							// won't be in the exact mark on the map
 						}
 						if (!result.getCategory().equalsIgnoreCase("")) {
 							// Check for existing category flag
-							String categoryPostfix = result.getCategory().toLowerCase().replace(" ", "-");
-							String flagFilename = imageIcon + "-" + categoryPostfix + ".png";
-							String tempDir = System.getProperty("java.io.tmpdir");
+							String categoryPostfix = result.getCategory()
+									.toLowerCase().replace(" ", "-");
+							String flagFilename = imageIcon + "-"
+									+ categoryPostfix + ".png";
+							String tempDir = System
+									.getProperty("java.io.tmpdir");
 							String flagFilePath = tempDir + flagFilename;
 							File file = new File(flagFilePath);
 							if (file.exists() && !file.isDirectory()) {
@@ -164,9 +172,12 @@ public class MapBrowserListeners {
 						}
 						imageIcon += ".png";
 						map.getBrowser().execute(
-								"addMarker(" + result.getID() + "," + lat + "," + lng + ",\""
-										+ result.getName() + "\",\"" + imageIcon + "\",\"" + result.getSummary() + "\",\"" + result.getWikiLink()
-										+ "\");");
+								"addMarker(" + result.getID() + "," + lat + ","
+										+ lng + ",\"" + result.getName()
+										+ "\",\"" + imageIcon + "\",\""
+										+ result.getSummary() + "\",\""
+										+ result.getWikiLink() + "\");");
+
 					}
 
 				}
@@ -174,7 +185,8 @@ public class MapBrowserListeners {
 		});
 	}
 
-	public static class BrowserDeleteMarkersActionListener implements ActionListener {
+	public static class BrowserDeleteMarkersActionListener implements
+			ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Display.getDefault().asyncExec(new Runnable() {
@@ -188,8 +200,7 @@ public class MapBrowserListeners {
 			});
 		}
 	}
-	
-	
+
 	public static class BrowserShowStatsActionListner implements ActionListener {
 
 		@Override
@@ -197,12 +208,18 @@ public class MapBrowserListeners {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
 					if (map != null) {
-						String msg = " Showing " +
-								Main.queries.getAmountOfLatestResults() + " results:<br>" + 
-								Main.queries.getBirthsOfLatestResults()+  " Births<br>"+ 
-								(Main.queries.getAmountOfLatestResults() - Main.queries.getBirthsOfLatestResults())+ " Deaths<br>"+ 
-								Main.queries.getStatsOfLatestResults() + " Females<br>"+ 
-								(Main.queries.getAmountOfLatestResults() - Main.queries.getStatsOfLatestResults())+ " Males";
+						String msg = " Showing "
+								+ Main.queries.getAmountOfLatestResults()
+								+ " results:<br>"
+								+ Main.queries.getBirthsOfLatestResults()
+								+ " Births<br>"
+								+ (Main.queries.getAmountOfLatestResults() - Main.queries
+										.getBirthsOfLatestResults())
+								+ " Deaths<br>"
+								+ Main.queries.getStatsOfLatestResults()
+								+ " Females<br>"
+								+ (Main.queries.getAmountOfLatestResults() - Main.queries
+										.getStatsOfLatestResults()) + " Males";
 						map.getBrowser().execute("showStats(\"" + msg + "\");");
 					} else {
 						// TODO Show message?
@@ -214,30 +231,37 @@ public class MapBrowserListeners {
 
 	}
 
-	public static class BrowserSyncFavoritesActionListener implements ActionListener {
+	public static class BrowserSyncFavoritesActionListener implements
+			ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
 					if (map != null) {
-						String favorites = ((String) map.getBrowser().evaluate("return getFavorites()"));
-						String removeFromFavorites = ((String) map.getBrowser().evaluate("return getRemoveFromFavorites()"));
-						List<String> favoritesList = Arrays.asList(favorites.split(","));
-						List<String> removeList = Arrays.asList(removeFromFavorites.split(","));
+						String favorites = ((String) map.getBrowser().evaluate(
+								"return getFavorites()"));
+						String removeFromFavorites = ((String) map.getBrowser()
+								.evaluate("return getRemoveFromFavorites()"));
+						List<String> favoritesList = Arrays.asList(favorites
+								.split(","));
+						List<String> removeList = Arrays
+								.asList(removeFromFavorites.split(","));
 						String msg;
 						try {
-							Main.queries.storeFavoriteIDs(favoritesList, removeList);
-							
+							Main.queries.storeFavoriteIDs(favoritesList,
+									removeList);
+
 						} catch (AtlasServerException e) {
 							msg = "Favorites failed to sync to database.";
-							map.getBrowser().execute("error(\"" + msg + "\");");
+							map.getBrowser().execute("showError(\"" + msg + "\");");
 						} finally {
 							String favList = "[" + favorites + "]";
-							map.getBrowser().execute("updateFavorites("+ favList +");");
+							map.getBrowser().execute(
+									"updateFavorites(" + favList + ");");
 							map.getBrowser().execute("syncComplete();");
 						}
-						
+
 					} else {
 						// TODO Show message?
 					}
@@ -246,7 +270,8 @@ public class MapBrowserListeners {
 		}
 	}
 
-	public static class BrowserTimespanAdjustmentListener implements AdjustmentListener {
+	public static class BrowserTimespanAdjustmentListener implements
+			AdjustmentListener {
 
 		@Override
 		public void adjustmentValueChanged(final AdjustmentEvent e) {
@@ -255,7 +280,8 @@ public class MapBrowserListeners {
 					if (map != null) {
 						JScrollBar timeline = (JScrollBar) e.getAdjustable();
 						int start = timeline.getValue();
-						int end = timeline.getValue() + timeline.getModel().getExtent();
+						int end = timeline.getValue()
+								+ timeline.getModel().getExtent();
 						setTimespan(start, end);
 					} else {
 						// TODO Show message?
@@ -265,24 +291,16 @@ public class MapBrowserListeners {
 
 		}
 	}
-	
-	public static class BrowserAddPersonListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					if (map != null) {
-						map.getBrowser().execute("deleteMarkers();");
-					} else {
-						// TODO Show message?
-					}
-				}
-			});
-		}
-	}
 
 	public static void setTimespan(int startYear, int endYear) {
-		map.getBrowser().execute("setTimespan(" + startYear + "," + endYear + ");");
+		System.out.println("Adjusting timeSpan...");
+		map.getBrowser().execute(
+				"setTimespan(" + startYear + "," + endYear + ");");
+	}
+
+	public static void setCategory(String cat) {
+		String exec = "setCategory(\"" + cat + "\");";
+		System.out.println("Adjusting category label...\nExecuting:"+exec);
+		map.getBrowser().execute(exec);
 	}
 }
