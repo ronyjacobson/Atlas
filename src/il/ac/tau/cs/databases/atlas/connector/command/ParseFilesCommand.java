@@ -18,33 +18,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ParseFilesCommand extends BaseDBCommand<Boolean>{
-    private File yagoDateFile;
-    private File yagoLocationFile;
-    private File yagoCategoryFile;
-    private File yagoLabelsFile;
-    private File yagoWikiFile;
-    private File yagoGeonamesFile;
-    private File geonamesCitiesFile;
-    private String parserOutputPath;
     private AtomicInteger progress;
-    private long timestamp;
     private YagoParser yagoParser;
 
-    public ParseFilesCommand(File yagoDateFile, File yagoLocationFile, File yagoCategoryFile, File yagoLabelsFile, File yagoWikiFile, File yagoGeonamesFile, File geonamesCitiesFile, String parserOutputPath, AtomicInteger progress) {
-        this.yagoDateFile = yagoDateFile;
-        this.yagoLocationFile = yagoLocationFile;
-        this.yagoCategoryFile = yagoCategoryFile;
-        this.yagoLabelsFile = yagoLabelsFile;
-        this.yagoWikiFile = yagoWikiFile;
-        this.yagoGeonamesFile = yagoGeonamesFile;
-        this.geonamesCitiesFile = geonamesCitiesFile;
-        this.parserOutputPath = parserOutputPath;
+    public ParseFilesCommand(File yagoDateFile, File yagoLocationFile, File yagoCategoryFile, File yagoLabelsFile, File yagoWikiFile, File yagoGeonamesFile, File geonamesCitiesFile, File yagoLiteralFactsFile, AtomicInteger progress) {
         this.progress = progress;
-        //this.timestamp = System.currentTimeMillis();
-        this.timestamp = 1433944465995l; // TODO: revert
-//        this.yagoParser = new YagoParser(yagoDateFile, yagoLocationFile, yagoCategoryFile, yagoLabelsFile, yagoWikiFile, yagoGeonamesFile, geonamesCitiesFile, parserOutputPath);
+        this.yagoParser = new YagoParser(yagoDateFile, yagoLocationFile, yagoCategoryFile, yagoLabelsFile, yagoWikiFile, yagoGeonamesFile, geonamesCitiesFile, yagoLiteralFactsFile);
     }
-
 
     @Override
     protected Boolean innerExecute(Connection con) throws AtlasServerException {
@@ -63,7 +43,9 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
 
         //progress.getAndIncrement();
 
+
         createLocationsTable(con);
+
         int addedByUser = addYagoUser(con); // TODO: should only happen in the initial setup
         // Insert data table to DB
 
@@ -90,7 +72,7 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
             }
             pstmt.executeBatch();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Failed to create 'categories' table", e);
             throw new AtlasServerException("Failed to insert into `categories` table");
         }
         logger.info("'categories' table created successfully");
@@ -100,7 +82,7 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
         logger.info("Creating 'person_labels' table");
         Map<Long, YagoPerson> personsMap = yagoParser.getPersonsMap();
         try (PreparedStatement pstmt = con
-                .prepareStatement("INSERT INTO person_labels(label, person_ID) VALUES (?, ?)")) {
+                .prepareStatement("REPLACE INTO person_labels(label, person_ID) VALUES (?, ?)")) {
             for (YagoPerson yagoPerson : personsMap.values()) {
                 int personId = yagoPerson.getPersonId();
                 for (String label : yagoPerson.getLabels()) {
@@ -111,7 +93,7 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
             }
             pstmt.executeBatch();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Failed to create 'person_labels' table", e);
             throw new AtlasServerException("Failed to create 'person_labels' table");
         }
         logger.info("'person_labels' table created successfully");
@@ -121,7 +103,7 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
         logger.info("Creating 'person_has_category' table");
         Map<Long, YagoPerson> personsMap = yagoParser.getPersonsMap();
         try (PreparedStatement pstmt = con
-                .prepareStatement("INSERT INTO person_has_category(person_ID, category_ID) VALUES (?, ?)")) {
+                .prepareStatement("REPLACE INTO person_has_category(person_ID, category_ID) VALUES (?, ?)")) {
             for (YagoPerson yagoPerson : personsMap.values()) {
                 int personId = yagoPerson.getPersonId();
                 for (Integer categoryId : yagoPerson.getCategories()) {
@@ -132,7 +114,7 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
             }
             pstmt.executeBatch();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Failed to create 'person_has_category' table", e);
             throw new AtlasServerException("Failed to create 'person_has_category' table");
         }
         logger.info("'person_has_category' table created successfully");
@@ -144,6 +126,7 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
         logger.info("Total number of records to be inserted: " + personsMap.size() + " persons");
 
         ResultSet rs = null;
+        Statement stmt = null;
 
         try (PreparedStatement pstmt = con
                 .prepareStatement("INSERT INTO person(wikiURL, diedOnDate, wasBornOnDate, addedByUser, wasBornInLocation, diedInLocation, isFemale, yago_ID, prefLabel) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE wikiURL=VALUES(wikiURL), diedOnDate=VALUES(diedOnDate), wasBornOnDate=VALUES(wasBornOnDate), addedByUser=VALUES(addedByUser), wasBornInLocation=VALUES(wasBornInLocation), diedInLocation=VALUES(diedInLocation), isFemale=VALUES(isFemale), prefLabel=VALUES(prefLabel)",
@@ -182,25 +165,28 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
 
                 pstmt.executeUpdate();
                 rs = pstmt.getGeneratedKeys();
-                rs.next();
+                if (! rs.next()) {
+                    stmt = con.createStatement();
+                    rs = stmt.executeQuery("SELECT person_ID FROM person WHERE yago_ID=" + yagoPerson.getYagoId());
+                }
                 int personId = rs.getInt(1);
                 yagoPerson.setPersonId(personId);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Failed to create 'person' table", e);
             throw new AtlasServerException("Failed to create 'person' table");
         } finally {
-            safelyClose(rs);
+            safelyClose(rs, stmt);
         }
         logger.info("'person' table created successfully");
     }
 
     private int addYagoUser(Connection con) throws AtlasServerException {
-        logger.info("creating initial YAGO user for adding all Yago persons");
+        logger.info("Setting YAGO user for adding all Yago persons");
         int newUserId;
         ResultSet rs = null;
         try (PreparedStatement pstmt = con
-                .prepareStatement("INSERT IGNORE INTO user(username, password, wasBornInLocation) VALUES (?, ?, ?)",
+                .prepareStatement("INSERT INTO user(username, password, wasBornInLocation, isFemale) VALUES (?, ?, ?, 0) ON DUPLICATE KEY UPDATE username=VALUES(username), password=VALUES(password), wasBornInLocation=VALUES(wasBornInLocation), isFemale=1-isFemale",
                         Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, "YAGO");
             pstmt.setString(2, "yagohasnopassword");
@@ -210,10 +196,10 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
             rs = pstmt.getGeneratedKeys();
             rs.next();
             newUserId = rs.getInt(1);
-            logger.info("YAGO user created with id=" + newUserId);
+            logger.info("YAGO user id=" + newUserId);
             return newUserId;
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Failed to create YAGO user", e);
             throw new AtlasServerException("Failed to create YAGO user");
         } finally {
             safelyClose(rs);
@@ -225,7 +211,7 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
         Map<Long, YagoLocation> locationsMap = yagoParser.getLocationsMap();
         logger.info("Total number of records to be inserted: " + locationsMap.size() + " locations");
         try (PreparedStatement pstmt = con
-                .prepareStatement("INSERT INTO location(geo_name, latitude, longitude, wikiURL, location_ID) VALUES (?, ?, ?, ?, ?)")) {
+                .prepareStatement("REPLACE INTO location(geo_name, latitude, longitude, wikiURL, location_ID) VALUES (?, ?, ?, ?, ?)")) {
             for (YagoLocation yagoLocation : locationsMap.values()) {
                 pstmt.setString(1, yagoLocation.getName());
                 pstmt.setDouble(2, yagoLocation.getLatitude());
@@ -236,14 +222,14 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
             }
             pstmt.executeBatch();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Failed to create 'location' table", e);
             throw new AtlasServerException("Failed to create 'location' table");
         }
         logger.info("'location' table created successfully");
     }
 
     public static void main(String[] args) throws AtlasServerException {
-        DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06","localhost", "3305", "DbMysql06");
+        DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06","localhost", "3306", "DbMysql06");
         ParseFilesCommand cmd = new ParseFilesCommand(new File("/Users/admin/Downloads/yagoDateFacts.tsv"),
                 new File("/Users/admin/Downloads/yagoFacts.tsv"),
                 new File("/Users/admin/Downloads/yagoTransitiveType.tsv"),
@@ -251,7 +237,7 @@ public class ParseFilesCommand extends BaseDBCommand<Boolean>{
                 new File("/Users/admin/Downloads/yagoWikipediaInfo.tsv"),
                 new File("/Users/admin/Downloads/yagoGeonamesEntityIds.tsv"),
                 new File("/Users/admin/Downloads/cities1000.txt"),
-                "/Users/admin/Downloads/Test",
+                new File("/Users/admin/Downloads/yagoLiteralFacts.tsv"),
                 new AtomicInteger(0));
         cmd.execute();
     }

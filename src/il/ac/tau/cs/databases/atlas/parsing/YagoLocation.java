@@ -7,6 +7,13 @@ public class YagoLocation {
     private double longitude;
     private String wikiUrl;
 
+    public YagoLocation() {
+    }
+
+    public YagoLocation(long locationId) {
+        this.locationId = locationId;
+    }
+
     public long getLocationId() {
         return locationId;
     }

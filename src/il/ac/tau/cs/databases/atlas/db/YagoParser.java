@@ -29,12 +29,13 @@ public class YagoParser {
     private final File yagoWikiFile;
     private final File yagoGeonamesFile;
     private final File geonamesCitiesFile;
+    private final File yagoLiteralFactsFile;
 
     private Map<Long, YagoPerson> personsMap; // yagoId -> Person
-    private Map<Long, YagoLocation> locationsMap; // geoId -> Location
-    private Map<Long, Long> yagoToGeoMap; // yagoId -> geoId
+    private Map<Long, YagoLocation> locationsMap; // locationId -> Location      TODO: was: // geoId -> Location
+    private Map<Long, Long> geoIdToLocationIdMap; // geoId -> locationId
 
-    public YagoParser(File yagoDateFile, File yagoLocationFile, File yagoCategoryFile, File yagoLabelsFile, File yagoWikiFile, File yagoGeonamesFile, File geonamesCitiesFile) {
+    public YagoParser(File yagoDateFile, File yagoLocationFile, File yagoCategoryFile, File yagoLabelsFile, File yagoWikiFile, File yagoGeonamesFile, File geonamesCitiesFile, File yagoLiteralFactsFile) {
         this.yagoDateFile = yagoDateFile;
         this.yagoLocationFile = yagoLocationFile;
         this.yagoCategoryFile = yagoCategoryFile;
@@ -42,10 +43,11 @@ public class YagoParser {
         this.yagoWikiFile = yagoWikiFile;
         this.yagoGeonamesFile = yagoGeonamesFile;
         this.geonamesCitiesFile = geonamesCitiesFile;
+        this.yagoLiteralFactsFile = yagoLiteralFactsFile;
 
         personsMap = new HashMap<>();
         locationsMap = new HashMap<>();
-        yagoToGeoMap = new HashMap<>();
+        geoIdToLocationIdMap = new HashMap<>();
 
         categoryTypes.put("<wordnet_scientist_110560637>", 1);
         categoryTypes.put("<wordnet_philosopher_110423589>", 2);
@@ -111,6 +113,15 @@ public class YagoParser {
         return yagoPerson;
     }
 
+    private YagoLocation ensureLocationIdToYagoLocation(long locationId) {
+        YagoLocation yagoLocation = locationsMap.get(locationId);
+        if (yagoLocation == null) {
+            yagoLocation = new YagoLocation(locationId);
+            locationsMap.put(locationId, yagoLocation);
+        }
+        return yagoLocation;
+    }
+
     private YagoLocation ensureGeoIdToYagoLocation(long geoId) {
         YagoLocation yagoLocation = locationsMap.get(geoId);
         if (yagoLocation == null) {
@@ -172,16 +183,17 @@ public class YagoParser {
                     yagoPerson.setIsFemale(true);
                 }
             } else if ("<wasBornIn>".equals(factType) && yagoPerson != null) {
-                setLoactionIdFromYagoId(factValue, yagoPerson, true);
+                setLocationIdFromYagoId(factValue, yagoPerson, true);
             } else if ("<diedIn>".equals(factType) && yagoPerson != null) {
-                setLoactionIdFromYagoId(factValue, yagoPerson, false);
+                setLocationIdFromYagoId(factValue, yagoPerson, false);
             }
         }
         br.close();
     }
 
-    private void setLoactionIdFromYagoId(String yagoLocationId, YagoPerson yagoPerson, boolean born) {
-        Long geoId = yagoToGeoMap.get(yagoIdToHash(yagoLocationId));
+    private void setLocationIdFromYagoId(String yagoLocationId, YagoPerson yagoPerson, boolean born) {
+        /*
+        Long geoId = geoIdToLocationIdMap.get(yagoIdToHash(yagoLocationId));
         if (geoId != null) {
             YagoLocation yagoLocation = locationsMap.get(geoId);
             if (yagoLocation != null && born) {
@@ -189,6 +201,14 @@ public class YagoParser {
             } else if (yagoLocation != null) {
                 yagoPerson.setDiedInLocation(yagoLocation.getLocationId());
             }
+        }
+        */
+        long locationId = yagoIdToHash(yagoLocationId);
+        YagoLocation yagoLocation = locationsMap.get(locationId);
+        if (yagoLocation != null && born) {
+            yagoPerson.setBornInLocation(locationId);
+        } else if (yagoLocation != null) {
+            yagoPerson.setDiedInLocation(locationId);
         }
     }
 
@@ -216,6 +236,7 @@ public class YagoParser {
         br.close();
     }
 
+
     // handles yagoGeonamesEntityIds
     public void parseYagoGeonamesFile(File yagoGeonamesFile) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(yagoGeonamesFile));
@@ -231,8 +252,8 @@ public class YagoParser {
             if (m.find()) {
                 try {
                     long geoId = Long.parseLong(m.group(1));
-                    ensureGeoIdToYagoLocation(geoId).setLocationId(locationId);
-                    yagoToGeoMap.put(locationId, geoId);
+                    geoIdToLocationIdMap.put(geoId, locationId);
+                    //ensureLocationIdToYagoLocation(locationId);
                 } catch (NumberFormatException e) {
                     continue;
                 }
@@ -249,14 +270,23 @@ public class YagoParser {
             String[] cols = line.trim().split("\\t");
             try {
                 long geoId = Long.parseLong(cols[0]);
-                YagoLocation yagoLocation = locationsMap.get(geoId);
-                if (yagoLocation != null) {
+
+                // translation from geo id to hashed yago id
+                Long locationId = geoIdToLocationIdMap.get(geoId);
+                if (locationId == null) {
+                    continue;
+                }
+                if (! locationsMap.containsKey(locationId)) {
                     String name = cols[2];
                     double latitude = Double.parseDouble(cols[4]);
                     double longitude = Double.parseDouble(cols[5]);
+
+                    // insert new location
+                    YagoLocation yagoLocation = new YagoLocation(locationId);
                     yagoLocation.setName(name);
                     yagoLocation.setLatitude(latitude);
                     yagoLocation.setLongitude(longitude);
+                    locationsMap.put(locationId, yagoLocation);
                 }
             } catch (NumberFormatException e) {
                 continue;
@@ -264,6 +294,8 @@ public class YagoParser {
         }
         br.close();
     }
+
+
 
     // handles yagoWikipediaInfo
     public void parseYagoWikiFile(File yagoWiKiFile) throws IOException {
@@ -278,35 +310,46 @@ public class YagoParser {
             long locationId = yagoIdToHash(cols[0]);
             Matcher wikiMatcher = p.matcher(cols[2]);
             if ("<hasWikipediaUrl>".equals(cols[1]) && wikiMatcher.find()) {
-                if (personsMap.containsKey(locationId)) {
-                    personsMap.get(locationId).setWikiUrl(wikiMatcher.group(1));
+                YagoPerson yagoPerson = personsMap.get(locationId);
+                if (yagoPerson != null) {
+                    yagoPerson.setWikiUrl(wikiMatcher.group(1));
                 }
-                Long geoId = yagoToGeoMap.get(locationId);
-                if (geoId != null && locationsMap.containsKey(geoId)) {
-                    locationsMap.get(geoId).setWikiUrl(wikiMatcher.group(1));
+
+                YagoLocation yagoLocation = locationsMap.get(locationId);
+                if (yagoLocation != null) {
+                    yagoLocation.setWikiUrl(wikiMatcher.group(1));
                 }
             }
         }
         br.close();
     }
 
-    public void literalFacts(File literalFile) throws IOException {
-        BufferedReader br = new BufferedReader(new FileReader(literalFile));
+    public void parseYagoLiteralFacts(File yagoLiteralFactsFile) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(yagoLiteralFactsFile));
         String line;
-        int etan = 0;
         while ((line = br.readLine()) != null) {
             String[] cols = line.trim().split("\\t");
-            //long locationId = yagoIdToHash(cols[0]);
+            if (cols.length < 5) {
+                continue;
+            }
+
+            long locationId = yagoIdToHash(cols[1]);
             if ("<hasLatitude>".equals(cols[2])) {
-                etan++;
+                if ("<Berlin>".equals(cols[1])) {
+                    System.out.println("233");
+                }
+                double latitude = Double.parseDouble(cols[4]);
+                ensureLocationIdToYagoLocation(locationId).setLatitude(latitude);
+            } else if ("<hasLongitude>".equals(cols[2])) {
+                double longitue = Double.parseDouble(cols[4]);
+                ensureLocationIdToYagoLocation(locationId).setLongitude(longitue);
             }
         }
-        System.out.println(etan);
         br.close();
     }
 
     // handles yagoLabels
-    public void parseYagoLabelsFile(File yagoLabelsFile) throws IOException {
+    public void parseYagoLabelsFile(File yagoLabelsFile, boolean searchForLocation) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(yagoLabelsFile));
         Pattern p = Pattern.compile(LABEL_REGEX);
         String line;
@@ -319,11 +362,25 @@ public class YagoParser {
             long yagoId = yagoIdToHash(cols[1]);
             Matcher m = p.matcher(cols[3]);
             if (m.matches()) {
-                YagoPerson yagoPerson = personsMap.get(yagoId);
-                if ("skos:prefLabel".equals(cols[2]) && yagoPerson != null) {
-                    yagoPerson.setPrefLabel(m.group(1));
-                } else if ("rdfs:label".equals(cols[2]) && yagoPerson != null) {
-                    yagoPerson.addLabel(m.group(1));
+                String label = m.group(1);
+                if (label.length() > 199) {
+                    label = label.substring(0, 199);
+                }
+                if ("skos:prefLabel".equals(cols[2]) && searchForLocation) {
+                    YagoLocation yagoLocation = locationsMap.get(yagoId);
+                    if (yagoLocation != null) {
+                        yagoLocation.setName(label);
+                    }
+                } else if ("skos:prefLabel".equals(cols[2]) && ! searchForLocation) {
+                    YagoPerson yagoPerson = personsMap.get(yagoId);
+                    if (yagoPerson != null) {
+                        yagoPerson.setPrefLabel(label);
+                    }
+                } else if ("rdfs:label".equals(cols[2]) && ! searchForLocation) {
+                    YagoPerson yagoPerson = personsMap.get(yagoId);
+                    if (yagoPerson != null) {
+                        yagoPerson.addLabel(label);
+                    }
                 }
             }
         }
@@ -336,6 +393,10 @@ public class YagoParser {
             System.out.println("Terminating parser");
 //            throw new IOException("Bad input file");
         }*/
+        logger.info("Parsing YAGO literal facts info..");
+        parseYagoLiteralFacts(yagoLiteralFactsFile);
+        logger.info("Parsing YAGO labels for locations..");
+        parseYagoLabelsFile(yagoLabelsFile, true);
         logger.info("Parsing YAGO geonames info..");
         parseYagoGeonamesFile(yagoGeonamesFile);
         logger.info("Parsing Geonames cities info..");
@@ -350,8 +411,8 @@ public class YagoParser {
         validatePersonsMap();
         logger.info("Parsing YAGO categories..");
         parseYagoCategoryFile(yagoCategoryFile);
-        logger.info("Parsing YAGO labels..");
-        parseYagoLabelsFile(yagoLabelsFile);
+        logger.info("Parsing YAGO labels for persons..");
+        parseYagoLabelsFile(yagoLabelsFile, false);
         logger.info("Parsing YAGO wikipedia info..");
         parseYagoWikiFile(yagoWikiFile);
         logger.info("Ensuring labels..");
@@ -368,11 +429,10 @@ public class YagoParser {
                 new File("/Users/admin/Downloads/yagoLabels.tsv"),
                 new File("/Users/admin/Downloads/yagoWikipediaInfo.tsv"),
                 new File("/Users/admin/Downloads/yagoGeonamesEntityIds.tsv"),
-                new File("/Users/admin/Downloads/cities1000.txt"));
-/*
+                new File("/Users/admin/Downloads/cities1000.txt"),
+                new File("/Users/admin/Downloads/yagoLiteralFacts.tsv"));
+
         yagoParser.parseFiles();
-*/
-        yagoParser.literalFacts(new File("C:\\tmp\\yagoLiteralFacts.tsv"));
     }
 
     private boolean validateFiles() {

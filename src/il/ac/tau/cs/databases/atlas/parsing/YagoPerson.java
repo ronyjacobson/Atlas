@@ -109,7 +109,7 @@ public class YagoPerson {
         if (prefLabel == null) {
             prefLabel = label;
         }
-        return (label == null);
+        return (label != null);
     }
 
     public int getPersonId() {
