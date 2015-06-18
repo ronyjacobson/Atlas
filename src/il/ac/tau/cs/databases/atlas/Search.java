@@ -29,6 +29,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import org.eclipse.swt.widgets.Display;
 
@@ -150,17 +151,35 @@ public class Search extends JFrame {
 	}
 
 	private void createDatesPanel() {
-
-		GridLayout panelLayout = new GridLayout(1, 2);
+		
+		GridLayout panelLayout = new GridLayout(1, 1);
 		panelLayout.setHgap(GAP_BETWEEN_COMPONENTS);
 		datesPanel = new JPanel(panelLayout);
 
+		GridLayout fromPanelLayout = new GridLayout(2, 1);
+		fromPanelLayout.setHgap(GAP_BETWEEN_COMPONENTS);
+		JPanel fromPanel = new JPanel(fromPanelLayout);
+
+		GridLayout toPanelLayout = new GridLayout(2, 1);
+		toPanelLayout.setHgap(GAP_BETWEEN_COMPONENTS);
+		JPanel toPanel = new JPanel(toPanelLayout);
+
 		// Make panel transparent
 		datesPanel.setOpaque(false);
+		fromPanel.setBackground(new Color(1f, 1f, 1f, 0.5f));
+		toPanel.setBackground(new Color(1f, 1f, 1f, 0.5f));
 
 		// Define buttons attributes
 		Font fieldFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_FIELD);
-
+		
+		// Create labels
+		JLabel fromLabel = new JLabel("Search from:", SwingConstants.CENTER);
+		fromLabel.setForeground(Color.DARK_GRAY);
+		fromLabel.setFont(fieldFont);
+		JLabel toLabel = new JLabel("To:", SwingConstants.CENTER);
+		toLabel.setForeground(Color.DARK_GRAY);
+		toLabel.setFont(fieldFont);
+		
 		// Create dates
 		Date today = new Date();
 		ClearTextBox clearTextBoxListner = new ClearTextBox();
@@ -178,8 +197,13 @@ public class Search extends JFrame {
 		untilDate.setFont(fieldFont);
 
 		// Add to panel
-		datesPanel.add(fromDate);
-		datesPanel.add(untilDate);
+		toPanel.add(toLabel);
+		toPanel.add(untilDate);
+		fromPanel.add(fromLabel);
+		fromPanel.add(fromDate);
+		
+		datesPanel.add(fromPanel);
+		datesPanel.add(toPanel);
 
 	}
 	/**

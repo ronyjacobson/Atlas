@@ -178,7 +178,7 @@ public class Login extends JFrame {
 		dateLabel.setForeground(Color.DARK_GRAY);
 		dateLabel.setFont(fieldFont);
 		
-		JLabel placeLabel = new JLabel("Birth Place:", SwingConstants.LEFT);
+		JLabel placeLabel = new JLabel("Birth Place (optional):", SwingConstants.LEFT);
 		placeLabel.setForeground(Color.DARK_GRAY);
 		placeLabel.setFont(fieldFont);
 		
@@ -286,8 +286,6 @@ public class Login extends JFrame {
 				JOptionPane.showMessageDialog(null, "Password can not be blank.", GrapicUtils.PROJECT_NAME, 1);
 			} else if (DateUtils.isToday(wasBornOn.getCalendar()) && signupEnabled) {
 				JOptionPane.showMessageDialog(null, "No way you were born today, enter a valid birthday.", GrapicUtils.PROJECT_NAME, 1);
-			} else if (wasBornIn.getSelectedItem().toString().equals(DEFAULT_LOCATION) && signupEnabled) {
-				JOptionPane.showMessageDialog(null, "Please choose a birth place from the list.", GrapicUtils.PROJECT_NAME, 1);
 			} else if (!isFemale.isSelected() && !isMale.isSelected() && signupEnabled) {
 				JOptionPane.showMessageDialog(null, "Please choose male or female.", GrapicUtils.PROJECT_NAME, 1);
 			} else {
@@ -329,6 +327,7 @@ public class Login extends JFrame {
 					}
 				} else {
 					// Sign Up
+					
 					fetchedUser = new User(username.getText(), String.copyValueOf(password.getPassword()), wasBornOn.getDate(),
 							Queries.locationsMap.get(wasBornIn.getSelectedItem().toString()), isFemale.isSelected());
 					boolean status;
