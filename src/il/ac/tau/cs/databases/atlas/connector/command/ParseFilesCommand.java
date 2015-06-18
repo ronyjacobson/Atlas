@@ -26,6 +26,11 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
     }
 
     @Override
+    protected String getDisplayLabel() {
+        return "To begin press 'Start'";
+    }
+
+    @Override
     protected String getFrameLabel() {
         return "Yago Updater";
     }
@@ -34,35 +39,34 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
     protected void runProgressCmd(Connection con) throws AtlasServerException {
         // GUI should check if files exist
 
+        yagoParser.setProgressUpdater(progressUpdater);
         try {
             logger.info("Parser started");
-            progressUpdater.updateProgress(5, "A");
-            logger.info("Parsing YAGO literal facts info..");
+            int numberOfSteps = 12;
+            int step = 0;
+            progressLogger(++step, numberOfSteps, "Parsing YAGO literal facts info..");
             yagoParser.parseYagoLiteralFacts(files.get(ParserConstants.YAGO_LITERAL_FACTS_TSV));
-            progressUpdater.updateProgress(10, "B");
-            logger.info("Parsing YAGO labels for locations..");
+            progressLogger(++step, numberOfSteps, "Parsing YAGO labels for locations..");
             yagoParser.parseYagoLabelsFile(files.get(ParserConstants.YAGO_LABELS_TSV), true);
-            progressUpdater.updateProgress(15, "C");
-            logger.info("Parsing YAGO geonames info..");
+            progressLogger(++step, numberOfSteps, "Parsing YAGO geonames info..");
             yagoParser.parseYagoGeonamesFile(files.get(ParserConstants.YAGO_GEONAMES_ENTITY_IDS_TSV));
-            progressUpdater.updateProgress(20, "D");
-            logger.info("Parsing Geonames cities info..");
+            progressLogger(++step, numberOfSteps, "Parsing Geonames cities info..");
             yagoParser.parseGeonamesCitiesFile(files.get(ParserConstants.CITIES1000_TXT));
-            logger.info("Validating locations..");
+            progressLogger(++step, numberOfSteps, "Validating locations..");
             yagoParser.validateLocationsMap();
-            logger.info("Parsing YAGO dates..");
+            progressLogger(++step, numberOfSteps, "Parsing YAGO dates..");
             yagoParser.parseYagoDateFile(files.get(ParserConstants.YAGO_DATE_FACTS_TSV));
-            logger.info("Parsing YAGO locations facts..");
+            progressLogger(++step, numberOfSteps, "Parsing YAGO locations facts..");
             yagoParser.parseYagoLocationFile(files.get(ParserConstants.YAGO_FACTS_TSV));
-            logger.info("Filtering out persons without birth date/place..");
+            progressLogger(++step, numberOfSteps, "Filtering out persons without birth date/place..");
             yagoParser.validatePersonsMap();
-            logger.info("Parsing YAGO categories..");
+            progressLogger(++step, numberOfSteps, "Parsing YAGO categories..");
             yagoParser.parseYagoCategoryFile(files.get(ParserConstants.YAGO_TRANSITIVE_TYPE_TSV));
-            logger.info("Parsing YAGO labels for persons..");
+            progressLogger(++step, numberOfSteps, "Parsing YAGO labels for persons..");
             yagoParser.parseYagoLabelsFile(files.get(ParserConstants.YAGO_LABELS_TSV), false);
-            logger.info("Parsing YAGO wikipedia info..");
+            progressLogger(++step, numberOfSteps, "Parsing YAGO wikipedia info..");
             yagoParser.parseYagoWikiFile(files.get(ParserConstants.YAGO_WIKIPEDIA_INFO_TSV));
-            logger.info("Ensuring labels..");
+            progressLogger(++step, numberOfSteps, "Ensuring labels..");
             yagoParser.ensureLabels(); // remove persons without prefLabel or no labels at all
             logger.info("Parsing complete");
         } catch (IOException e) {
@@ -70,19 +74,18 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
         }
 
         createLocationsTable(con);
-
         int addedByUser = addYagoUser(con); // TODO: should only happen in the initial setup
         // Insert data table to DB
-
         createCategoriesTable(con);
         createPersonTable(con, addedByUser);
         createPersonHasCategoryTable(con);
         createPersonLabelsTable(con);
     }
 
-    @Override
-    protected String getDisplayLabel() {
-        return "To begin press 'Start'";
+    private void progressLogger(int step, int numberOfSteps, String msg) {
+        String outMsg = "Step " + step + "/" + numberOfSteps + ": " + msg;
+        logger.info(outMsg);
+        progressUpdater.updateHeader(outMsg);
     }
 
     private void createCategoriesTable(Connection con) throws AtlasServerException {
