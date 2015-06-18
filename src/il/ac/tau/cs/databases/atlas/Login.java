@@ -296,7 +296,7 @@ public class Login extends JFrame {
 						// Check password validity
 						if (fetchedUser.getPassword().equals(user.getPassword())) {
 							// Login
-							LoginSuccesful();
+							loginSuccesful();
 						} else {
 							// Login failed
 							JOptionPane.showMessageDialog(null,
@@ -326,7 +326,7 @@ public class Login extends JFrame {
 						if (status) {
 							JOptionPane.showMessageDialog(null, "You are now registered!");
 							// Login
-							LoginSuccesful();
+							loginSuccesful();
 						} else {
 							JOptionPane.showMessageDialog(null, "Failed to register. Try again later.", GrapicUtils.PROJECT_NAME,
 									JOptionPane.ERROR_MESSAGE);
@@ -340,7 +340,7 @@ public class Login extends JFrame {
 		}
 	}
 
-	private void LoginSuccesful() {
+	private void loginSuccesful() {
 
 		// Store User
 		Main.user = fetchedUser;

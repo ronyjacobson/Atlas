@@ -48,10 +48,10 @@ public class Add extends JFrame {
 	private static final int NUM_OF_COMPONENTS = 10;
 	private static final int GAP_BETWEEN_COMPONENTS = 16;
 	private static final String DEFAULT_CATEGORY = "Choose a category...";
-	private static final String DEFAULT_BIRTH_LOCATION = "Choose birth place...";
-	private static final String DEFAULT_DEATH_LOCATION = "Choose death place...";
-	private static final String DEFAULT_BIRTH_DATE = "Enter birthday";
-	private static final String DEFAULT_DEATH_DATE = "Enter death date";
+	private static final String DEFAULT_BIRTH_LOCATION = "Choose place of birth...";
+	private static final String DEFAULT_DEATH_LOCATION = "Choose place of death...";
+	private static final String DEFAULT_BIRTH_DATE = "Birth date:";
+	private static final String DEFAULT_DEATH_DATE = "Death date (Optional):";
 	private static final String NOT_DEAD_LOCATION = "NOT DEAD";
 
 	private JLabel label;
@@ -192,23 +192,40 @@ public class Add extends JFrame {
 
 	private void createDatesPanel() {
 
-		GridLayout panelLayout = new GridLayout(1, 2);
+		GridLayout panelLayout = new GridLayout(1, 1);
 		panelLayout.setHgap(GAP_BETWEEN_COMPONENTS);
 		datesPanel = new JPanel(panelLayout);
 
+		GridLayout birthPanelLayout = new GridLayout(2, 1);
+		birthPanelLayout.setHgap(GAP_BETWEEN_COMPONENTS);
+		JPanel birthPanel = new JPanel(birthPanelLayout);
+
+		GridLayout deathPanelLayout = new GridLayout(2, 1);
+		deathPanelLayout.setHgap(GAP_BETWEEN_COMPONENTS);
+		JPanel deathPanel = new JPanel(deathPanelLayout);
+
 		// Make panel transparent
 		datesPanel.setOpaque(false);
+		birthPanel.setBackground(new Color(1f, 1f, 1f, 0.5f));
+		deathPanel.setBackground(new Color(1f, 1f, 1f, 0.5f));
 
 		// Define buttons attributes
 		Font fieldFont = new Font("Century Gothic", Font.PLAIN,
 				GrapicUtils.FONT_SIZE_FIELD);
+
+		// Create labels
+		JLabel deathLabel = new JLabel(DEFAULT_DEATH_DATE, SwingConstants.LEFT);
+		deathLabel.setForeground(Color.DARK_GRAY);
+		deathLabel.setFont(fieldFont);
+		JLabel birthLabel = new JLabel(DEFAULT_BIRTH_DATE, SwingConstants.LEFT);
+		birthLabel.setForeground(Color.DARK_GRAY);
+		birthLabel.setFont(fieldFont);
 
 		// Create dates
 		Date today = new Date();
 		ClearTextBox clearTextBoxListner = new ClearTextBox();
 
 		wasBornOn = new JDateChooser();
-		wasBornOn.setToolTipText(DEFAULT_BIRTH_DATE);
 		wasBornOn.setDate(null);
 		wasBornOn.setMaxSelectableDate(today);
 		wasBornOn.addMouseListener(clearTextBoxListner);
@@ -221,10 +238,15 @@ public class Add extends JFrame {
 		hasDiedOn.addMouseListener(clearTextBoxListner);
 		hasDiedOn.setFont(fieldFont);
 
-		// Add to panel
-		datesPanel.add(wasBornOn);
-		datesPanel.add(hasDiedOn);
+		// Add to panels
 
+		birthPanel.add(birthLabel);
+		deathPanel.add(deathLabel);
+		birthPanel.add(wasBornOn);
+		deathPanel.add(hasDiedOn);
+
+		datesPanel.add(birthPanel);
+		datesPanel.add(deathPanel);
 	}
 
 	private void createLocationsPanel() {
@@ -349,15 +371,16 @@ public class Add extends JFrame {
 				JOptionPane.showMessageDialog(null,
 						"Please choose a birth date", GrapicUtils.PROJECT_NAME,
 						1);
-			} else if (hasDiedOn.getCalendar() != null
-					&& DateUtils.isSameDay(wasBornOn.getCalendar(),
-							hasDiedOn.getCalendar())) {
+			} else if ( (hasDiedOn.getCalendar() != null) &&
+						 DateUtils.isSameDay(wasBornOn.getCalendar(), hasDiedOn.getCalendar()) 
+						 && (!hasDiedIn.getSelectedItem().toString().equals(NOT_DEAD_LOCATION))) {
 				JOptionPane.showMessageDialog(null,
 						"No way that the birth and death dates are the same.",
 						GrapicUtils.PROJECT_NAME, 1);
 			} else if (hasDiedOn.getCalendar() != null
 					&& DateUtils.isAfterDay(wasBornOn.getCalendar(),
-							hasDiedOn.getCalendar())) {
+							hasDiedOn.getCalendar()) &&
+							(!hasDiedIn.getSelectedItem().toString().equals(NOT_DEAD_LOCATION))) {
 				JOptionPane.showMessageDialog(null,
 						"No way that the birth date is after the death date.",
 						GrapicUtils.PROJECT_NAME, 1);
@@ -375,46 +398,61 @@ public class Add extends JFrame {
 				JOptionPane.showMessageDialog(null,
 						"Wikipedia link can not be blank.",
 						GrapicUtils.PROJECT_NAME, 1);
-			} else {
-				try {
-					// Get locations IDs
-					Integer birthLocaionID = Queries.locationsMap.get(wasBornIn
-							.getSelectedItem().toString());
-					Integer deathLocaionID = (hasDiedIn.getSelectedItem()
-							.toString().equals(NOT_DEAD_LOCATION)) ? null
-							: Queries.locationsMap.get(hasDiedIn
-									.getSelectedItem().toString());
-					// Get dates
-					Date birthDate = wasBornOn.getDate();
-					Date deathDate = (hasDiedOn.getCalendar() == null) ? null
-							: hasDiedOn.getDate();
-					// Add entry
-					stringName = name.getText();
-					Main.queries.addNew(stringName, category.getSelectedItem()
-							.toString(), birthDate, birthLocaionID, deathDate,
-							deathLocaionID, wikiLink.getText(), isFemale
-									.isSelected());
-					status = "";
-					JOptionPane.showMessageDialog(null, "New entry added to the data base.",
-							GrapicUtils.PROJECT_NAME,
-							JOptionPane.INFORMATION_MESSAGE);
-				} catch (AtlasServerException e) {
-					JOptionPane
-							.showMessageDialog(
+			} else if (hasDiedIn.getSelectedItem().toString()
+					.equals(NOT_DEAD_LOCATION)) {
+				if (hasDiedOn.getCalendar() != null) {
+					int reply = JOptionPane
+							.showConfirmDialog(
 									null,
-									"Failed to add new entry: " + e.getMessage() + ".",
+									"<html>You mentioned this person is not dead but entered a death date.<br>"
+											+ "This person will be added without the death date.<br>Continue anyway?</html>",
+									GrapicUtils.PROJECT_NAME,
+									JOptionPane.YES_NO_OPTION);
+
+					if (reply == JOptionPane.YES_OPTION) {
+						try {
+							// Get locations IDs
+							Integer birthLocaionID = Queries.locationsMap
+									.get(wasBornIn.getSelectedItem().toString());
+							Integer deathLocaionID = (hasDiedIn
+									.getSelectedItem().toString()
+									.equals(NOT_DEAD_LOCATION)) ? null
+									: Queries.locationsMap.get(hasDiedIn
+											.getSelectedItem().toString());
+							// Get dates
+							Date birthDate = wasBornOn.getDate();
+							Date deathDate = (deathLocaionID == null) ? null
+									: hasDiedOn.getDate();
+							// Add entry
+							stringName = name.getText();
+							Main.queries.addNew(stringName, category
+									.getSelectedItem().toString(), birthDate,
+									birthLocaionID, deathDate, deathLocaionID,
+									wikiLink.getText(), isFemale.isSelected());
+							status = "";
+							JOptionPane.showMessageDialog(null,
+									"New entry added to the data base.",
+									GrapicUtils.PROJECT_NAME,
+									JOptionPane.INFORMATION_MESSAGE);
+						} catch (AtlasServerException e) {
+							JOptionPane.showMessageDialog(
+									null,
+									"Failed to add new entry: "
+											+ e.getMessage() + ".",
 									GrapicUtils.PROJECT_NAME,
 									JOptionPane.ERROR_MESSAGE);
-					status = e.getMessage();
-					// Close the windows
-					dispose();
+							status = e.getMessage();
+							// Close the windows
+							dispose();
+						}
+					}
 				}
 			}
 		}
 	}
 
 	public String getStatus() {
-		return this.status;
+		return status;
 	}
 
 	public String getName() {

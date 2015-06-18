@@ -6,9 +6,11 @@ import il.ac.tau.cs.databases.atlas.db.MockQueries;
 import il.ac.tau.cs.databases.atlas.db.Queries;
 import il.ac.tau.cs.databases.atlas.db.User;
 import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
+
 import org.apache.log4j.Logger;
 
 import java.awt.Toolkit;
+import java.util.Date;
 
 public class Main {
 	private static final Logger log = Logger.getLogger(Main.class);
@@ -42,11 +44,17 @@ public class Main {
 	 * Main running method
 	 */
 	public static void main(String[] args) {
+		boolean DEBUG = false;
 		try {
 			// Initialize the program
 			initialize();
-			// Show splash screen
-			new Splash();
+			if (DEBUG) {
+				Main.user = new User(1, "rony", "0000", new Date(), 1, true);
+				new Map();
+			} else {
+				// Show splash screen
+				new Splash();
+			}
 		} catch (Exception e) {
 			// TODO Handle Exception
 			e.printStackTrace();

@@ -38,7 +38,7 @@ public class MapBrowserListeners {
 					String msg;
 					try {
 						List<String> favs = Main.queries.getFavoritesIDs();
-						String favList =favs.toString();
+						String favList = favs.toString();
 						map.getBrowser().execute("updateFavorites(" + favList + ");");
 					} catch (AtlasServerException e) {
 						msg = "Couldnt get favorites from database.";
