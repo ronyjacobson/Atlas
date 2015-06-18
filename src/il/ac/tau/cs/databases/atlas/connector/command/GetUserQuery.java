@@ -31,11 +31,9 @@ public class GetUserQuery extends BaseDBCommand<User> {
         try {
         	statement = con.prepareStatement(
         			"SELECT * FROM "+
-        			DBConstants.User.TABLE_NAME + ", " +
-        			DBConstants.Location.TABLE_NAME + "\n" +
-        			"WHERE "+  DBConstants.USERNAME_L+" = ? \n" +
-        			"AND "+ DBConstants.BORN_IN_LOCATION_L +" = "+DBConstants.LOCATION_ID_L+"\n"+
-        			"OR "+ DBConstants.BORN_IN_LOCATION_L +" = 'NULL'");
+        			DBConstants.User.TABLE_NAME +
+        			" WHERE "+  DBConstants.USERNAME_L+" = ? ");
+        	
         	statement.setString(1, user.getUsername());
         	logger.info(String.format("Executing DB query:\n %s.", statement.toString()));
         	resultSet = statement.executeQuery();
@@ -53,14 +51,9 @@ public class GetUserQuery extends BaseDBCommand<User> {
             	Date dateOfBirth = resultSet.getDate(DBConstants.BORN_ON_DATE_L);
             	int locationID = resultSet.getInt(DBConstants.BORN_IN_LOCATION_L);
             	int userID = resultSet.getInt(DBConstants.USER_ID_L);
-            	String locationName = resultSet.getString(DBConstants.GEO_NAME_L);
-            	double lng = resultSet.getDouble(DBConstants.LONG_L);
-				double lat = resultSet.getDouble(DBConstants.LAT_L);
-				boolean isFemail = resultSet.getBoolean(DBConstants.IS_FEMALE_L);
-				String locUrl= resultSet.getString(DBConstants.WIKI_URL_L);
-            	Location loc = new Location(locationID, locationName, lat, lng, locUrl);
-                fetchedUser = new User(userID, username, password, dateOfBirth, locationID, isFemail);
-                fetchedUser.setLocation(loc);
+            	boolean isFemail = resultSet.getBoolean(DBConstants.IS_FEMALE_L);
+				fetchedUser = new User(userID, username, password, dateOfBirth, locationID, isFemail);
+               
             }
 
         } catch (SQLException e) {
