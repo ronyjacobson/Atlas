@@ -9,6 +9,8 @@ import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
 import java.awt.Toolkit;
 import java.util.Date;
 
+import javax.swing.JOptionPane;
+
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -32,11 +34,10 @@ public class Main {
 		try {
 			// Initialize DB
 			// TODO - read from properties file
-			DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06", "127.0.0.1", "3306", "DbMysql06");
+			DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06", "127.0.0.1", "3305", "DbMysql06");
 			State.autoLoad();
 			//TODO(etan) - server exception
 		} catch (Exception e) {
-			// Throw exception to main screen
 			throw e;
 		}
 	}
@@ -57,8 +58,10 @@ public class Main {
 				new Splash();
 			}
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, e.getMessage(), GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null,
+					"Unable to connect to DB.", GrapicUtils.PROJECT_NAME,
+					JOptionPane.ERROR_MESSAGE);
+
 		}
 	}
 }

@@ -59,7 +59,7 @@ public class DBQueries implements Queries {
 	 * @return A Hash Map of all geographical locations in the database
 	 */
 	@Override
-	public void getGeoLocationsHashMap() throws AtlasServerException {
+	public void getGeoLocationsIntoHashMap() throws AtlasServerException {
 		// Initialize DB query
 		GetGeoLocationsQuery query = new GetGeoLocationsQuery();
 		logger.info("Fetching GeoLocations names and Id's...");
@@ -74,7 +74,7 @@ public class DBQueries implements Queries {
 	@Override
 	public List<String> getAllGeoLocationsNames() throws AtlasServerException {
 		if (locationsNames.isEmpty()) {
-			getGeoLocationsHashMap();
+			getGeoLocationsIntoHashMap();
 		}
 		return locationsNames;
 	}

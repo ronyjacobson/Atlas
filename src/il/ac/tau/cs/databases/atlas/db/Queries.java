@@ -33,7 +33,7 @@ public interface Queries {
 	 * @return A list of all geographical locations in the database
 	 * @throws AtlasServerException 
 	 */
-	public void getGeoLocationsHashMap() throws AtlasServerException;
+	public void getGeoLocationsIntoHashMap() throws AtlasServerException;
 	
 	/**
 	 * @return A list of strings representing the display names of all

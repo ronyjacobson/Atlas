@@ -137,7 +137,7 @@ public class MockQueries implements Queries {
 
 
 	@Override
-	public void getGeoLocationsHashMap() {
+	public void getGeoLocationsIntoHashMap() {
 		// TODO Auto-generated method stub
 		return;
 	}
