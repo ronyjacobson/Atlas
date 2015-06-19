@@ -97,7 +97,7 @@ public class GetResultsGeneralQuery extends BaseDBCommand<Map<String, Result>> {
 				}
 
 			}
-			logger.info("Qurey executed successfully.");
+			logger.info("Query executed successfully.");
 
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Created by user on 22/05/2015.
  */
-public class GetFavoriteResultsQuery extends GetResultsGeneralQuery {
+public class GetNewFavoritesResultsQuery extends GetResultsGeneralQuery {
 
 	protected Map<String, Result> innerExecute(Connection con)
 			throws AtlasServerException {
@@ -19,7 +19,7 @@ public class GetFavoriteResultsQuery extends GetResultsGeneralQuery {
 
 	@Override
 	protected String makeFromStmt() {
-		return super.makeFromStmt() + "	,user_favorties \n";
+		return super.makeFromStmt() + "	, user_favorites \n";
 	}
 
 	@Override

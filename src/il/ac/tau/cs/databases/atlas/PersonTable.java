@@ -92,10 +92,10 @@ public class PersonTable {
 
         Display display = new Display();
         Map<String, Result> resultMap = new HashMap<>();
-        resultMap.put("b123", new Result("123", "etan", new Location(1, "Tel Aviv", 22.2f, 33.3f), new Date(1000,10,1), true, "artist", "www.com", false, "artist"));
-        resultMap.put("d123", new Result("123", "etan", new Location(1, "Ramat Gan", 22.2f, 33.3f), new Date(1020,10,1), false, "artist", "www.com", false, "artist"));
-        resultMap.put("b1234", new Result("1234", "paz", new Location(1, "Tel Aviv", 22.2f, 33.3f), new Date(500,10,1), true, "artista", "www.com", false, "artista"));
-        resultMap.put("d1234", new Result("1234", "paz", new Location(1, "Ramat Gan", 22.2f, 33.3f), new Date(520,10,1), false, "artista", "www.com", false, "artista"));
+        resultMap.put("b123", new Result("123", "etan", new Location((long)1, "Tel Aviv", 22.2f, 33.3f), new Date(1000,10,1), true, "artist", "www.com", false, "artist"));
+        resultMap.put("d123", new Result("123", "etan", new Location((long)1, "Ramat Gan", 22.2f, 33.3f), new Date(1020,10,1), false, "artist", "www.com", false, "artist"));
+        resultMap.put("b1234", new Result("1234", "paz", new Location((long)1, "Tel Aviv", 22.2f, 33.3f), new Date(500,10,1), true, "artista", "www.com", false, "artista"));
+        resultMap.put("d1234", new Result("1234", "paz", new Location((long)1, "Ramat Gan", 22.2f, 33.3f), new Date(520,10,1), false, "artista", "www.com", false, "artista"));
         new PersonTable(resultMap);
     }
 }

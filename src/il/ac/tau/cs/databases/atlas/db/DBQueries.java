@@ -14,6 +14,7 @@ import il.ac.tau.cs.databases.atlas.connector.command.SearchResultsByDatesQuery;
 import il.ac.tau.cs.databases.atlas.connector.command.SearchResultsByNameQuery;
 import il.ac.tau.cs.databases.atlas.connector.command.UpdateFavoritesQuery;
 import il.ac.tau.cs.databases.atlas.connector.command.NewCommands.GetGoResultsQuery;
+import il.ac.tau.cs.databases.atlas.connector.command.NewCommands.GetNewFavoritesResultsQuery;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
 import java.io.File;
@@ -190,9 +191,9 @@ public class DBQueries implements Queries {
 		List<Result> results = new ArrayList<Result>();
 		amountOfFemaleResults = 0;
 		amountOfBirthResults = 0;
-		GetFavoritesResultsQuery query = new GetFavoritesResultsQuery();
+		GetNewFavoritesResultsQuery query = new GetNewFavoritesResultsQuery();
 		logger.info("Fetching Favorites...");
-		results.addAll(query.execute());
+		results.addAll(query.execute().values());
 		amountOfLatestResults = results.size();
 		return results;
 	}

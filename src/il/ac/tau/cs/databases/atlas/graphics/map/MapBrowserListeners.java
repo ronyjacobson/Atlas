@@ -93,6 +93,7 @@ public class MapBrowserListeners {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			showSpinner();
 			if (firstQuery) {
 				firstQuery = false;
 				// Set up favorites list
@@ -107,26 +108,23 @@ public class MapBrowserListeners {
 						.toString();
 				// Check category
 				List<Result> results = null;
-				executeJS("showSpinner();");
 				try {
 					if (category.equals(Map.DEFAULT_CATEGORY)) {
 						executeJS("showError(\""
 								+ "Please select a category.\");");
 					} else if (category.equals(Map.FAVORITES_CATEGORY)) {
-						showSpinner();
 						results = Main.queries.getFavorites();
 					} else {
-						showSpinner();
 						results = Main.queries.getResults(startYear, endYear, category);
 					}
 				} catch (AtlasServerException ase) {
-					hideSpinner();
 					executeJS("showError(\"" + ase.getMessage() + "\");");
 					ase.printStackTrace();
 				}
 				if (results != null) {
 					showResultsOnMap(results, category);
 				}
+				hideSpinner();
 			} else {
 				// TODO Show message?
 			}
@@ -197,8 +195,6 @@ public class MapBrowserListeners {
 										+ result.getWikiLink() + "\");");
 
 					}
-					hideSpinner();
-
 				}
 			}
 		});

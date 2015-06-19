@@ -1,10 +1,6 @@
 package il.ac.tau.cs.databases.atlas.connector.command.NewCommands;
 
 import il.ac.tau.cs.databases.atlas.db.Result;
-import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
-
-import java.sql.Connection;
-import java.util.Map;
 
 /**
  * Created by user on 22/05/2015.
