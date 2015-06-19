@@ -62,6 +62,8 @@ public class AddPersonQuery extends BaseDBCommand<Void> {
 			
 			statement.close();
 			resultSet.close();
+
+			con.setAutoCommit(false);
 			
 			// Add the new person to DB
 			if (deathDate == null && deathLocID == null) {
@@ -136,6 +138,7 @@ public class AddPersonQuery extends BaseDBCommand<Void> {
 			logger.info(String.format("Executing DB query: %s.",
 					statement.toString()));
 			statement.executeUpdate();
+			con.commit();
 
             logger.info("Person added successfully - The generated person ID is: "+ genID);
 		} catch (PersonExistsError e) {
