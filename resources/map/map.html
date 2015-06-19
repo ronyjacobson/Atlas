@@ -129,13 +129,13 @@
                   	// This result was previously asked to be removed
                   	removeFromFavorites.splice(j, 1);
                   }
-                  swal("Added To Favorties!", "This person will be added to your favorites after you sync.", "success");
+                  swal("Added to Favorites!", "This person will be added to your favorites after you sync.", "success");
             } else {
                   // This result is in favorites - REMOVE
                   element.querySelector('img').setAttribute("src","addfavorite.png");
                   favorites.splice(i, 1);
                   removeFromFavorites.push(resultid);
-                  swal("Removed From Favorites!", "This person will be removed from your favorites after you sync.", "error");
+                  swal("Removed from Favorites!", "This person will be removed from your favorites after you sync.", "error");
             }
       }
 
