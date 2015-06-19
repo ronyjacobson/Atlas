@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 public class DBQueries implements Queries {
 
 	protected final Logger logger = Logger.getLogger(this.getClass().getName());
+	
 	public static int amountOfLatestResults = 0;
 	public static int amountOfFemaleResults = 0;
 	public static int amountOfBirthResults = 0;
@@ -26,7 +27,7 @@ public class DBQueries implements Queries {
 	public User fetchUser(User user) throws AtlasServerException {
 		// Initialize DB query
 		GetUserQuery query = new GetUserQuery(user);
-		System.out.println(String.format(
+		logger.info(String.format(
 				"Checking for regitered user with username: %s...",
 				user.getUsername()));
 		// Execute query
@@ -41,7 +42,7 @@ public class DBQueries implements Queries {
 	public boolean registerUser(User user) throws AtlasServerException {
 		// Initialize DB query
 		RegisterUserQuery query = new RegisterUserQuery(user);
-		System.out.println(String.format(
+		logger.info(String.format(
 				"Registering user with username: %s...", user.getUsername()));
 		// Execute query
 		User newUser = query.execute();
@@ -61,7 +62,7 @@ public class DBQueries implements Queries {
 	public void getGeoLocationsHashMap() throws AtlasServerException {
 		// Initialize DB query
 		GetGeoLocationsQuery query = new GetGeoLocationsQuery();
-		System.out.println("Fetching GeoLocations names and Id's...");
+		logger.info("Fetching GeoLocations names and Id's...");
 		query.execute();
 	}
 
@@ -95,7 +96,7 @@ public class DBQueries implements Queries {
 	public List<String> getAllCategoriesNames() throws AtlasServerException {
 		// Initialize DB query
 		GetCategoriesQuery query = new GetCategoriesQuery();
-		System.out.println("Fetching category names...");
+		logger.info("Fetching category names...");
 		// Execute query
 		ArrayList<String> categories = query.execute();
 		return categories;
@@ -167,7 +168,7 @@ public class DBQueries implements Queries {
 		amountOfFemaleResults = 0;
 		amountOfBirthResults = 0;
 		GetFavoritesResultsQuery query = new GetFavoritesResultsQuery();
-		System.out.println("Fetching Favorites...");
+		logger.info("Fetching Favorites...");
 		results.addAll(query.execute());
 		amountOfLatestResults = results.size();
 		return results;
@@ -205,7 +206,7 @@ public class DBQueries implements Queries {
 		// Initialize DB query
 		UpdateFavoritesQuery query = new UpdateFavoritesQuery(favoritesList,
 				removeFromFavorits);
-		System.out.println("Updating favorites...");
+		logger.info("Updating favorites...");
 
 		// Execute query
 		query.execute();
@@ -230,12 +231,7 @@ public class DBQueries implements Queries {
 	public void addNew(String name, String category, Date birthDate,
 			Integer birthlocationID, Date deathDate, Integer deathlocationID,
 			String wikiLink, boolean isFemale) throws AtlasServerException {
-		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 		// Initialize DB query
 		if (category.equals("Favorites")) {
 			throw new AtlasServerException(
@@ -245,7 +241,7 @@ public class DBQueries implements Queries {
 		AddPersonQuery query = new AddPersonQuery(name, catId, birthDate,
 				birthlocationID, deathDate, deathlocationID, wikiLink, isFemale);
 
-		System.out.println(String.format("Adding person: %s...", name));
+		logger.info(String.format("Adding person: %s...", name));
 
 		// Execute query
 		query.execute();
@@ -279,13 +275,7 @@ public class DBQueries implements Queries {
 		List<Result> results = new ArrayList<Result>();
 		amountOfFemaleResults = 0;
 		amountOfBirthResults = 0;
-		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println("Fetching results by dates...");
+		logger.info("Fetching results by dates...");
 		SearchResultsByDatesQuery query = new SearchResultsByDatesQuery(sdate,
 				edate);
 		results.addAll(query.execute());
@@ -298,16 +288,10 @@ public class DBQueries implements Queries {
 		List<Result> results = new ArrayList<Result>();
 		amountOfFemaleResults = 0;
 		amountOfBirthResults = 0;
-		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		maxYear = 0;
 		minYear = 0;
 		SearchResultsByNameQuery query = new SearchResultsByNameQuery(name);
-		System.out.println("Fetching results by name...");
+		logger.info("Fetching results by name...");
 		results.addAll(query.execute());
 		maxYear = query.getMaxYear();
 		minYear = query.getMinYear();
@@ -324,7 +308,7 @@ public class DBQueries implements Queries {
 			throws AtlasServerException {
 		amountOfFemaleResults = 0;
 		amountOfBirthResults = 0;
-		System.out.println("Fetching results by category and years...");
+		logger.info("Fetching results by category and years...");
 		List<Result> results = new ArrayList<Result>();
 		GetResultsQuery query = new GetResultsQuery(startYear, endYear,
 				category);
