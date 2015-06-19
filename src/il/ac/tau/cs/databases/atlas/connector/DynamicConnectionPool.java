@@ -15,9 +15,7 @@ import org.apache.log4j.Logger;
 /**
  * Created by user on 19/05/2015.
  */
-public enum DynamicConnectionPool implements ConnectionPool {
-	
-    INSTANCE;
+public class DynamicConnectionPool implements ConnectionPool {
     
     private static final Logger log = Logger.getLogger(ConnectionPool.class);
 

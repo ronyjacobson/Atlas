@@ -1,6 +1,7 @@
 package il.ac.tau.cs.databases.atlas.connector.command;
 
 import il.ac.tau.cs.databases.atlas.ParserConstants;
+import il.ac.tau.cs.databases.atlas.connector.ConnectionPoolHolder;
 import il.ac.tau.cs.databases.atlas.connector.DynamicConnectionPool;
 import il.ac.tau.cs.databases.atlas.connector.command.base.BaseProgressDBCommand;
 import il.ac.tau.cs.databases.atlas.db.YagoParser;
@@ -284,7 +285,10 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
     }
 
     public static void main(String[] args) throws AtlasServerException {
-        DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06","localhost", "3306", "DbMysql06");
+        DynamicConnectionPool dynamicConnectionPool = new DynamicConnectionPool();
+        dynamicConnectionPool.initialize("DbMysql06", "DbMysql06", "localhost", "3306", "DbMysql06");
+        ConnectionPoolHolder.INSTANCE.set(dynamicConnectionPool);
+
         Map<String, File> files = new HashMap<>();
         files.put(ParserConstants.YAGO_DATE_FACTS_TSV, new File("/Users/admin/Downloads/yagoDateFacts.tsv"));
         files.put(ParserConstants.YAGO_LITERAL_FACTS_TSV, new File("/Users/admin/Downloads/yagoLiteralFacts.tsv"));

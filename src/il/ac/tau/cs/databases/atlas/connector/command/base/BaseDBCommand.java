@@ -1,6 +1,7 @@
 package il.ac.tau.cs.databases.atlas.connector.command.base;
 
 import il.ac.tau.cs.databases.atlas.connector.ConnectionPool;
+import il.ac.tau.cs.databases.atlas.connector.ConnectionPoolHolder;
 import il.ac.tau.cs.databases.atlas.connector.DynamicConnectionPool;
 import il.ac.tau.cs.databases.atlas.connector.FixedConnectionPool;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
@@ -13,7 +14,7 @@ import java.sql.*;
  */
 public abstract class BaseDBCommand<T> {
     protected final Logger logger = Logger.getLogger(this.getClass().getName());
-    private static ConnectionPool connectionPool = DynamicConnectionPool.INSTANCE;
+    private static ConnectionPool connectionPool = ConnectionPoolHolder.INSTANCE.get();
 
 
     public T execute() throws AtlasServerException {

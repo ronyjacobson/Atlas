@@ -1,5 +1,6 @@
 package il.ac.tau.cs.databases.atlas.connector.command;
 
+import il.ac.tau.cs.databases.atlas.connector.ConnectionPoolHolder;
 import il.ac.tau.cs.databases.atlas.connector.DynamicConnectionPool;
 import il.ac.tau.cs.databases.atlas.connector.command.base.BaseProgressDBCommand;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
@@ -50,8 +51,9 @@ public class TempCommand extends BaseProgressDBCommand {
     }
 
     public static void main(String[] args) throws AtlasServerException {
-        DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06", "127.0.0.1", "3306", "DbMysql06");
-        new TempCommand(100).execute();
-        System.out.println("done");
+        DynamicConnectionPool dynamicConnectionPool = new DynamicConnectionPool();
+        dynamicConnectionPool.initialize("DbMysql06", "DbMysql06", "localhost", "3306", "DbMysql06");
+        ConnectionPoolHolder.INSTANCE.set(dynamicConnectionPool);
+        new TempCommand(4).execute();
     }
 }

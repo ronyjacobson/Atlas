@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import il.ac.tau.cs.databases.atlas.Main;
+import il.ac.tau.cs.databases.atlas.connector.ConnectionPoolHolder;
 import il.ac.tau.cs.databases.atlas.connector.DynamicConnectionPool;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
@@ -24,9 +25,9 @@ public class DBQueriesTest {
 	public void setUp() throws Exception {
 		// Initialize connection according to debugger
 		if (tester == "Rony") {
-			//DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06","127.0.0.1", "3306", "dbmysql06");
-			DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06", "127.0.0.1", "3305", "DbMysql06");
-			Main.user = new User(2, "Rony", "0000", new Date(), Long.parseLong("257782768722431"), true);
+			DynamicConnectionPool dynamicConnectionPool = new DynamicConnectionPool();
+			dynamicConnectionPool.initialize("DbMysql06", "DbMysql06", "127.0.0.1", "3306", "DbMysql06");
+			ConnectionPoolHolder.INSTANCE.set(dynamicConnectionPool);
 		}
 	}
 	
