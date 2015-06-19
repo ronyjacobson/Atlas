@@ -17,7 +17,7 @@ public interface Queries {
 	Map<String, Integer> categoriesMap= new HashMap<>();
 	
 	// List of last fetched reuslts
-	List<Result> lastResults= new ArrayList<Result>();
+	Map<String,Result> lastResults= new ArrayList<Result>();
 	
 	// last SQL query executed
 	String lastQueryExecuted="";
