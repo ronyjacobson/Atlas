@@ -271,6 +271,29 @@ public class DBQueries implements Queries {
 	}
 
 	/**
+	 * Update an existing entry in the database
+	 *
+	 * @throws AtlasServerException
+	 */
+	@Override
+	public void updateRecord(int personId, String name, String category, Date birthDate,
+							 Long birthlocationID, Date deathDate, Long deathlocationID,
+							 String wikiLink, boolean isFemale) throws AtlasServerException {
+
+		// Initialize DB query
+		if (category.equals("Favorites")) {
+			throw new AtlasServerException(
+					"Cant add to favorites, choose a category and then add");
+		}
+		UpdatePersonQuery query = new UpdatePersonQuery(personId, name, birthDate, birthlocationID, deathDate, deathlocationID, wikiLink, isFemale);
+
+		logger.info(String.format("Updating person: %s...", name));
+
+		// Execute query
+		query.execute();
+	}
+
+	/**
 	 * @return The start year of the latest search results fetched from the
 	 *         database
 	 */
