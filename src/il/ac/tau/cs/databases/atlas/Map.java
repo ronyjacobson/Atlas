@@ -45,7 +45,7 @@ public class Map extends JFrame {
 	private static final int GAP_BETWEEN_COMPONENTS = 10;
 	private static final int TIMELINE_MAX = 2015;
 	private static final int TIMELINE_MIN = 1000;
-	private static final int TIMELINE_EXTENT = 100;
+	private static final int TIMELINE_EXTENT = 10;
 	private static final int TIMELINE_INITIAL_VALUE = 1000;
 	public static final String DEFAULT_CATEGORY = "Choose a category...";
 	public static final String FAVORITES_CATEGORY = "Favorites";

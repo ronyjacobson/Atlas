@@ -51,7 +51,7 @@ public class AddPersonQuery extends BaseDBCommand<Void> {
 					+ " WHERE label = ?");
 			statement.setString(1, name);
 			
-			System.out.println(String.format("Executing DB query: %s.",
+			logger.info(String.format("Executing DB query: %s.",
 					statement.toString()));
 			resultSet = statement.executeQuery();
 			
@@ -99,7 +99,7 @@ public class AddPersonQuery extends BaseDBCommand<Void> {
 			statement.setBoolean(5, isFemale);
 			statement.setString(6, name);
 			
-			System.out.println(String.format("Executing DB query: %s.",
+			logger.info(String.format("Executing DB query: %s.",
 					statement.toString()));
 			
 			statement.executeUpdate();
@@ -118,7 +118,7 @@ public class AddPersonQuery extends BaseDBCommand<Void> {
             statement.setInt(1, genID);
             statement.setString(2, name);
             
-            System.out.println(String.format("Executing DB query: %s.",
+            logger.info(String.format("Executing DB query: %s.",
 					statement.toString()));
 			statement.executeUpdate();
 			statement.close();
@@ -133,11 +133,11 @@ public class AddPersonQuery extends BaseDBCommand<Void> {
 			statement.setInt(1, categoryId);
 			statement.setInt(2, genID);
 			
-			System.out.println(String.format("Executing DB query: %s.",
+			logger.info(String.format("Executing DB query: %s.",
 					statement.toString()));
 			statement.executeUpdate();
 
-            System.out.println("Person added successfully - The generated person ID is: "+ genID);
+            logger.info("Person added successfully - The generated person ID is: "+ genID);
 		} catch (PersonExistsError e) {
     			throw e;
 		} catch (SQLException e) {
@@ -145,7 +145,7 @@ public class AddPersonQuery extends BaseDBCommand<Void> {
 		} finally {
 			safelyClose(statement, resultSet);
 		}
-		System.out.println("Query executed properly.");
+		logger.info("Query executed properly.");
 		return null;
 	}
 }

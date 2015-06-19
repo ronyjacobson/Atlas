@@ -23,10 +23,7 @@ public class Location {
 	}
 	
 	public Location(Integer id, String name, double lat, double lng, String url) {
-		this.id = id;
-		this.name = name;
-		this.lat = lat;
-		this.lng = lng;
+		this(id, name,lat, lng);
 		this.url = url;
 	}
 

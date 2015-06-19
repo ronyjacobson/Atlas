@@ -367,11 +367,17 @@ public class Add extends JFrame {
 					Date birthDate = wasBornOn.getDate();
 					Date deathDate = (deathLocaionID == null) ? null
 							: hasDiedOn.getDate();
-
+					
+					//get wikiLink
+					String link = wikiLink.getText();
+					if (!link.toLowerCase().contains("http://")) {
+						link = "http://"+wikiLink;
+					}
+					
+					
 					Main.queries.addNew(name.getText(), category
 							.getSelectedItem().toString(), birthDate,
-							birthLocaionID, deathDate, deathLocaionID, wikiLink
-									.getText(), isFemale.isSelected());
+							birthLocaionID, deathDate, deathLocaionID, link, isFemale.isSelected());
 
 					// Succeeded- Show message.
 					MapBrowserListeners.hideSpinner();

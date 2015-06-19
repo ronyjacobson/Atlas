@@ -54,9 +54,9 @@ public class GetResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 	private void innerExecuteByBirths(Connection con, boolean isBirth) throws SQLException {
 		
 		if (isBirth) {
-			System.out.println("Fetching births by category and yeras...");
+			logger.info("Fetching births by category and yeras...");
 		} else {
-			System.out.println("Fetching deaths by category and yeras...");
+			logger.info("Fetching deaths by category and yeras...");
 		}
 		
 		String st = String.format("%s\nUNION ALL\n(%s)",
@@ -69,7 +69,7 @@ public class GetResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 		
 		statement = con.prepareStatement(st);
 		
-		System.out.println(String.format("Executing DB query:\n%s.",
+		logger.info(String.format("Executing DB query:\n%s.",
 				statement.toString()));
 		resultSet = statement.executeQuery();
 

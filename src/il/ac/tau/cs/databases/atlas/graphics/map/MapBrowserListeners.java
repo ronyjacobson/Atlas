@@ -16,10 +16,12 @@ import java.util.List;
 import javax.swing.JComboBox;
 import javax.swing.JScrollBar;
 
+import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Display;
 
 public class MapBrowserListeners {
-
+	
+	protected final static Logger logger = Logger.getLogger(MapBrowserListeners.class.getName());
 	public volatile static MapBrowser map = null;
 
 	public static void setMap(MapBrowser map) {
@@ -309,23 +311,23 @@ public class MapBrowserListeners {
 	}
 
 	public static void setTimespan(int startYear, int endYear) {
-		System.out.println("Adjusting timeSpan...");
+		logger.info("Adjusting timeSpan...");
 		executeJS("setTimespan(" + startYear + "," + endYear + ");");
 	}
 
 	public static void showSpinner() {
-		System.out.println("Showing Spinner...");
+		logger.info("Showing Spinner...");
 		executeJS("showSpinner();");
 	}
 
 	public static void hideSpinner() {
-		System.out.println("Hiding Spinner...");
+		logger.info("Hiding Spinner...");
 		executeJS("hideSpinner();");
 	}
 
 	public static void setCategory(String cat) {
 		String exec = "setCategory(\"" + cat + "\");";
-		System.out.println("Adjusting category label...\nExecuting:" + exec);
+		logger.info("Adjusting category label...\nExecuting:" + exec);
 		map.getBrowser().execute(exec);
 	}
 }

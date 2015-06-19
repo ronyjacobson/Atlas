@@ -1,12 +1,14 @@
 package il.ac.tau.cs.databases.atlas.connector;
 
+import il.ac.tau.cs.databases.atlas.Main;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
 import java.sql.*;
-
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.log4j.Logger;
 
 /**
  * This class is a singleton connection pool (thus the enum) with a fixed number of connections.
@@ -14,8 +16,10 @@ import java.util.concurrent.TimeUnit;
  * TODO: maybe block instead of returning null when all connections are used up
  */
 public enum FixedConnectionPool implements ConnectionPool {
-    INSTANCE;
-
+    
+	INSTANCE;
+	
+	private static final Logger log = Logger.getLogger(ConnectionPool.class);
     private String userName;
     private String password;
     private String ip;
@@ -40,12 +44,12 @@ public enum FixedConnectionPool implements ConnectionPool {
 
     private void initializeConnectionPool() throws AtlasServerException {
         while (!isConnectionPoolFull()) {
-            System.out.println("Connection Pool is NOT full. Proceeding with adding new connections");
+            log.info("Connection Pool is NOT full. Proceeding with adding new connections");
             //Adding new connection instance until the pool is full
             connectionPool.add(createNewConnectionForPool());
 
         }
-        System.out.println("Connection Pool is full.");
+        log.info("Connection Pool is full.");
     }
 
     private boolean isConnectionPoolFull() {
@@ -60,15 +64,15 @@ public enum FixedConnectionPool implements ConnectionPool {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             connection = DriverManager.getConnection(dbBaseUrl + ip + ":" + port + "/" + dbName, userName, password);
-            System.out.println(DriverManager.getLoginTimeout());
-            System.out.println("Created new connection: " + connection);
+            log.info(DriverManager.getLoginTimeout());
+            log.info("Created new connection: " + connection);
         } catch (SQLException sqle) {
-            System.err.println("SQLException: " + sqle);
-            System.out.println("Unable to connect - " + sqle.getMessage());
+            log.error("SQLException: " + sqle);
+            log.info("Unable to connect - " + sqle.getMessage());
             throw new AtlasServerException("Unable to create connection pool");
         } catch (ClassNotFoundException cnfe) {
-            System.err.println("ClassNotFoundException: " + cnfe);
-            System.out.println("Unable to load the MySQL JDBC driver..");
+            log.error("ClassNotFoundException: " + cnfe);
+            log.info("Unable to load the MySQL JDBC driver..");
             throw new AtlasServerException("Unable to create connection pool");
         }
 
@@ -104,7 +108,7 @@ public enum FixedConnectionPool implements ConnectionPool {
             try {
                 if (conn != null) conn.close();
             } catch (SQLException e) {
-                //System.out.println("error while closing DB connections+: e");
+                //log.info("error while closing DB connections+: e");
             }
     }
 
@@ -115,7 +119,7 @@ public enum FixedConnectionPool implements ConnectionPool {
         final Statement statement = connection.createStatement();
         final ResultSet resultSet = statement.executeQuery("select * from location");
         while (resultSet.next()) {
-            System.out.println(resultSet.getString("name"));
+            log.info(resultSet.getString("name"));
         }
         statement.close();
         resultSet.close();

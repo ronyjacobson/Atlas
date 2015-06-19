@@ -54,10 +54,10 @@ public class SearchResultsByDatesQuery extends BaseDBCommand<ArrayList<Result>> 
 		String hashIDPref;
 		
 		if (isBirth) {
-			System.out.println("Fetching births by dates...");
+			logger.info("Fetching births by dates...");
 			hashIDPref = "birth";
 		} else {
-			System.out.println("Fetching deaths by dates...");
+			logger.info("Fetching deaths by dates...");
 			hashIDPref = "death";
 		}
 		String st = String.format("%s\nUNION ALL\n(%s)",
@@ -68,7 +68,7 @@ public class SearchResultsByDatesQuery extends BaseDBCommand<ArrayList<Result>> 
 		
 		st = "SELECT DISTINCT * FROM ("+st+") AS results";
 		statement = con.prepareStatement(st);
-		System.out.println(String.format("Executing DB query: %s.",	statement.toString()));
+		logger.info(String.format("Executing DB query: %s.",	statement.toString()));
 		resultSet = statement.executeQuery();
 			
 

@@ -1,8 +1,14 @@
 package il.ac.tau.cs.databases.atlas.db;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Result {
+	
 
 	/**
 	 *  A class representing a query result
@@ -25,21 +31,19 @@ public class Result {
 		this.date = date;
 		this.category = category;
 		this.summary = summary;
-		this.wikiLink = wikiLink;
+		
+		// check if url is from yago
+		if (!wikiLink.contains("http://")) {
+			this.wikiLink = "http://en.wikipedia.org/wiki/"+wikiLink;
+		} else {
+			this.wikiLink = wikiLink;
+		}
 	}
 	
 	public Result(String id, String name, Location location, Date date, boolean isBirth, String category, String wikiLink, boolean isFemale, String cat) {
-		this.id = id;
-		this.name = name;
-		this.location = location;
-		this.isBirth = isBirth;
-		this.date = date;
-		this.category = category;
-		this.summary = (isBirth ? 
-				String.format("%s.\\<br\\>Was born on %s in %s.", cat, date.toString(), location.getName())  :
-				String.format("%s.\\<br\\>Died on %s in %s.", cat, date.toString(), location.getName()));
-		this.wikiLink = wikiLink;
-		this.isFemale = isFemale;
+		this(id, name, location, date, isBirth, category, "", wikiLink);
+		this.summary = (isBirth ? String.format("%s.\\<br\\>Born: %s, in %s.", cat, getDateToString(), location.getName()):
+								  String.format("%s.\\<br\\>Died: %s, in %s.", cat, getDateToString(), location.getName()));
 	}
 
 	public String getID() {
@@ -113,4 +117,11 @@ public class Result {
 	public void setFemale(boolean isFemale) {
 		this.isFemale = isFemale;
 	}
+	
+	private String getDateToString() {
+		DateFormat df = new SimpleDateFormat("d MMMM, yyyy", Locale.US);
+		return df.format(this.date);
+	}
+	
+	
 }
