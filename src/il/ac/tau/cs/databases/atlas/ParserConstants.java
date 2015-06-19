@@ -3,9 +3,6 @@ package il.ac.tau.cs.databases.atlas;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by user on 17/06/2015.
- */
 public class ParserConstants {
     public static final String YAGO_DATE_FACTS_TSV = "yagoDateFacts.tsv";
     public static final String YAGO_FACTS_TSV = "yagoFacts.tsv";

@@ -86,7 +86,6 @@ public class YagoParser {
         }
     }
 
-    // TODO: find a better alternative?
     private long yagoIdToHash(String yagoId) {
         String cleanYagoId = yagoId.substring(1,yagoId.length()-1);
         long hash=7;
@@ -96,6 +95,9 @@ public class YagoParser {
         return hash;
     }
 
+    /**
+     * fetch YagoPerson object with yagoId, if no such person exists, create it
+     */
     private YagoPerson ensureYagoIdToYagoPerson(long yagoId) {
         YagoPerson yagoPerson = personsMap.get(yagoId);
         if (yagoPerson == null) {
@@ -105,6 +107,9 @@ public class YagoParser {
         return yagoPerson;
     }
 
+    /**
+     * fetch YagoLocation object with locationId, if no such location exists, create it
+     */
     private YagoLocation ensureLocationIdToYagoLocation(long locationId) {
         YagoLocation yagoLocation = locationsMap.get(locationId);
         if (yagoLocation == null) {
@@ -114,13 +119,14 @@ public class YagoParser {
         return yagoLocation;
     }
 
-    private YagoLocation ensureGeoIdToYagoLocation(long geoId) {
-        YagoLocation yagoLocation = locationsMap.get(geoId);
-        if (yagoLocation == null) {
-            yagoLocation = new YagoLocation();
-            locationsMap.put(geoId, yagoLocation);
+    private void setLocationIdFromYagoId(String yagoLocationId, YagoPerson yagoPerson, boolean born) {
+        long locationId = yagoIdToHash(yagoLocationId);
+        YagoLocation yagoLocation = locationsMap.get(locationId);
+        if (yagoLocation != null && born) {
+            yagoPerson.setBornInLocation(locationId);
+        } else if (yagoLocation != null) {
+            yagoPerson.setDiedInLocation(locationId);
         }
-        return yagoLocation;
     }
 
     private long numberOfLines(File file) throws IOException {
@@ -132,7 +138,9 @@ public class YagoParser {
         return numberOfLines;
     }
 
-    // handles yagoDateFacts
+    /**
+     * handles yagoDateFacts file
+     */
     public void parseYagoDateFile(File yagoDateFile) throws IOException {
         progressUpdater.updateProgress(0, "Reading file..");
         long numberOfLines = numberOfLines(yagoDateFile);
@@ -173,7 +181,9 @@ public class YagoParser {
         br.close();
     }
 
-    // handles yagoFacts
+    /**
+     * handles yagoFacts file
+     */
     public void parseYagoLocationFile(File yagoLocationFile) throws IOException {
         progressUpdater.updateProgress(0, "Reading file..");
         long numberOfLines = numberOfLines(yagoLocationFile);
@@ -208,17 +218,9 @@ public class YagoParser {
         br.close();
     }
 
-    private void setLocationIdFromYagoId(String yagoLocationId, YagoPerson yagoPerson, boolean born) {
-        long locationId = yagoIdToHash(yagoLocationId);
-        YagoLocation yagoLocation = locationsMap.get(locationId);
-        if (yagoLocation != null && born) {
-            yagoPerson.setBornInLocation(locationId);
-        } else if (yagoLocation != null) {
-            yagoPerson.setDiedInLocation(locationId);
-        }
-    }
-
-    // handles yagoTransitiveType
+    /**
+     * handles yagoTransitiveType file
+     */
     public void parseYagoCategoryFile(File yagoCategoryFile) throws IOException {
         progressUpdater.updateProgress(0, "Reading file..");
         long numberOfLines = numberOfLines(yagoCategoryFile);
@@ -250,8 +252,9 @@ public class YagoParser {
         br.close();
     }
 
-
-    // handles yagoGeonamesEntityIds
+    /**
+     * handles yagoGeonamesEntityIds file
+     */
     public void parseYagoGeonamesFile(File yagoGeonamesFile) throws IOException {
         progressUpdater.updateProgress(0, "Reading file..");
         long numberOfLines = numberOfLines(yagoGeonamesFile);
@@ -284,7 +287,9 @@ public class YagoParser {
         br.close();
     }
 
-    // handles cities1000
+    /**
+     * handles cities1000 file
+     */
     public void parseGeonamesCitiesFile(File geoCitiesFile) throws IOException {
         progressUpdater.updateProgress(0, "Reading file..");
         long numberOfLines = numberOfLines(geoCitiesFile);
@@ -325,9 +330,9 @@ public class YagoParser {
         br.close();
     }
 
-
-
-    // handles yagoWikipediaInfo
+    /**
+     * handles yagoWikipediaInfo file
+     */
     public void parseYagoWikiFile(File yagoWiKiFile) throws IOException {
         progressUpdater.updateProgress(0, "Reading file..");
         long numberOfLines = numberOfLines(yagoWiKiFile);
@@ -362,6 +367,9 @@ public class YagoParser {
         br.close();
     }
 
+    /**
+     * handles yagoLiteralFacts file
+     */
     public void parseYagoLiteralFacts(File yagoLiteralFactsFile) throws IOException {
         progressUpdater.updateProgress(0, "Reading file..");
         long numberOfLines = numberOfLines(yagoLiteralFactsFile);
@@ -394,7 +402,9 @@ public class YagoParser {
         br.close();
     }
 
-    // handles yagoLabels
+    /**
+     * handles yagoLabels file
+     */
     public void parseYagoLabelsFile(File yagoLabelsFile, boolean searchForLocation) throws IOException {
         progressUpdater.updateProgress(0, "Reading file..");
         long numberOfLines = numberOfLines(yagoLabelsFile);
