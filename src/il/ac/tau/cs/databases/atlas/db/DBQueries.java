@@ -230,12 +230,7 @@ public class DBQueries implements Queries {
 	public void addNew(String name, String category, Date birthDate,
 			Integer birthlocationID, Date deathDate, Integer deathlocationID,
 			String wikiLink, boolean isFemale) throws AtlasServerException {
-		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 		// Initialize DB query
 		if (category.equals("Favorites")) {
 			throw new AtlasServerException(
@@ -279,12 +274,7 @@ public class DBQueries implements Queries {
 		List<Result> results = new ArrayList<Result>();
 		amountOfFemaleResults = 0;
 		amountOfBirthResults = 0;
-		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 		System.out.println("Fetching results by dates...");
 		SearchResultsByDatesQuery query = new SearchResultsByDatesQuery(sdate,
 				edate);
@@ -298,12 +288,6 @@ public class DBQueries implements Queries {
 		List<Result> results = new ArrayList<Result>();
 		amountOfFemaleResults = 0;
 		amountOfBirthResults = 0;
-		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		maxYear = 0;
 		minYear = 0;
 		SearchResultsByNameQuery query = new SearchResultsByNameQuery(name);
