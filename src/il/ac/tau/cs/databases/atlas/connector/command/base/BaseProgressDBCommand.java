@@ -127,9 +127,10 @@ public abstract class BaseProgressDBCommand extends BaseDBCommand<Boolean> {
     }
 
     private void popFinishDialog() {
-        JOptionPane.showMessageDialog(mainFrame,
-                "Finished successfully");
+        JOptionPane.showMessageDialog(mainFrame, getSuccessMessage());
     }
+
+    protected abstract String getSuccessMessage();
 
     protected abstract void runProgressCmd(Connection con) throws AtlasServerException;
 

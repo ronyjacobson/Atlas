@@ -23,6 +23,11 @@ public class TempCommand extends BaseProgressDBCommand {
     }
 
     @Override
+    protected String getSuccessMessage() {
+        return "Process finished. You are the queen!";
+    }
+
+    @Override
     protected void runProgressCmd(Connection con) throws AtlasServerException {
         for (int i = 0; i < end; i++) {
             System.out.println(i);

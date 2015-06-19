@@ -37,6 +37,11 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
     }
 
     @Override
+    protected String getSuccessMessage() {
+        return "Update finished, please restart the program to sync with the update.";
+    }
+
+    @Override
     protected void runProgressCmd(Connection con) throws AtlasServerException {
 
         yagoParser.setProgressUpdater(progressUpdater);
