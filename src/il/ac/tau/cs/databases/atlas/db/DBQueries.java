@@ -84,8 +84,12 @@ public class DBQueries implements Queries {
 	 */
 	@Override
 	public boolean isConnectedToDB() {
-		// TODO - Etan??
-		return true;
+		try {
+			return new CheckConnectivityCommand().execute();
+		} catch (AtlasServerException e) {
+			logger.error("error while checking connectivity", e);
+			return false;
+		}
 	}
 
 	/**

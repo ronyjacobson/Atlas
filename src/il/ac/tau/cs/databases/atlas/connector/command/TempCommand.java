@@ -27,10 +27,14 @@ public class TempCommand extends BaseProgressDBCommand {
         for (int i = 0; i < end; i++) {
             System.out.println(i);
             progressUpdater.updateProgress(4*i, "progress: " + i);
+            if (i == 10) {
+                throw new AtlasServerException("paz");
+            }
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                System.out.println("Temp cmd stopped");
+                throw new AtlasServerException("stopped");
             }
         }
     }
@@ -42,6 +46,7 @@ public class TempCommand extends BaseProgressDBCommand {
 
     public static void main(String[] args) throws AtlasServerException {
         DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06", "127.0.0.1", "3306", "DbMysql06");
-        new TempCommand(4).execute();
+        new TempCommand(100).execute();
+        System.out.println("done");
     }
 }

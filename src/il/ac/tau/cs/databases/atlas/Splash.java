@@ -57,7 +57,7 @@ public class Splash {
 			new Login();
 		} else {
 			// Error and exit
-			JOptionPane.showMessageDialog(null, "Failed to connect to the data base. Program will terminate.", GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Failed to connect to the database. Please check your configuration file. Program will terminate.", GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
 		}
 		
 	}

@@ -2,6 +2,7 @@ package il.ac.tau.cs.databases.atlas.db;
 
 import il.ac.tau.cs.databases.atlas.ParserConstants;
 import il.ac.tau.cs.databases.atlas.ProgressUpdater;
+import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 import il.ac.tau.cs.databases.atlas.parsing.*;
 
 import java.io.*;
@@ -34,7 +35,7 @@ public class YagoParser {
         this.progressUpdater = progressUpdater;
     }
 
-    public void validatePersonsMap() {
+    public void validatePersonsMap() throws AtlasServerException {
         progressUpdater.resetProgress();
         long numberOfRecords = personsMap.size();
         long recordNumber = 0;
@@ -50,7 +51,7 @@ public class YagoParser {
         }
     }
 
-    public void ensureLabels() {
+    public void ensureLabels() throws AtlasServerException {
         progressUpdater.resetProgress();
         long numberOfRecords = personsMap.size();
         long recordNumber = 0;
@@ -66,11 +67,11 @@ public class YagoParser {
         }
     }
 
-    private void updateProgress(long numberOfRecords, long recordNumber) {
+    private void updateProgress(long numberOfRecords, long recordNumber) throws AtlasServerException {
         progressUpdater.updateProgress((int) (recordNumber * 100 / numberOfRecords), recordNumber + "/" + numberOfRecords + " processed");
     }
 
-    public void validateLocationsMap() {
+    public void validateLocationsMap() throws AtlasServerException {
         progressUpdater.resetProgress();
         long numberOfRecords = locationsMap.size();
         long recordNumber = 0;
@@ -141,7 +142,7 @@ public class YagoParser {
     /**
      * handles yagoDateFacts file
      */
-    public void parseYagoDateFile(File yagoDateFile) throws IOException {
+    public void parseYagoDateFile(File yagoDateFile) throws IOException, AtlasServerException {
         progressUpdater.updateProgress(0, "Reading file..");
         long numberOfLines = numberOfLines(yagoDateFile);
         long lineNumber = 0;
@@ -184,7 +185,7 @@ public class YagoParser {
     /**
      * handles yagoFacts file
      */
-    public void parseYagoLocationFile(File yagoLocationFile) throws IOException {
+    public void parseYagoLocationFile(File yagoLocationFile) throws IOException, AtlasServerException {
         progressUpdater.updateProgress(0, "Reading file..");
         long numberOfLines = numberOfLines(yagoLocationFile);
         long lineNumber = 0;
@@ -221,7 +222,7 @@ public class YagoParser {
     /**
      * handles yagoTransitiveType file
      */
-    public void parseYagoCategoryFile(File yagoCategoryFile) throws IOException {
+    public void parseYagoCategoryFile(File yagoCategoryFile) throws IOException, AtlasServerException {
         progressUpdater.updateProgress(0, "Reading file..");
         long numberOfLines = numberOfLines(yagoCategoryFile);
         long lineNumber = 0;
@@ -255,7 +256,7 @@ public class YagoParser {
     /**
      * handles yagoGeonamesEntityIds file
      */
-    public void parseYagoGeonamesFile(File yagoGeonamesFile) throws IOException {
+    public void parseYagoGeonamesFile(File yagoGeonamesFile) throws IOException, AtlasServerException {
         progressUpdater.updateProgress(0, "Reading file..");
         long numberOfLines = numberOfLines(yagoGeonamesFile);
         long lineNumber = 0;
@@ -290,7 +291,7 @@ public class YagoParser {
     /**
      * handles cities1000 file
      */
-    public void parseGeonamesCitiesFile(File geoCitiesFile) throws IOException {
+    public void parseGeonamesCitiesFile(File geoCitiesFile) throws IOException, AtlasServerException {
         progressUpdater.updateProgress(0, "Reading file..");
         long numberOfLines = numberOfLines(geoCitiesFile);
         long lineNumber = 0;
@@ -333,7 +334,7 @@ public class YagoParser {
     /**
      * handles yagoWikipediaInfo file
      */
-    public void parseYagoWikiFile(File yagoWiKiFile) throws IOException {
+    public void parseYagoWikiFile(File yagoWiKiFile) throws IOException, AtlasServerException {
         progressUpdater.updateProgress(0, "Reading file..");
         long numberOfLines = numberOfLines(yagoWiKiFile);
         long lineNumber = 0;
@@ -370,7 +371,7 @@ public class YagoParser {
     /**
      * handles yagoLiteralFacts file
      */
-    public void parseYagoLiteralFacts(File yagoLiteralFactsFile) throws IOException {
+    public void parseYagoLiteralFacts(File yagoLiteralFactsFile) throws IOException, AtlasServerException {
         progressUpdater.updateProgress(0, "Reading file..");
         long numberOfLines = numberOfLines(yagoLiteralFactsFile);
         long lineNumber = 0;
@@ -405,7 +406,7 @@ public class YagoParser {
     /**
      * handles yagoLabels file
      */
-    public void parseYagoLabelsFile(File yagoLabelsFile, boolean searchForLocation) throws IOException {
+    public void parseYagoLabelsFile(File yagoLabelsFile, boolean searchForLocation) throws IOException, AtlasServerException {
         progressUpdater.updateProgress(0, "Reading file..");
         long numberOfLines = numberOfLines(yagoLabelsFile);
         long lineNumber = 0;

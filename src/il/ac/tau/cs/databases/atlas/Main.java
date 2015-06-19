@@ -11,6 +11,8 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 
+import javax.swing.*;
+
 public class Main {
 	private static final Logger log = Logger.getLogger(Main.class);
 	// DB queries object
@@ -30,7 +32,7 @@ public class Main {
 		try {
 			// Initialize DB
 			// TODO - read from properties file
-			DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06", "127.0.0.1", "3305", "DbMysql06");
+			DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06", "127.0.0.1", "3306", "DbMysql06");
 			State.autoLoad();
 			//TODO(etan) - server exception
 		} catch (Exception e) {
@@ -55,7 +57,7 @@ public class Main {
 				new Splash();
 			}
 		} catch (Exception e) {
-			// TODO Handle Exception
+			JOptionPane.showMessageDialog(null, e.getMessage(), GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
 	}
