@@ -29,6 +29,8 @@ public class Result {
 		this.location = location;
 		this.isBirth = isBirth;
 		this.date = date;
+		// pretty print category
+		category = category.substring(0, 1).toUpperCase() +  category.substring(1);
 		this.category = category;
 		this.summary = summary;
 

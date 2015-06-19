@@ -1,6 +1,7 @@
 package il.ac.tau.cs.databases.atlas.connector.command;
 
 import il.ac.tau.cs.databases.atlas.connector.ConnectionPool;
+import il.ac.tau.cs.databases.atlas.connector.ConnectionPoolHolder;
 import il.ac.tau.cs.databases.atlas.connector.DynamicConnectionPool;
 import il.ac.tau.cs.databases.atlas.connector.ScriptRunner;
 import il.ac.tau.cs.databases.atlas.connector.command.base.BaseDBCommand;
@@ -29,7 +30,9 @@ public class CreateSchemaCommand extends BaseDBCommand<Boolean> {
     }
 
     public static void main(String[] args) throws AtlasServerException {
-        DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06", "127.0.0.1", "3305", "DbMysql06");
+        DynamicConnectionPool dynamicConnectionPool = new DynamicConnectionPool();
+        dynamicConnectionPool.initialize("DbMysql06", "DbMysql06", "127.0.0.1", "3305", "DbMysql06");
+        ConnectionPoolHolder.INSTANCE.set(dynamicConnectionPool);
         new CreateSchemaCommand().execute();
     }
 }

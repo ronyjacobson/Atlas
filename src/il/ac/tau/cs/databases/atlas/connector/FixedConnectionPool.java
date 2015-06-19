@@ -1,6 +1,5 @@
 package il.ac.tau.cs.databases.atlas.connector;
 
-import il.ac.tau.cs.databases.atlas.Main;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
 import java.sql.*;
@@ -15,9 +14,7 @@ import org.apache.log4j.Logger;
  * When all connections are used up, null is returned instead of connection.
  * TODO: maybe block instead of returning null when all connections are used up
  */
-public enum FixedConnectionPool implements ConnectionPool {
-    
-	INSTANCE;
+public class FixedConnectionPool implements ConnectionPool {
 	
 	private static final Logger log = Logger.getLogger(ConnectionPool.class);
     private String userName;
@@ -110,20 +107,5 @@ public enum FixedConnectionPool implements ConnectionPool {
             } catch (SQLException e) {
                 //log.info("error while closing DB connections+: e");
             }
-    }
-
-    public static void main(String[] args) throws AtlasServerException, SQLException {
-        final ConnectionPool pool = DynamicConnectionPool.INSTANCE;
-        pool.initialize("DbMysql06", "DbMysql06", "127.0.0.1", "3305", "DbMysql06");
-        final Connection connection = pool.checkOut();
-        final Statement statement = connection.createStatement();
-        final ResultSet resultSet = statement.executeQuery("select * from location");
-        while (resultSet.next()) {
-            log.info(resultSet.getString("name"));
-        }
-        statement.close();
-        resultSet.close();
-        pool.checkIn(connection);
-        pool.close();
     }
 }

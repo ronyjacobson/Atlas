@@ -1,5 +1,6 @@
 package il.ac.tau.cs.databases.atlas.db;
 
+import il.ac.tau.cs.databases.atlas.connector.ConnectionPoolHolder;
 import il.ac.tau.cs.databases.atlas.connector.DynamicConnectionPool;
 import il.ac.tau.cs.databases.atlas.connector.command.TempCommand;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
@@ -117,7 +118,9 @@ public class MockQueries implements Queries {
 	@Override
 	public void update(File fullPathDirectory) throws AtlasServerException {
 		try {
-			DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06", "127.0.0.1", "3306", "DbMysql06");
+			DynamicConnectionPool dynamicConnectionPool = new DynamicConnectionPool();
+			dynamicConnectionPool.initialize("DbMysql06", "DbMysql06", "127.0.0.1", "3305", "DbMysql06");
+			ConnectionPoolHolder.INSTANCE.set(dynamicConnectionPool);
 		} catch (AtlasServerException e) {
 			e.printStackTrace();
 		}
