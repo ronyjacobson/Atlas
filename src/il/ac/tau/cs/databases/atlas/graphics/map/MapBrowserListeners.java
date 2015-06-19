@@ -2,6 +2,8 @@ package il.ac.tau.cs.databases.atlas.graphics.map;
 
 import il.ac.tau.cs.databases.atlas.Main;
 import il.ac.tau.cs.databases.atlas.Map;
+import il.ac.tau.cs.databases.atlas.PersonTable;
+import il.ac.tau.cs.databases.atlas.ResultsHolder;
 import il.ac.tau.cs.databases.atlas.db.Result;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
@@ -13,9 +15,9 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.JComboBox;
-import javax.swing.JScrollBar;
+import javax.swing.*;
 
+import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Display;
 
@@ -48,6 +50,8 @@ public class MapBrowserListeners {
 			}
 		});
 	}
+
+
 
 	public static class BrowserMessageActionListener implements ActionListener {
 
@@ -213,6 +217,19 @@ public class MapBrowserListeners {
 					}
 				}
 			});
+		}
+	}
+
+	public static class UpdateListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			final java.util.Map<String, Result> resultMap = ResultsHolder.INSTANCE.getResultMap();
+			if (resultMap == null || resultMap.isEmpty()) {
+				JOptionPane.showMessageDialog(null, "There are no results on map!", GrapicUtils.PROJECT_NAME, JOptionPane.WARNING_MESSAGE);
+			} else {
+				new PersonTable(resultMap);
+			}
 		}
 	}
 

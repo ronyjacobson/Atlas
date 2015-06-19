@@ -49,6 +49,7 @@ public class Map extends JFrame {
 	public static final String DEFAULT_CATEGORY = "Choose a category...";
 	public static final String FAVORITES_CATEGORY = "Favorites";
 	private static final String GO_BUTTON = "GO!";
+	private static final String UPDATE_BUTTON = "UPDATE";
 	private static int width;
 	private static int height;
 
@@ -62,8 +63,10 @@ public class Map extends JFrame {
 	private static JButton buttonUpdateFavorites;
 	private static JButton buttonUpdateDBFiles;
 	private static JButton buttonAudio;
-	private static JScrollBar timeline = new JScrollBar(JScrollBar.HORIZONTAL,
-			TIMELINE_INITIAL_VALUE, TIMELINE_EXTENT, TIMELINE_MIN, TIMELINE_MAX);;
+
+	private static JButton buttonUpdate;
+	private static JScrollBar timeline = new JScrollBar(JScrollBar.HORIZONTAL, TIMELINE_INITIAL_VALUE, TIMELINE_EXTENT, TIMELINE_MIN,
+	TIMELINE_MAX);
 
 	/**
 	 * Creates and shows the map screen.
@@ -196,16 +199,12 @@ public class Map extends JFrame {
 		buttonsPanel.setOpaque(false);
 
 		// Define buttons attributes
-		Font fieldFont = new Font("Century Gothic", Font.PLAIN,
-				GrapicUtils.FONT_SIZE_FIELD);
-		Dimension dimensionCategory = new Dimension(width / 5, height / 13);
-		Dimension dimensionGo = new Dimension(width / 9, height / 13);
-		Dimension dimensionStats = new Dimension(
-				(int) dimensionCategory.getWidth() / 3,
-				(int) dimensionCategory.getHeight());
-		Dimension dimensionOther = new Dimension(
-				(int) dimensionCategory.getWidth() / 3,
-				(int) dimensionCategory.getHeight() / 2);
+		Font fieldFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_FIELD);
+		Dimension dimensionCategory = new Dimension(width / 7, height / 13);
+		Dimension dimensionGo = new Dimension(width / 15, height / 13);
+		Dimension dimensionStats = new Dimension((int) dimensionCategory.getWidth() / 3, (int) dimensionCategory.getHeight());
+		Dimension dimensionOther = new Dimension((int) dimensionCategory.getWidth() / 3, (int) dimensionCategory.getHeight() / 2);
+
 
 		// Add categories combo box
 		try {
@@ -227,13 +226,19 @@ public class Map extends JFrame {
 		buttonGo.setFont(fieldFont);
 		buttonsPanel.add(buttonGo);
 
+		// Add an Edit button
+		buttonUpdate = new JButton(UPDATE_BUTTON);
+		buttonUpdate.setPreferredSize(dimensionGo);
+		buttonUpdate.setFont(fieldFont);
+		buttonsPanel.add(buttonUpdate);
+
 		// Add a button for statistics
 		buttonStats = new JButton("");
-		buttonStats.setIcon(new ImageIcon(getClass().getResource(
-				GrapicUtils.getSkin() + "Stats.png")));
-		buttonStats.setPreferredSize(dimensionStats);
+		buttonStats.setIcon(new ImageIcon(getClass().getResource(GrapicUtils.getSkin() + "Stats.png")));
+		buttonStats.setPreferredSize(dimensionGo);
 		buttonStats.setFont(fieldFont);
 		buttonsPanel.add(buttonStats);
+
 		// Add a button for adding values
 		buttonAdd = new JButton("");
 		buttonAdd.setIcon(new ImageIcon(getClass().getResource(
@@ -241,6 +246,7 @@ public class Map extends JFrame {
 		buttonAdd.setPreferredSize(dimensionOther);
 		buttonAdd.setFont(fieldFont);
 		buttonsPanel.add(buttonAdd);
+
 		// Add a button for search
 		buttonSearch = new JButton("");
 		buttonSearch.setIcon(new ImageIcon(getClass().getResource(
@@ -248,6 +254,7 @@ public class Map extends JFrame {
 		buttonSearch.setPreferredSize(dimensionOther);
 		buttonSearch.setFont(fieldFont);
 		buttonsPanel.add(buttonSearch);
+
 		// Add a button for favorites update
 		buttonUpdateFavorites = new JButton("");
 		buttonUpdateFavorites.setIcon(new ImageIcon(getClass().getResource(
@@ -255,6 +262,7 @@ public class Map extends JFrame {
 		buttonUpdateFavorites.setPreferredSize(dimensionOther);
 		buttonUpdateFavorites.setFont(fieldFont);
 		buttonsPanel.add(buttonUpdateFavorites);
+
 		// Add a button for db files update
 		buttonUpdateDBFiles = new JButton("");
 		buttonUpdateDBFiles.setIcon(new ImageIcon(getClass().getResource(
@@ -262,6 +270,7 @@ public class Map extends JFrame {
 		buttonUpdateDBFiles.setPreferredSize(dimensionOther);
 		buttonUpdateDBFiles.setFont(fieldFont);
 		buttonsPanel.add(buttonUpdateDBFiles);
+
 		// Add a button for audio
 		buttonAudio = new JButton("");
 		buttonAudio.setIcon(new ImageIcon(getClass().getResource(
@@ -302,6 +311,8 @@ public class Map extends JFrame {
 		buttonUpdateDBFiles.addActionListener(new DBFilesUplaodListner());
 		buttonAudio
 				.addActionListener(new AudioUtils.AudioToggleActionListener());
+
+		buttonUpdate.addActionListener(new MapBrowserListeners.UpdateListener());
 
 		// Return the panel
 		return buttonsPanel;

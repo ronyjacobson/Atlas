@@ -16,7 +16,6 @@ public interface Queries {
 	// Maps between category names and ids
 	Map<String, Integer> categoriesMap= new HashMap<>();
 	
-	
 	/**
 	 * @return True if the server is connected and online
 	 */
