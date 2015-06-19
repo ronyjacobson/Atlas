@@ -15,6 +15,7 @@ import il.ac.tau.cs.databases.atlas.connector.command.UpdateFavoritesQuery;
 import il.ac.tau.cs.databases.atlas.connector.command.UpdatePersonQuery;
 import il.ac.tau.cs.databases.atlas.connector.command.NewCommands.GetGoResultsQuery;
 import il.ac.tau.cs.databases.atlas.connector.command.NewCommands.GetNewFavoritesResultsQuery;
+import il.ac.tau.cs.databases.atlas.connector.command.NewCommands.SearchResultsQuery;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
 import java.io.File;
@@ -202,7 +203,7 @@ public class DBQueries implements Queries {
 		logger.info("Fetching Favorites...");
 		results.addAll(query.execute().values());
 		amountOfLatestResults = results.size();
-		logger.info("Fetching Favorites done");
+		logger.info("Fetching Favorites done.");
 		return results;
 	}
 
@@ -306,7 +307,7 @@ public class DBQueries implements Queries {
 
 		// Execute query
 		query.execute();
-		logger.info(String.format("Updating person: %s done", name));
+		logger.info(String.format("Updating person: %s done.", name));
 	}
 
 	/**
@@ -338,11 +339,10 @@ public class DBQueries implements Queries {
 		amountOfFemaleResults = 0;
 		amountOfBirthResults = 0;
 		logger.info("Fetching results by dates...");
-		SearchResultsByDatesQuery query = new SearchResultsByDatesQuery(sdate,
-				edate);
-		results.addAll(query.execute());
+		SearchResultsQuery query = new SearchResultsQuery(sdate,edate);
+		results.addAll(query.execute().values());
 		amountOfLatestResults = results.size();
-		logger.info("Fetching results by dates done");
+		logger.info("Fetching results by dates done.");
 		return results;
 	}
 
@@ -353,13 +353,13 @@ public class DBQueries implements Queries {
 		amountOfBirthResults = 0;
 		maxYear = 0;
 		minYear = 0;
-		SearchResultsByNameQuery query = new SearchResultsByNameQuery(name);
+		SearchResultsQuery query = new SearchResultsQuery(name);
 		logger.info("Fetching results by name...");
-		results.addAll(query.execute());
+		results.addAll(query.execute().values());
 		maxYear = query.getMaxYear();
 		minYear = query.getMinYear();
 		amountOfLatestResults = results.size();
-		logger.info("Fetching results by name done");
+		logger.info("Fetching results by name done.");
 		return results;
 	}
 
@@ -377,7 +377,7 @@ public class DBQueries implements Queries {
 		GetGoResultsQuery query = new GetGoResultsQuery(startYear, endYear, category);
 		results.addAll(query.execute().values());
 		amountOfLatestResults = results.size();
-		logger.info("Fetching results by category and years done");
+		logger.info("Fetching results by category and years done.");
 		return results;
 	}
 
