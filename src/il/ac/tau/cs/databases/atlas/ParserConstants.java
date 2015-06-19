@@ -50,5 +50,16 @@ public class ParserConstants {
         CATEGORY_TYPES.put("<wordnet_performer_110415638>", 18);
         CATEGORY_TYPES.put("<wordnet_military_officer_110317007>", 19);
         CATEGORY_TYPES.put("<wordnet_novelist_110363573>", 20);
+        CATEGORY_TYPES.put("<wordnet_singer_110599806>", 21);
+        CATEGORY_TYPES.put("<wordnet_entertainer_109616922>", 22);
+        CATEGORY_TYPES.put("<wordnet_doctor_110020890>", 23);
+        CATEGORY_TYPES.put("<wordnet_engineer_109615807>", 24);
+        CATEGORY_TYPES.put("<wordnet_actor_109765278>", 25);
+        CATEGORY_TYPES.put("<wordnet_film_maker_110088390>", 26);
+        CATEGORY_TYPES.put("<wordnet_historian_110177150>", 27);
+        CATEGORY_TYPES.put("<wordnet_businessperson_109882716>", 28);
+        CATEGORY_TYPES.put("<wordnet_sailor_110546633>", 29);
+        CATEGORY_TYPES.put("<wordnet_revolutionist_110527334>", 30);
+
     }
 }
