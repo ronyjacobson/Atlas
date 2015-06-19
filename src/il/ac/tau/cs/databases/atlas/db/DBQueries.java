@@ -2,11 +2,30 @@ package il.ac.tau.cs.databases.atlas.db;
 
 import il.ac.tau.cs.databases.atlas.Main;
 import il.ac.tau.cs.databases.atlas.ParserConstants;
-import il.ac.tau.cs.databases.atlas.connector.command.*;
+import il.ac.tau.cs.databases.atlas.connector.command.AddPersonQuery;
+import il.ac.tau.cs.databases.atlas.connector.command.CheckConnectivityCommand;
+import il.ac.tau.cs.databases.atlas.connector.command.GetCategoriesQuery;
+import il.ac.tau.cs.databases.atlas.connector.command.GetFavoritesResultsQuery;
+import il.ac.tau.cs.databases.atlas.connector.command.GetGeoLocationsQuery;
+import il.ac.tau.cs.databases.atlas.connector.command.GetUserQuery;
+import il.ac.tau.cs.databases.atlas.connector.command.ParseFilesCommand;
+import il.ac.tau.cs.databases.atlas.connector.command.RegisterUserQuery;
+import il.ac.tau.cs.databases.atlas.connector.command.SearchResultsByDatesQuery;
+import il.ac.tau.cs.databases.atlas.connector.command.SearchResultsByNameQuery;
+import il.ac.tau.cs.databases.atlas.connector.command.UpdateFavoritesQuery;
+import il.ac.tau.cs.databases.atlas.connector.command.NewCommands.GetGoResultsQuery;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -313,9 +332,8 @@ public class DBQueries implements Queries {
 		amountOfBirthResults = 0;
 		logger.info("Fetching results by category and years...");
 		List<Result> results = new ArrayList<Result>();
-		GetResultsQuery query = new GetResultsQuery(startYear, endYear,
-				category);
-		results.addAll(query.execute());
+		GetGoResultsQuery query = new GetGoResultsQuery(startYear, endYear, category);
+		results.addAll(query.execute().values());
 		amountOfLatestResults = results.size();
 		return results;
 	}

@@ -2,10 +2,9 @@ package il.ac.tau.cs.databases.atlas.db;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Result {
 
@@ -21,6 +20,16 @@ public class Result {
 	private String summary;
 	private String wikiLink;
 	private boolean isFemale;
+	// signals if we need to show this result on map.
+	private boolean validResult;
+
+	public boolean isValidResult() {
+		return validResult;
+	}
+
+	public void setValidResult(boolean validResult) {
+		this.validResult = validResult;
+	}
 
 	public Result(String id, String name, Location location, Date date,
 			boolean isBirth, String category, String summary, String wikiLink) {
@@ -131,6 +140,13 @@ public class Result {
 	private String getDateToString() {
 		DateFormat df = new SimpleDateFormat("d MMMM, yyyy", Locale.US);
 		return df.format(this.date);
+	}
+	
+	public int getYear(){
+		Date date = this.getDate();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		return cal.get(Calendar.YEAR);
 	}
 
 }

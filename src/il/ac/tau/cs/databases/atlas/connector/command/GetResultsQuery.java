@@ -92,7 +92,7 @@ public class GetResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 			} if (isBirth) {
 				DBQueries.amountOfBirthResults++;
 			}
-			Location location = new Location(0, geoname, lat, lng, locUrl);
+			Location location = new Location((long)0, geoname, lat, lng, locUrl);
 			java.util.Date date = (isBirth ? bornOn : diedOn);
 			Result res = new Result(String.valueOf(personID), name, location, date, isBirth, category, personUrl, isFemale, this.category);
 			results.add(res);

@@ -26,11 +26,11 @@ public class MockQueries implements Queries {
 	 */
 	public List<Location> getAllGeoLocations() {
 		ArrayList<Location> geoLocations = new ArrayList<>();
-		geoLocations.add(new Location(1,"Tel-Aviv", 32.0667, 34.8000));
+		geoLocations.add(new Location((long)1,"Tel-Aviv", 32.0667, 34.8000));
 		locationsMap.put("Tel-Aviv", Long.parseLong("0"));
-		geoLocations.add(new Location(2,"New-York", 40.748817, -73.985428));
+		geoLocations.add(new Location((long)2,"New-York", 40.748817, -73.985428));
 		locationsMap.put("New-York",Long.parseLong("1"));
-		geoLocations.add(new Location(3, "Paris", 48.8567, 2.3508));
+		geoLocations.add(new Location((long)3, "Paris", 48.8567, 2.3508));
 		locationsMap.put("Paris", Long.parseLong("2"));
 		return geoLocations;
 	}

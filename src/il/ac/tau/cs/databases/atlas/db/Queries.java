@@ -16,12 +16,6 @@ public interface Queries {
 	// Maps between category names and ids
 	Map<String, Integer> categoriesMap= new HashMap<>();
 	
-	// List of last fetched reuslts
-	Map<String,Result> lastResults= new HashMap<String,Result>();
-	
-	// last SQL query executed
-	String lastQueryExecuted="";
-	
 	
 	/**
 	 * @return True if the server is connected and online

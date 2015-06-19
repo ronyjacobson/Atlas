@@ -4,34 +4,33 @@ package il.ac.tau.cs.databases.atlas.db;
  * A class representing a location in the world
  */
 public class Location {
-	private Integer id;
+	private Long id;
 	private String name;
 	private double lat = 0;
 	private double lng = 0;
 	private String url = "";
 
-	public Location(Integer id, String name) {
+	public Location(Long id, String name) {
 		this.id = id;
 		this.name = name;
 	}
 
-	public Location(Integer id, String name, double lat, double lng) {
-		this.id = id;
-		this.name = name;
+	public Location(Long id, String name, double lat, double lng) {
+		this(id,name);
 		this.lat = lat;
 		this.lng = lng;
 	}
 	
-	public Location(Integer id, String name, double lat, double lng, String url) {
+	public Location(Long id, String name, double lat, double lng, String url) {
 		this(id, name,lat, lng);
 		this.url = url;
 	}
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

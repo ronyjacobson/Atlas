@@ -113,8 +113,7 @@ public class MapBrowserListeners {
 						results = Main.queries.getFavorites();
 					} else {
 						showSpinner();
-						results = Main.queries.getResults(startYear, endYear,
-								category);
+						results = Main.queries.getResults(startYear, endYear, category);
 					}
 				} catch (AtlasServerException ase) {
 					hideSpinner();
@@ -154,6 +153,9 @@ public class MapBrowserListeners {
 					MapBrowserListeners.setCategory(category);
 
 					for (Result result : results) {
+						if (!result.isValidResult()) {
+							continue;
+						}
 						double lat = result.getLocation().getLat();
 						double lng = result.getLocation().getLng();
 						String imageIcon = "flag-";
@@ -327,7 +329,7 @@ public class MapBrowserListeners {
 
 	public static void setCategory(String cat) {
 		String exec = "setCategory(\"" + cat + "\");";
-		logger.info("Adjusting category label...\nExecuting:" + exec);
+		logger.info("Adjusting category label by executing JS:" + exec);
 		map.getBrowser().execute(exec);
 	}
 }

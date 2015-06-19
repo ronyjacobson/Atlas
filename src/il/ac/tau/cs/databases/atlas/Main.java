@@ -125,7 +125,7 @@ public class Main {
 	 * Main running method
 	 */
 	public static void main(String[] args) {
-		boolean DEBUG = false;
+		boolean SKIP_LOGIN = false;
 		try {
 			// Initialize the program
 			String pathToConfFile = "config.properties";
@@ -133,7 +133,7 @@ public class Main {
 				pathToConfFile = args[0];
 			}
 			initialize(pathToConfFile);
-			if (DEBUG) {
+			if (SKIP_LOGIN) {
 				Main.user = new User(1, "rony", "0000", new Date(), Long.parseLong("1") , true);
 				new Map();
 			} else {

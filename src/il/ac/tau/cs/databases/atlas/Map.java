@@ -7,8 +7,6 @@ import il.ac.tau.cs.databases.atlas.graphics.map.MapBrowserListeners;
 import il.ac.tau.cs.databases.atlas.utils.AudioUtils;
 import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
 
-import org.apache.commons.io.IOUtils;
-
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -34,9 +32,10 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
+
+import org.apache.commons.io.IOUtils;
 
 public class Map extends JFrame {
 
@@ -45,7 +44,7 @@ public class Map extends JFrame {
 	private static final int GAP_BETWEEN_COMPONENTS = 10;
 	private static final int TIMELINE_MAX = 2015;
 	private static final int TIMELINE_MIN = 1000;
-	private static final int TIMELINE_EXTENT = 10;
+	private static final int TIMELINE_EXTENT = 100;
 	private static final int TIMELINE_INITIAL_VALUE = 1000;
 	public static final String DEFAULT_CATEGORY = "Choose a category...";
 	public static final String FAVORITES_CATEGORY = "Favorites";
@@ -63,8 +62,8 @@ public class Map extends JFrame {
 	private static JButton buttonUpdateFavorites;
 	private static JButton buttonUpdateDBFiles;
 	private static JButton buttonAudio;
-	private static JScrollBar timeline = new JScrollBar(JScrollBar.HORIZONTAL, TIMELINE_INITIAL_VALUE, TIMELINE_EXTENT, TIMELINE_MIN,
-			TIMELINE_MAX);;
+	private static JScrollBar timeline = new JScrollBar(JScrollBar.HORIZONTAL,
+			TIMELINE_INITIAL_VALUE, TIMELINE_EXTENT, TIMELINE_MIN, TIMELINE_MAX);;
 
 	/**
 	 * Creates and shows the map screen.
@@ -94,8 +93,8 @@ public class Map extends JFrame {
 
 		// Set up the content pane.
 		addComponentsToPanel(getContentPane());
-		
-		pack();	
+
+		pack();
 	}
 
 	private void addComponentsToPanel(Container pane) throws Exception {
@@ -144,14 +143,14 @@ public class Map extends JFrame {
 		if (map.initialize()) {
 			// Navigate to the following URL
 			String mapURL = GrapicUtils.RESOURCES_MAP_FOLDER + "map.html";
-			
+
 			// Create a temporary map HTML file in the file system
-			InputStream in  =  Map.class.getResourceAsStream(mapURL);
+			InputStream in = Map.class.getResourceAsStream(mapURL);
 			File temp = File.createTempFile("mapAtlas", ".html");
 			try (FileOutputStream out = new FileOutputStream(temp)) {
-	            IOUtils.copy(in, out);
+				IOUtils.copy(in, out);
 				out.close();
-	        }
+			}
 			in.close();
 			temp.deleteOnExit();
 			URL url = temp.toURI().toURL();
@@ -159,35 +158,28 @@ public class Map extends JFrame {
 			map.setUrl(url.toString());
 			// Set map for browser actions
 			MapBrowserListeners.setMap(map);
-			
+
 			// Create temporary flag PNG files
-			String[] pngFiles = {
-					"favorite.png",
-					"addfavorite.png",
-					"removefavorite.png",
-					"flag-birth-favorites.png",
-					"flag-birth-monarchist.png",
-					"flag-birth-philosopher.png",
-					"flag-birth-scientist.png",
-					"flag-birth.png",
-					"flag-death-favorites.png",
-					"flag-death-monarchist.png",
-					"flag-death-philosopher.png",
-					"flag-death-scientist.png",
+			String[] pngFiles = { "favorite.png", "addfavorite.png",
+					"removefavorite.png", "flag-birth-favorites.png",
+					"flag-birth-monarchist.png", "flag-birth-philosopher.png",
+					"flag-birth-scientist.png", "flag-birth.png",
+					"flag-death-favorites.png", "flag-death-monarchist.png",
+					"flag-death-philosopher.png", "flag-death-scientist.png",
 					"flag-death.png" };
 			String tempDir = System.getProperty("java.io.tmpdir");
-			for (String pngFile: pngFiles){
+			for (String pngFile : pngFiles) {
 				String pngURL = GrapicUtils.RESOURCES_MAP_FOLDER + pngFile;
-				in  =  Map.class.getResourceAsStream(pngURL);
+				in = Map.class.getResourceAsStream(pngURL);
 				temp = new File(tempDir + "/" + pngFile);
 				try (FileOutputStream out = new FileOutputStream(temp)) {
-		            IOUtils.copy(in, out);
+					IOUtils.copy(in, out);
 					out.close();
-		        }
+				}
 				in.close();
 				temp.deleteOnExit();
 			}
-			
+
 		} else {
 			throw new MapBrowser.BrowserException();
 		}
@@ -195,26 +187,33 @@ public class Map extends JFrame {
 	}
 
 	private JPanel createButtonsPanel() {
-		// Create buttons panel  
-		FlowLayout buttonsPanelLayout = new FlowLayout(FlowLayout.CENTER, GAP_BETWEEN_BUTTONS, GAP_BETWEEN_COMPONENTS);
+		// Create buttons panel
+		FlowLayout buttonsPanelLayout = new FlowLayout(FlowLayout.CENTER,
+				GAP_BETWEEN_BUTTONS, GAP_BETWEEN_COMPONENTS);
 		JPanel buttonsPanel = new JPanel(buttonsPanelLayout);
 
 		// Make panel transparent
 		buttonsPanel.setOpaque(false);
 
 		// Define buttons attributes
-		Font fieldFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_FIELD);
+		Font fieldFont = new Font("Century Gothic", Font.PLAIN,
+				GrapicUtils.FONT_SIZE_FIELD);
 		Dimension dimensionCategory = new Dimension(width / 5, height / 13);
 		Dimension dimensionGo = new Dimension(width / 9, height / 13);
-		Dimension dimensionStats = new Dimension((int) dimensionCategory.getWidth() / 3, (int) dimensionCategory.getHeight());
-		Dimension dimensionOther = new Dimension((int) dimensionCategory.getWidth() / 3, (int) dimensionCategory.getHeight() / 2);
+		Dimension dimensionStats = new Dimension(
+				(int) dimensionCategory.getWidth() / 3,
+				(int) dimensionCategory.getHeight());
+		Dimension dimensionOther = new Dimension(
+				(int) dimensionCategory.getWidth() / 3,
+				(int) dimensionCategory.getHeight() / 2);
 
 		// Add categories combo box
 		try {
 			List<String> categories = Main.queries.getAllCategoriesNames();
 			categories.add(0, DEFAULT_CATEGORY);
 			categories.add(FAVORITES_CATEGORY);
-			categoriesComboBox = new JComboBox<String>(categories.toArray(new String[categories.size()]));
+			categoriesComboBox = new JComboBox<String>(
+					categories.toArray(new String[categories.size()]));
 			categoriesComboBox.setFont(fieldFont);
 			categoriesComboBox.setPreferredSize(dimensionCategory);
 			buttonsPanel.add(categoriesComboBox);
@@ -230,51 +229,60 @@ public class Map extends JFrame {
 
 		// Add a button for statistics
 		buttonStats = new JButton("");
-		buttonStats.setIcon(new ImageIcon(getClass().getResource(GrapicUtils.getSkin() + "Stats.png")));
+		buttonStats.setIcon(new ImageIcon(getClass().getResource(
+				GrapicUtils.getSkin() + "Stats.png")));
 		buttonStats.setPreferredSize(dimensionStats);
 		buttonStats.setFont(fieldFont);
 		buttonsPanel.add(buttonStats);
 		// Add a button for adding values
 		buttonAdd = new JButton("");
-		buttonAdd.setIcon(new ImageIcon(getClass().getResource(GrapicUtils.getSkin() + "Add.png")));
+		buttonAdd.setIcon(new ImageIcon(getClass().getResource(
+				GrapicUtils.getSkin() + "Add.png")));
 		buttonAdd.setPreferredSize(dimensionOther);
 		buttonAdd.setFont(fieldFont);
 		buttonsPanel.add(buttonAdd);
 		// Add a button for search
 		buttonSearch = new JButton("");
-		buttonSearch.setIcon(new ImageIcon(getClass().getResource(GrapicUtils.getSkin() + "Search.png")));
+		buttonSearch.setIcon(new ImageIcon(getClass().getResource(
+				GrapicUtils.getSkin() + "Search.png")));
 		buttonSearch.setPreferredSize(dimensionOther);
 		buttonSearch.setFont(fieldFont);
 		buttonsPanel.add(buttonSearch);
 		// Add a button for favorites update
 		buttonUpdateFavorites = new JButton("");
-		buttonUpdateFavorites.setIcon(new ImageIcon(getClass().getResource(GrapicUtils.getSkin() + "Update.png")));
+		buttonUpdateFavorites.setIcon(new ImageIcon(getClass().getResource(
+				GrapicUtils.getSkin() + "Update.png")));
 		buttonUpdateFavorites.setPreferredSize(dimensionOther);
 		buttonUpdateFavorites.setFont(fieldFont);
 		buttonsPanel.add(buttonUpdateFavorites);
 		// Add a button for db files update
 		buttonUpdateDBFiles = new JButton("");
-		buttonUpdateDBFiles.setIcon(new ImageIcon(getClass().getResource(GrapicUtils.getSkin() + "Upload.png")));
+		buttonUpdateDBFiles.setIcon(new ImageIcon(getClass().getResource(
+				GrapicUtils.getSkin() + "Upload.png")));
 		buttonUpdateDBFiles.setPreferredSize(dimensionOther);
 		buttonUpdateDBFiles.setFont(fieldFont);
 		buttonsPanel.add(buttonUpdateDBFiles);
 		// Add a button for audio
 		buttonAudio = new JButton("");
-		buttonAudio.setIcon(new ImageIcon(getClass().getResource(GrapicUtils.getSkin() + "Audio.png")));
+		buttonAudio.setIcon(new ImageIcon(getClass().getResource(
+				GrapicUtils.getSkin() + "Audio.png")));
 		buttonAudio.setPreferredSize(dimensionOther);
 		buttonAudio.setFont(fieldFont);
 		buttonsPanel.add(buttonAudio);
 
 		// Add listeners
-		buttonGo.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(timeline, categoriesComboBox));
-		buttonStats.addActionListener(new MapBrowserListeners.BrowserShowStatsActionListner());
+		buttonGo.addActionListener(new MapBrowserListeners.BrowserAddMarkerActionListener(
+				timeline, categoriesComboBox));
+		buttonStats
+				.addActionListener(new MapBrowserListeners.BrowserShowStatsActionListner());
 		buttonAdd.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					new Add();
 				} catch (IOException e) {
-					MapBrowserListeners.executeJS("showError(\"Exception occured while using the add screen.\");");
+					MapBrowserListeners
+							.executeJS("showError(\"Exception occured while using the add screen.\");");
 				}
 			}
 		});
@@ -284,13 +292,16 @@ public class Map extends JFrame {
 				try {
 					new Search();
 				} catch (IOException e) {
-					MapBrowserListeners.executeJS("showError(\"Exception occured while using the search screen.\");");
+					MapBrowserListeners
+							.executeJS("showError(\"Exception occured while using the search screen.\");");
 				}
 			}
 		});
-		buttonUpdateFavorites.addActionListener(new MapBrowserListeners.BrowserSyncFavoritesActionListener());
+		buttonUpdateFavorites
+				.addActionListener(new MapBrowserListeners.BrowserSyncFavoritesActionListener());
 		buttonUpdateDBFiles.addActionListener(new DBFilesUplaodListner());
-		buttonAudio.addActionListener(new AudioUtils.AudioToggleActionListener());
+		buttonAudio
+				.addActionListener(new AudioUtils.AudioToggleActionListener());
 
 		// Return the panel
 		return buttonsPanel;

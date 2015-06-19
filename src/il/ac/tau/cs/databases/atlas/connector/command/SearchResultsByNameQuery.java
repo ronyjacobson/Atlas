@@ -95,7 +95,7 @@ public class SearchResultsByNameQuery extends BaseDBCommand<ArrayList<Result>> {
 			double lng = resultSet.getDouble(DBConstants.LONG_L);
 			double lat = resultSet.getDouble(DBConstants.LAT_L);
 			boolean isFemale = resultSet.getBoolean(DBConstants.IS_FEMALE_L);
-			Location location = new Location(0, geoname, lat, lng, locUrl);
+			Location location = new Location((long)0, geoname, lat, lng, locUrl);
 			java.util.Date date = (isBirth ? bornOn : diedOn);
 
 			// Adjust Max year/Min Year to set in timeline

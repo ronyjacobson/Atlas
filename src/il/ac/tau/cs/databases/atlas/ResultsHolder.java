@@ -9,10 +9,22 @@ import java.util.Map;
  */
 public enum ResultsHolder {
     INSTANCE;
-
+    
+    // Last fetched reuslts
     private Map<String, Result> resultMap;
+	
+    // Last SQL query executed
+    private String lastResultQueryExecuted="";
 
-    public Map<String, Result> getResultMap() {
+    public String getLastResultQueryExecuted() {
+		return lastResultQueryExecuted;
+	}
+
+	public void setLastResultQueryExecuted(String lastResultQueryExecuted) {
+		this.lastResultQueryExecuted = lastResultQueryExecuted;
+	}
+
+	public Map<String, Result> getResultMap() {
         return resultMap;
     }
 
