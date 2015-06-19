@@ -128,7 +128,8 @@ public class Result {
 		this.isFemale = isFemale;
 	}
 
-	private String getDateToString() {
+
+	public String getDateToString() {
 		DateFormat df = new SimpleDateFormat("d MMMM, yyyy", Locale.US);
 		return df.format(this.date);
 	}
