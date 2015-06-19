@@ -41,6 +41,7 @@ public class DynamicConnectionPool implements ConnectionPool {
 
     @Override
     public synchronized Connection checkOut() throws AtlasServerException {
+    	log.info("Checking out connection...");
         long now = System.currentTimeMillis();
         Connection connection;
         if (unlocked.size() > 0) {
@@ -69,6 +70,7 @@ public class DynamicConnectionPool implements ConnectionPool {
         // no objects available, create a new one
         connection = createConnection();
         locked.put(connection, now);
+        log.info("Checking out connection done.");
         return connection;
     }
 
@@ -110,8 +112,10 @@ public class DynamicConnectionPool implements ConnectionPool {
 
     @Override
     public void checkIn(Connection connection) {
+    	log.info("Checking in connection...");
         locked.remove(connection);
         unlocked.put(connection, System.currentTimeMillis());
+        log.info("Checking in connection done.");
     }
 
     @Override

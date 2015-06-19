@@ -5,7 +5,6 @@ import il.ac.tau.cs.databases.atlas.ParserConstants;
 import il.ac.tau.cs.databases.atlas.connector.command.AddPersonQuery;
 import il.ac.tau.cs.databases.atlas.connector.command.CheckConnectivityCommand;
 import il.ac.tau.cs.databases.atlas.connector.command.GetCategoriesQuery;
-import il.ac.tau.cs.databases.atlas.connector.command.GetFavoritesResultsQuery;
 import il.ac.tau.cs.databases.atlas.connector.command.GetGeoLocationsQuery;
 import il.ac.tau.cs.databases.atlas.connector.command.GetUserQuery;
 import il.ac.tau.cs.databases.atlas.connector.command.ParseFilesCommand;
@@ -13,6 +12,7 @@ import il.ac.tau.cs.databases.atlas.connector.command.RegisterUserQuery;
 import il.ac.tau.cs.databases.atlas.connector.command.SearchResultsByDatesQuery;
 import il.ac.tau.cs.databases.atlas.connector.command.SearchResultsByNameQuery;
 import il.ac.tau.cs.databases.atlas.connector.command.UpdateFavoritesQuery;
+import il.ac.tau.cs.databases.atlas.connector.command.UpdatePersonQuery;
 import il.ac.tau.cs.databases.atlas.connector.command.NewCommands.GetGoResultsQuery;
 import il.ac.tau.cs.databases.atlas.connector.command.NewCommands.GetNewFavoritesResultsQuery;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
@@ -33,7 +33,7 @@ import org.apache.log4j.Logger;
 public class DBQueries implements Queries {
 
 	protected final Logger logger = Logger.getLogger(this.getClass().getName());
-	
+
 	public static int amountOfLatestResults = 0;
 	public static int amountOfFemaleResults = 0;
 	public static int amountOfBirthResults = 0;
@@ -62,8 +62,8 @@ public class DBQueries implements Queries {
 	public boolean registerUser(User user) throws AtlasServerException {
 		// Initialize DB query
 		RegisterUserQuery query = new RegisterUserQuery(user);
-		logger.info(String.format(
-				"Registering user with username: %s...", user.getUsername()));
+		logger.info(String.format("Registering user with username: %s...",
+				user.getUsername()));
 		// Execute query
 		User newUser = query.execute();
 		if (newUser == null) {
@@ -84,6 +84,7 @@ public class DBQueries implements Queries {
 		GetGeoLocationsQuery query = new GetGeoLocationsQuery();
 		logger.info("Fetching GeoLocations names and Id's...");
 		query.execute();
+		logger.info("Fetching GeoLocations done.");
 	}
 
 	/**
@@ -121,8 +122,14 @@ public class DBQueries implements Queries {
 		// Initialize DB query
 		GetCategoriesQuery query = new GetCategoriesQuery();
 		logger.info("Fetching category names...");
-		// Execute query
-		ArrayList<String> categories = query.execute();
+		ArrayList<String> categories = new ArrayList<String>();
+		if (categoriesMap.isEmpty()) {
+			// Execute query
+			categories = query.execute();
+		} else {
+			categories.addAll(categoriesMap.keySet());
+		}
+		logger.info("Fetching category names done.");
 		return categories;
 	}
 
@@ -195,6 +202,7 @@ public class DBQueries implements Queries {
 		logger.info("Fetching Favorites...");
 		results.addAll(query.execute().values());
 		amountOfLatestResults = results.size();
+		logger.info("Fetching Favorites done");
 		return results;
 	}
 
@@ -234,15 +242,17 @@ public class DBQueries implements Queries {
 
 		// Execute query
 		query.execute();
+		logger.info("Updating favorites done.");
 	}
 
 	/**
 	 * Update the DB with the Yago files in the given full path directory
+	 * 
 	 * @param fullPathDirectory
 	 */
 	@Override
 	public void update(File fullPathDirectory) throws AtlasServerException {
-		Map<String,File> filesMap = checkAndGetFiles(fullPathDirectory);
+		Map<String, File> filesMap = checkAndGetFiles(fullPathDirectory);
 		new ParseFilesCommand(filesMap).execute();
 	}
 
@@ -255,19 +265,21 @@ public class DBQueries implements Queries {
 	public void addNew(String name, String category, Date birthDate,
 			Long birthlocationID, Date deathDate, Long deathlocationID,
 			String wikiLink, boolean isFemale) throws AtlasServerException {
-		
+
 		// Initialize DB query
 		if (category.equals("Favorites")) {
 			throw new AtlasServerException(
 					"Cant add to favorites, choose a category and then add");
 		}
 		int catId = categoriesMap.get(category);
-		AddPersonQuery query = new AddPersonQuery(name, catId, birthDate, birthlocationID, deathDate, deathlocationID, wikiLink, isFemale);
+		AddPersonQuery query = new AddPersonQuery(name, catId, birthDate,
+				birthlocationID, deathDate, deathlocationID, wikiLink, isFemale);
 
 		logger.info(String.format("Adding person: %s...", name));
 
 		// Execute query
 		query.execute();
+		logger.info(String.format("Adding person: %s done.", name));
 	}
 
 	/**
@@ -276,21 +288,25 @@ public class DBQueries implements Queries {
 	 * @throws AtlasServerException
 	 */
 	@Override
-	public void updateRecord(int personId, String name, String category, Date birthDate,
-							 Long birthlocationID, Date deathDate, Long deathlocationID,
-							 String wikiLink, boolean isFemale) throws AtlasServerException {
+	public void updateRecord(int personId, String name, String category,
+			Date birthDate, Long birthlocationID, Date deathDate,
+			Long deathlocationID, String wikiLink, boolean isFemale)
+			throws AtlasServerException {
 
 		// Initialize DB query
 		if (category.equals("Favorites")) {
 			throw new AtlasServerException(
 					"Cant add to favorites, choose a category and then add");
 		}
-		UpdatePersonQuery query = new UpdatePersonQuery(personId, name, birthDate, birthlocationID, deathDate, deathlocationID, wikiLink, isFemale);
+		UpdatePersonQuery query = new UpdatePersonQuery(personId, name,
+				birthDate, birthlocationID, deathDate, deathlocationID,
+				wikiLink, isFemale);
 
 		logger.info(String.format("Updating person: %s...", name));
 
 		// Execute query
 		query.execute();
+		logger.info(String.format("Updating person: %s done", name));
 	}
 
 	/**
@@ -326,6 +342,7 @@ public class DBQueries implements Queries {
 				edate);
 		results.addAll(query.execute());
 		amountOfLatestResults = results.size();
+		logger.info("Fetching results by dates done");
 		return results;
 	}
 
@@ -342,6 +359,7 @@ public class DBQueries implements Queries {
 		maxYear = query.getMaxYear();
 		minYear = query.getMinYear();
 		amountOfLatestResults = results.size();
+		logger.info("Fetching results by name done");
 		return results;
 	}
 
@@ -359,16 +377,20 @@ public class DBQueries implements Queries {
 		GetGoResultsQuery query = new GetGoResultsQuery(startYear, endYear, category);
 		results.addAll(query.execute().values());
 		amountOfLatestResults = results.size();
+		logger.info("Fetching results by category and years done");
 		return results;
 	}
 
-	private Map<String,File> checkAndGetFiles(File fullPath) throws AtlasServerException {
+	private Map<String, File> checkAndGetFiles(File fullPath)
+			throws AtlasServerException {
 		final File[] files = fullPath.listFiles();
 		if (files == null) {
-			throw new AtlasServerException(fullPath + ": The path doesn't exist");
+			throw new AtlasServerException(fullPath
+					+ ": The path doesn't exist");
 		}
 		Map<String, File> fileMap = new HashMap<>();
-		Set<String> required = new HashSet<>(Arrays.asList(ParserConstants.REQUIRED_FILES));
+		Set<String> required = new HashSet<>(
+				Arrays.asList(ParserConstants.REQUIRED_FILES));
 		for (File file : files) {
 			final String relevantFileName = file.getName();
 			if (required.remove(relevantFileName)) {
@@ -386,7 +408,8 @@ public class DBQueries implements Queries {
 		for (Map.Entry<String, File> stringFileEntry : fileMap.entrySet()) {
 			final File file = stringFileEntry.getValue();
 			if (!(file.exists() && !file.isDirectory() && file.canRead())) {
-				throw new AtlasServerException("The file: " + stringFileEntry.getKey() + ", is not valid");
+				throw new AtlasServerException("The file: "
+						+ stringFileEntry.getKey() + ", is not valid");
 			}
 		}
 		return fileMap;

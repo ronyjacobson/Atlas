@@ -22,8 +22,9 @@ import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Display;
 
 public class MapBrowserListeners {
-	
-	protected final static Logger logger = Logger.getLogger(MapBrowserListeners.class.getName());
+
+	protected final static Logger logger = Logger
+			.getLogger(MapBrowserListeners.class.getName());
 	public volatile static MapBrowser map = null;
 
 	public static void setMap(MapBrowser map) {
@@ -50,8 +51,6 @@ public class MapBrowserListeners {
 			}
 		});
 	}
-
-
 
 	public static class BrowserMessageActionListener implements ActionListener {
 
@@ -115,7 +114,8 @@ public class MapBrowserListeners {
 					} else if (category.equals(Map.FAVORITES_CATEGORY)) {
 						results = Main.queries.getFavorites();
 					} else {
-						results = Main.queries.getResults(startYear, endYear, category);
+						results = Main.queries.getResults(startYear, endYear,
+								category);
 					}
 				} catch (AtlasServerException ase) {
 					executeJS("showError(\"" + ase.getMessage() + "\");");
@@ -135,7 +135,7 @@ public class MapBrowserListeners {
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				if (map!=null) {
+				if (map != null) {
 					map.getBrowser().execute(code);
 				}
 			}
@@ -220,12 +220,21 @@ public class MapBrowserListeners {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			final java.util.Map<String, Result> resultMap = ResultsHolder.INSTANCE.getResultMap();
-			if (resultMap == null || resultMap.isEmpty()) {
-				JOptionPane.showMessageDialog(null, "There are no results on map!", GrapicUtils.PROJECT_NAME, JOptionPane.WARNING_MESSAGE);
-			} else {
-				new PersonTable(resultMap);
-			}
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					final java.util.Map<String, Result> resultMap = ResultsHolder.INSTANCE
+							.getResultMap();
+					if (resultMap == null || resultMap.isEmpty()) {
+						JOptionPane.showMessageDialog(null,
+								"There are no results on map!",
+								GrapicUtils.PROJECT_NAME,
+								JOptionPane.WARNING_MESSAGE);
+					} else {
+						new PersonTable(resultMap);
+					}
+
+				}
+			});
 		}
 	}
 

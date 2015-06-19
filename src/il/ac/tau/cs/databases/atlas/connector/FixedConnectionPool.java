@@ -56,6 +56,7 @@ public class FixedConnectionPool implements ConnectionPool {
 
     //Creating a connection
     private Connection createNewConnectionForPool() throws AtlasServerException {
+    	log.info("Creatring new connection...");
         Connection connection;
 
         try {
@@ -72,7 +73,7 @@ public class FixedConnectionPool implements ConnectionPool {
             log.info("Unable to load the MySQL JDBC driver..");
             throw new AtlasServerException("Unable to create connection pool");
         }
-
+        log.info("Creating new connection done.");
         return connection;
     }
 
@@ -80,6 +81,7 @@ public class FixedConnectionPool implements ConnectionPool {
      * @return connection if there is one available or null where pool is empty
      */
     public Connection checkOut() {
+    	log.info("Checking out connection...");
         //Check if there is a connection available. There are times when all the connections in the pool may be used up
         Connection connection = null;
         try {
@@ -88,12 +90,15 @@ public class FixedConnectionPool implements ConnectionPool {
             e.printStackTrace();
         }
         //Giving away the connection from the connection pool
+        log.info("Checking out connection done.");
         return connection;
     }
 
     public void checkIn(Connection connection) {
+    	log.info("Checking in connection...");
         //Adding the connection from the client back to the connection pool
         connectionPool.add(connection);
+        log.info("Checking in done.");
     }
 
     public int getNumberOfTotalConnectionsAvailable() {

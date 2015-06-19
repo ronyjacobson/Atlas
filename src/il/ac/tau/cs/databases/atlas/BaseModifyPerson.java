@@ -10,6 +10,7 @@ import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -37,6 +38,8 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import org.apache.log4j.Logger;
+
 import com.toedter.calendar.JDateChooser;
 
 /**
@@ -45,7 +48,9 @@ import com.toedter.calendar.JDateChooser;
  * @throws IOException
  */
 public abstract class BaseModifyPerson extends JFrame {
-
+	
+	protected final Logger logger = Logger.getLogger(this.getClass().getName());
+	
 	private static final long serialVersionUID = 1L;
 	private static final int NUM_OF_COMPONENTS = 10;
 	private static final int GAP_BETWEEN_COMPONENTS = 16;
@@ -74,7 +79,7 @@ public abstract class BaseModifyPerson extends JFrame {
 	public String stringName;
 
 	public BaseModifyPerson() throws IOException {
-
+		logger.info("Creating Add/Edit Dialog window...");
 		String addImagePath = GrapicUtils.getSkin() + "SecondaryScreen.png";
 
 		// Get graphics attributes
@@ -100,10 +105,12 @@ public abstract class BaseModifyPerson extends JFrame {
 		GridLayout panelLayout = new GridLayout(NUM_OF_COMPONENTS, 1);
 		panelLayout.setVgap(GAP_BETWEEN_COMPONENTS);
 		JPanel panel = new JPanel(panelLayout);
+		logger.info("Creating Add/Edit view...");
 		createDialogPanel(panel, width, height);
 		add(panel);
 
 		// Show add screen
+		logger.info("Making dialog visible...");
 		setVisible(true);
 
 	}
@@ -194,7 +201,7 @@ public abstract class BaseModifyPerson extends JFrame {
 	protected abstract String getButtonText();
 
 	private void createDatesPanel() {
-
+		logger.info("Making dates panel...");
 		GridLayout panelLayout = new GridLayout(1, 1);
 		panelLayout.setHgap(GAP_BETWEEN_COMPONENTS);
 		datesPanel = new JPanel(panelLayout);
@@ -250,10 +257,11 @@ public abstract class BaseModifyPerson extends JFrame {
 
 		datesPanel.add(birthPanel);
 		datesPanel.add(deathPanel);
+		logger.info("Making dates panel done");
 	}
 
 	private void createLocationsPanel() {
-
+		logger.info("Making locations panel...");
 		GridLayout panelLayout = new GridLayout(1, 2);
 		panelLayout.setHgap(GAP_BETWEEN_COMPONENTS);
 		locationsPanel = new JPanel(panelLayout);
@@ -269,15 +277,17 @@ public abstract class BaseModifyPerson extends JFrame {
 		try {
 			List<String> locations = new ArrayList<String>(
 					Main.queries.getAllGeoLocationsNames());
-
+			
 			locations.add(0, DEFAULT_BIRTH_LOCATION);
 			wasBornIn = new JComboBox<String>(
 					locations.toArray(new String[locations.size()]));
-
+			Dimension d= new Dimension(100,10);		
+			wasBornIn.setPreferredSize(d);
 			locations.set(0, DEFAULT_DEATH_LOCATION);
 			locations.add(1, NOT_DEAD_LOCATION);
 			hasDiedIn = new JComboBox<String>(
 					locations.toArray(new String[locations.size()]));
+			hasDiedIn.setPreferredSize(d);
 
 		} catch (AtlasServerException e) {
 			// TODO handle Exception
@@ -288,7 +298,7 @@ public abstract class BaseModifyPerson extends JFrame {
 		// Add to panel
 		locationsPanel.add(wasBornIn);
 		locationsPanel.add(hasDiedIn);
-
+		logger.info("Making locations panel done");
 	}
 
 	/**
@@ -368,7 +378,7 @@ public abstract class BaseModifyPerson extends JFrame {
 					//get wikiLink
 					String link = wikiLink.getText();
 					if (!link.toLowerCase().contains("http://")) {
-						link = "http://"+wikiLink;
+						link = "http://"+link;
 					}
 
 					execQuery(birthLocaionID, deathLocaionID, birthDate, deathDate, link);
