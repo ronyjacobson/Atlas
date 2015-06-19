@@ -24,12 +24,13 @@ public class DBQueriesTest {
 	public void setUp() throws Exception {
 		// Initialize connection according to debugger
 		if (tester == "Rony") {
-			DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06",
-					"127.0.0.1", "3306", "dbmysql06");
+			//DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06","127.0.0.1", "3306", "dbmysql06");
+			DynamicConnectionPool.INSTANCE.initialize("DbMysql06", "DbMysql06", "127.0.0.1", "3305", "DbMysql06");
+			Main.user = new User(2, "Rony", "0000", new Date(), Long.parseLong("257782768722431"), true);
 		}
 	}
 	
-	@Test
+	//@Test
 	public void isRegisteredUserTest() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
@@ -63,7 +64,7 @@ public class DBQueriesTest {
 				nonExistingUser.getUsername());
 	}
 
-	@Test
+	//@Test
 	public void getGeoLocationsHashMapTest() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
@@ -73,7 +74,7 @@ public class DBQueriesTest {
 		assertFalse(Queries.locationsMap.isEmpty());
 	}
 
-	@Test
+	//@Test
 	public void getCategoriesTest() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
@@ -90,7 +91,7 @@ public class DBQueriesTest {
 		}
 		// By category and time
 		Main.user = new User(1, "erer", "Sfsf", new Date(), Long.parseLong("5"), false);
-		List<Result> res = queries.getResults(1000, 1100, "Kings And Queens");
+		List<Result> res = queries.getResults(1000, 1010, "monarchist");
 		assertFalse(res.isEmpty());
 		System.out.println("Test Results:" + res.toString()+"\n\n\n");
 		// By name
