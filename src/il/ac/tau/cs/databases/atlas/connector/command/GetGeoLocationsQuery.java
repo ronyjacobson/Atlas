@@ -24,14 +24,14 @@ public class GetGeoLocationsQuery extends BaseDBCommand<Void> {
         try {
         	statement = con.prepareStatement(
         			"SELECT "+ DBConstants.Location.GEO_NAME + "," + DBConstants.Location.LOCATION_ID +
-        			" FROM "+ DBConstants.Location.TABLE_NAME);
+        			" FROM "+ DBConstants.Location.TABLE_NAME + " ORDER BY "+ DBConstants.Location.GEO_NAME);
         	logger.info(String.format("Executing DB query: %s.", statement.toString()));
         	resultSet = statement.executeQuery();
             
             while (resultSet.next()) {
             	// Create fetched Location
             	String name = resultSet.getString(DBConstants.Location.GEO_NAME);
-            	int id = resultSet.getInt(DBConstants.Location.LOCATION_ID);
+            	long id = resultSet.getLong(DBConstants.Location.LOCATION_ID);
             	Queries.locationsMap.put(name, id);
             	Queries.locationsNames.add(name);
             }

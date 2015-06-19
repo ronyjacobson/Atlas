@@ -11,7 +11,7 @@ public class User {
 	private String username;
 	private String password;
 	private Date dateOfBirth;
-	private Integer locationID;
+	private Long locationID;
 	private Location location;
 	private boolean isFemale;
 	
@@ -20,7 +20,7 @@ public class User {
 		this.password = password;
 	}
 	
-	public User(String username, String password, Date dateOfBirth, Integer locationID, boolean isFemale) {
+	public User(String username, String password, Date dateOfBirth, Long locationID, boolean isFemale) {
 		this.username = username;
 		this.password = password;
 		this.dateOfBirth = dateOfBirth;
@@ -28,13 +28,9 @@ public class User {
 		this.isFemale = isFemale;
 	}
 	
-	public User(Integer ID, String username, String password, Date dateOfBirth, int locationID, boolean isFemale) {
+	public User(Integer ID, String username, String password, Date dateOfBirth, Long locationID, boolean isFemale) {
+		this(username,password,dateOfBirth,locationID,isFemale);
 		this.userID = ID;
-		this.username = username;
-		this.password = password;
-		this.dateOfBirth = dateOfBirth;
-		this.locationID = locationID;
-		this.isFemale = isFemale;
 	}
 	
 	public Integer getUserID() {
@@ -45,11 +41,11 @@ public class User {
 		this.userID = userID;
 	}
 
-	public Integer getLocationID() {
+	public Long getLocationID() {
 		return locationID;
 	}
 
-	public void setLocationID(Integer locationID) {
+	public void setLocationID(Long locationID) {
 		this.locationID = locationID;
 	}
 

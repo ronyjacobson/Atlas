@@ -34,8 +34,8 @@ public class DBQueriesTest {
 		if (tester != "Rony") {
 			return;
 		}
-		User existingUser = new User("rony", "0000", new Date(), 0, true);
-		User nonExistingUser = new User("johnDo", "", new Date(), 0, false);
+		User existingUser = new User("rony", "0000", new Date(), Long.parseLong("0"), true);
+		User nonExistingUser = new User("johnDo", "", new Date(), Long.parseLong("0"), false);
 		User fetchedUser = queries.fetchUser(existingUser);
 		assertEquals("UserName", fetchedUser.getUsername(),
 				existingUser.getUsername());
@@ -49,8 +49,8 @@ public class DBQueriesTest {
 		if (tester != "Rony") {
 			return;
 		}
-		User existingUser = new User("rony", "0000", new Date(), 1, true);
-		User nonExistingUser = new User("newUser3", "password", new Date(), 1,
+		User existingUser = new User("rony", "0000", new Date(), Long.parseLong("1"), true);
+		User nonExistingUser = new User("newUser3", "password", new Date(), Long.parseLong("1"),
 				false);
 		try {
 			assertFalse(queries.registerUser(existingUser));
@@ -89,7 +89,7 @@ public class DBQueriesTest {
 			return;
 		}
 		// By category and time
-		Main.user = new User(1, "erer", "Sfsf", new Date(), 5, false);
+		Main.user = new User(1, "erer", "Sfsf", new Date(), Long.parseLong("5"), false);
 		List<Result> res = queries.getResults(1000, 1100, "Kings And Queens");
 		assertFalse(res.isEmpty());
 		System.out.println("Test Results:" + res.toString()+"\n\n\n");
@@ -108,9 +108,9 @@ public class DBQueriesTest {
 			return;
 		}
 		Queries.categoriesMap.put("Kings And Queens", 1);
-		Main.user = new User(1, "erer", "Sfsf", new Date(), 5, false);
+		Main.user = new User(1, "erer", "Sfsf", new Date(), Long.parseLong("5"), false);
 		try {
-			queries.addNew("Test", "Kings And Queens", new Date(), 1,new Date(), 1, "TestUrl", true);
+			queries.addNew("Test", "Kings And Queens", new Date(), Long.parseLong("1"),new Date(), Long.parseLong("2"), "TestUrl", true);
 		} catch (AtlasServerException e) {
 		}
 	}
@@ -120,7 +120,7 @@ public class DBQueriesTest {
 		if (tester != "Rony") {
 			return;
 		}
-		Main.user = new User(1, "erer", "Sfsf", new Date(), 5, false);
+		Main.user = new User(1, "erer", "Sfsf", new Date(), Long.parseLong("5"), false);
 		List<String> fav = new ArrayList<String>();
 		fav.add("2");
 		fav.add("4");
@@ -136,7 +136,7 @@ public class DBQueriesTest {
 		if (tester != "Rony") {
 			return;
 		}
-		Main.user = new User(1, "erer", "Sfsf", new Date(), 5, true);
+		Main.user = new User(1, "erer", "Sfsf", new Date(), Long.parseLong("5"), true);
 		@SuppressWarnings("deprecation")
 		List<Result> res = queries.getResults(new Date(0, 5, 1), new Date(200,
 				5, 1));
@@ -150,10 +150,10 @@ public class DBQueriesTest {
 		if (tester != "Rony") {
 			return;
 		}
-		Main.user = new User(1, "erer", "Sfsf", new Date(), 5, true);
+		Main.user = new User(1, "erer", "Sfsf", new Date(), Long.parseLong("5"), true);
 		List<Result> res = queries.getFavorites();
 		assertFalse(res.isEmpty());
-		Main.user = new User(67, "erer", "Sfsf", new Date(), 5, true);
+		Main.user = new User(67, "erer", "Sfsf", new Date(), Long.parseLong("5"), true);
 		res = queries.getFavorites();
 		assertTrue(res.isEmpty());
 	}

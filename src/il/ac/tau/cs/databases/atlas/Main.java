@@ -48,7 +48,7 @@ public class Main {
 			// Initialize the program
 			initialize();
 			if (DEBUG) {
-				Main.user = new User(1, "rony", "0000", new Date(), 1, true);
+				Main.user = new User(1, "rony", "0000", new Date(), Long.parseLong("1") , true);
 				new Map();
 			} else {
 				// Show splash screen

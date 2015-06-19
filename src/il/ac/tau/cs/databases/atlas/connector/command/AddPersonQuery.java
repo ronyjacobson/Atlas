@@ -22,11 +22,11 @@ public class AddPersonQuery extends BaseDBCommand<Void> {
 	private boolean isFemale;
 	private Date birthDate;
 	private Date deathDate;
-	private Integer birthLocID;
-	private Integer deathLocID;
+	private Long birthLocID;
+	private Long deathLocID;
 
 	public AddPersonQuery(String name, Integer categoryId, Date birthDate,
-			Integer birthlocationID, Date deathDate, Integer deathlocationID,
+			Long birthlocationID, Date deathDate, Long deathlocationID,
 			String wikiLink, boolean isFemale) {
 		this.name = name;
 		this.categoryId = categoryId;
@@ -90,12 +90,12 @@ public class AddPersonQuery extends BaseDBCommand<Void> {
 						, new String[]{DBConstants.Person.PERSON_ID});
 
 				statement.setDate(7, new java.sql.Date(deathDate.getTime()));
-				statement.setInt(8, deathLocID);
+				statement.setLong(8, deathLocID);
 			}
 			statement.setString(1, wikiLink);
 			statement.setDate(2, new java.sql.Date(birthDate.getTime()));
 			statement.setInt(3, Main.user.getUserID());
-			statement.setInt(4, birthLocID);
+			statement.setLong(4, birthLocID);
 			statement.setBoolean(5, isFemale);
 			statement.setString(6, name);
 			
