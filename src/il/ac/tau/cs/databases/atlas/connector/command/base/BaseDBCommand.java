@@ -14,8 +14,11 @@ import java.sql.*;
  */
 public abstract class BaseDBCommand<T> {
     protected final Logger logger = Logger.getLogger(this.getClass().getName());
-    private static ConnectionPool connectionPool = ConnectionPoolHolder.INSTANCE.get();
+    private ConnectionPool connectionPool;
 
+    public BaseDBCommand() {
+        connectionPool = ConnectionPoolHolder.INSTANCE.get();
+    }
 
     public T execute() throws AtlasServerException {
         final Connection con = connectionPool.checkOut();

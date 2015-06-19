@@ -44,10 +44,10 @@ public abstract class BaseProgressDBCommand extends BaseDBCommand<Boolean> {
 
     private void prepareGUI(){
         mainFrame = new JFrame(getFrameLabel());
-        final URL bgURL = getClass().getResource("/map/progress-bg.png");
+        final URL bgURL = getClass().getResource("/map/progress-bg6.png");
         mainFrame.setContentPane(new JLabel(new ImageIcon(bgURL)));
         mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        mainFrame.setSize(400, 240);
+        mainFrame.setSize(600, 250);
         mainFrame.setResizable(false);
         mainFrame.setLayout(new GridLayout(3, 1));
 
