@@ -101,6 +101,7 @@ public class MapBrowserListeners {
 						.toString();
 				// Check category
 				List<Result> results = null;
+				executeJS("showSpinner();");
 				try {
 					if (category.equals(Map.DEFAULT_CATEGORY)) {
 						executeJS("showError(\""
