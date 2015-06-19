@@ -23,7 +23,7 @@ public class Splash {
 	
 	public Splash() throws IOException {
 		
-		String splashImagePath = GrapicUtils.getSkin() + "Splash.png";
+		String splashImagePath = GrapicUtils.DEFAULT_SKIN + "Splash.png";
 		
 		// Create Window
 		JWindow splashWindow = new JWindow();

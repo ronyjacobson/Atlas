@@ -19,9 +19,9 @@ public class GrapicUtils {
 	public static final int FONT_SIZE_DATE = 11;
 	public final static String PROJECT_NAME = "ATLAS";
 	public final static String DEFAULT_FILE_NAME = PROJECT_NAME + ".sqlproj";
-	public final static String DEFAULT_SKIN = "graphics/skins/default/";
 	public final static String PACKAGE_PATH = "/il/ac/tau/cs/databases/atlas/";
 	public final static String RESOURCES_FOLDER = "/";
+	public final static String DEFAULT_SKIN = RESOURCES_FOLDER + "skins/";
 	public final static String RESOURCES_MAP_FOLDER = RESOURCES_FOLDER + "map/";
 	
 	/**
