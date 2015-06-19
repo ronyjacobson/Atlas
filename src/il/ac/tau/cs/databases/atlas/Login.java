@@ -1,6 +1,7 @@
 package il.ac.tau.cs.databases.atlas;
 
 import il.ac.tau.cs.databases.atlas.db.DBConstants;
+import il.ac.tau.cs.databases.atlas.db.DBFilesUplaodListner;
 import il.ac.tau.cs.databases.atlas.db.Queries;
 import il.ac.tau.cs.databases.atlas.db.User;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
@@ -53,8 +54,8 @@ import com.toedter.calendar.JDateChooser;
 public class Login extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private static final int NUM_OF_COMPONENTS = 9;
-	private static final int GAP_BETWEEN_COMPONENTS = 16;
+	private static final int NUM_OF_COMPONENTS = 12;
+	private static final int GAP_BETWEEN_COMPONENTS = 10;
 	private static final String DEFAULT_LOCATION = "Choose birth place...";
 
 	private User fetchedUser = null;
@@ -70,6 +71,8 @@ public class Login extends JFrame {
 	private JButton loginButton;
 	private boolean signupEnabled = false;
 	private boolean wereCredentialsEntered = false;
+	private JLabel installLabel;
+	private JButton installButton;
 
 	public Login() throws IOException {
 
@@ -88,12 +91,13 @@ public class Login extends JFrame {
 		setTitle(GrapicUtils.PROJECT_NAME);
 		setLocationRelativeTo(null);
 
+
 		// Set Actions
 		setResizable(false);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		// Add login panel
-		setLayout(new BorderLayout());
+//		setLayout(new BorderLayout());
 		setLayout(new FlowLayout());
 		GridLayout panelLayout = new GridLayout(NUM_OF_COMPONENTS, 1);
 		panelLayout.setVgap(GAP_BETWEEN_COMPONENTS-5);
@@ -128,7 +132,7 @@ public class Login extends JFrame {
 		Font dateFont = new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_DATE);
 
 		label = new JLabel("Log in or sign up:", SwingConstants.CENTER);
-		label.setForeground(Color.white);
+		label.setForeground(Color.black);
 		label.setFont(labelFont);
 
 		username = new JTextField("Username");
@@ -168,7 +172,7 @@ public class Login extends JFrame {
 		try {
 			List<String> options = new ArrayList<String>(Main.queries.getAllGeoLocationsNames());
 			options.add(0, DEFAULT_LOCATION);
-			wasBornIn = new JComboBox<String>(options.toArray(new String[options.size()]));
+			wasBornIn = new JComboBox<>(options.toArray(new String[options.size()]));
 			wasBornIn.setPreferredSize(new Dimension(200,10));
 			wasBornIn.setFont(fieldFont);
 			wasBornIn.setEnabled(false);
@@ -201,6 +205,14 @@ public class Login extends JFrame {
 		loginButton.addActionListener(new LoginAction());
 		loginButton.setFont(fieldFont);
 
+		installLabel = new JLabel("First time in Atlas? Press install:", SwingConstants.CENTER);
+		installLabel.setForeground(Color.white);
+		installLabel.setFont(new Font("Century Gothic", Font.PLAIN, GrapicUtils.FONT_SIZE_FIELD));
+
+		installButton = new JButton("Install DB");
+		installButton.setFont(fieldFont);
+		installButton.addActionListener(new DBFilesUplaodListner());
+
 		// Pad panel with blank label
 		JLabel paddingLabel1 = new JLabel(" ");
 		JLabel paddingLabel2 = new JLabel(" ");
@@ -219,6 +231,8 @@ public class Login extends JFrame {
 		panel.add(birthPanel);
 		panel.add(sexPanel);
 		panel.add(loginButton);
+		panel.add(installLabel);
+		panel.add(installButton);
 	}
 
 	/**
