@@ -82,18 +82,18 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
         createPersonLabelsTable(con);
     }
 
-    private void progressLogger(int step, int numberOfSteps, String msg) {
+    private void progressLogger(int step, int numberOfSteps, String msg) throws AtlasServerException {
         String outMsg = "Step " + step + "/" + numberOfSteps + ": " + msg;
         progressLogger(outMsg);
     }
 
-    private void progressLogger(String msg) {
+    private void progressLogger(String msg) throws AtlasServerException {
         progressUpdater.resetProgress();
         logger.info(msg);
         progressUpdater.updateHeader(msg);
     }
 
-    public void updateProgress(long numberOfRecords, long recordNumber) {
+    public void updateProgress(long numberOfRecords, long recordNumber) throws AtlasServerException {
         progressUpdater.updateProgress((int) (recordNumber * 100 / numberOfRecords), recordNumber + "/" + numberOfRecords + " processed");
     }
 

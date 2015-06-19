@@ -1,6 +1,9 @@
 package il.ac.tau.cs.databases.atlas;
 
+import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
+
 import javax.swing.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by user on 17/06/2015.
@@ -9,14 +12,17 @@ public class ProgressUpdater {
     private final JProgressBar progressBar;
     private final JTextArea outputTextArea;
     private final JLabel headerLabel;
+    private final AtomicBoolean running;
 
     public ProgressUpdater(JProgressBar progressBar, JTextArea outputTextArea, JLabel headerLabel) {
         this.progressBar = progressBar;
         this.outputTextArea = outputTextArea;
         this.headerLabel = headerLabel;
+        running = new AtomicBoolean(true);
     }
 
-    public void updateProgress(final int progress,final String lowerMessage) {
+    public void updateProgress(final int progress,final String lowerMessage) throws AtlasServerException {
+        checkIfStillRunning();
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 progressBar.setValue(progress);
@@ -25,7 +31,8 @@ public class ProgressUpdater {
         });
     }
 
-    public void updateProgress(final int progress,final String lowerMessage, final String header) {
+    public void updateProgress(final int progress,final String lowerMessage, final String header) throws AtlasServerException {
+        checkIfStillRunning();
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 progressBar.setValue(progress);
@@ -35,7 +42,8 @@ public class ProgressUpdater {
         });
     }
 
-    public void updateHeader(final String header) {
+    public void updateHeader(final String header) throws AtlasServerException {
+        checkIfStillRunning();
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -44,7 +52,8 @@ public class ProgressUpdater {
         });
     }
 
-    public void resetProgress() {
+    public void resetProgress() throws AtlasServerException {
+        checkIfStillRunning();
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -52,6 +61,16 @@ public class ProgressUpdater {
                 outputTextArea.setText("");
             }
         });
+    }
+
+    public void stopExecution() {
+        running.getAndSet(false);
+    }
+
+    private void checkIfStillRunning() throws AtlasServerException {
+        if (!running.get()) {
+            throw new AtlasServerException("Process stopped");
+        }
     }
 
 

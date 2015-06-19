@@ -13,6 +13,8 @@ import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
 
+import javax.swing.*;
+
 public class Main {
 	private static final Logger log = Logger.getLogger(Main.class);
 	// DB queries object
@@ -59,6 +61,7 @@ public class Main {
 			JOptionPane.showMessageDialog(null,
 					"Unable to connect to DB.", GrapicUtils.PROJECT_NAME,
 					JOptionPane.ERROR_MESSAGE);
+
 		}
 	}
 }

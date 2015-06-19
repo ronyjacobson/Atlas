@@ -19,6 +19,8 @@ import java.sql.Connection;
 public abstract class BaseProgressDBCommand extends BaseDBCommand<Boolean> {
     protected ProgressUpdater progressUpdater = null;
 
+    private Thread thread = null;
+
     private JFrame mainFrame;
     private JLabel headerLabel;
     private JLabel statusLabel;
@@ -53,10 +55,13 @@ public abstract class BaseProgressDBCommand extends BaseDBCommand<Boolean> {
             public void windowClosing(WindowEvent windowEvent) {
                 String ObjButtons[] = {"Yes", "No"};
                 int PromptResult = JOptionPane.showOptionDialog(null,
-                        "Exiting will not stop the update, if it already started. Are you sure you want to exit?", "Atlas updater",
+                        "Exiting may cause unexpected behaviour, if the process already started. Are you sure you want to exit?", "Atlas updater",
                         JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null,
                         ObjButtons, ObjButtons[1]);
                 if (PromptResult == 0) {
+                    if (progressUpdater != null) {
+                        progressUpdater.stopExecution();
+                    }
                     mainFrame.dispose();
                 }
             }
@@ -107,7 +112,8 @@ public abstract class BaseProgressDBCommand extends BaseDBCommand<Boolean> {
                         }
                     }
                 };
-                new Thread(task).start();
+                thread = new Thread(task);
+                thread.start();
             }
         });
 
