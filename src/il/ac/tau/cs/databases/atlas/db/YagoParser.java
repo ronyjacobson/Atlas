@@ -51,24 +51,35 @@ public class YagoParser {
         }
     }
 
-    public void ensureLabels() throws AtlasServerException {
+    public void ensureCategoriesLabelsAndLocations() throws AtlasServerException {
         progressUpdater.resetProgress();
         long numberOfRecords = personsMap.size();
         long recordNumber = 0;
         long interval = numberOfRecords / 100;
         for (Iterator<Entry<Long, YagoPerson>> it = personsMap.entrySet().iterator(); it.hasNext(); ) {
+            boolean remove = false;
             if (++recordNumber % interval == 0) {
                 updateProgress(numberOfRecords, recordNumber);
             }
             Entry<Long, YagoPerson> entry = it.next();
             if (! entry.getValue().isValidPersonLabels()) {
+                remove = true;
+            }
+            Long bornInLocation = entry.getValue().getBornInLocation();
+            if (bornInLocation != null && !locationsMap.containsKey(bornInLocation)) {
+                remove = true;
+            }
+            Long diedInLocation = entry.getValue().getDiedInLocation();
+            if (diedInLocation != null && !locationsMap.containsKey(diedInLocation)) {
+                remove = true;
+            }
+            if (entry.getValue().getCategories().size() == 0) {
+                remove = true;
+            }
+            if (remove) {
                 it.remove();
             }
         }
-    }
-
-    private void updateProgress(long numberOfRecords, long recordNumber) throws AtlasServerException {
-        progressUpdater.updateProgress((int) (recordNumber * 100 / numberOfRecords), recordNumber + "/" + numberOfRecords + " processed");
     }
 
     public void validateLocationsMap() throws AtlasServerException {
@@ -85,6 +96,26 @@ public class YagoParser {
                 it.remove();
             }
         }
+    }
+
+    public void removeUnusedLocation() throws AtlasServerException {
+        progressUpdater.resetProgress();
+        long numberOfRecords = locationsMap.size();
+        long recordNumber = 0;
+        long interval = numberOfRecords / 100;
+        for (Iterator<Entry<Long, YagoLocation>> it = locationsMap.entrySet().iterator(); it.hasNext(); ) {
+            if (++recordNumber % interval == 0) {
+                updateProgress(numberOfRecords, recordNumber);
+            }
+            Entry<Long, YagoLocation> entry = it.next();
+            if (! entry.getValue().isUsed()) {
+                it.remove();
+            }
+        }
+    }
+
+    private void updateProgress(long numberOfRecords, long recordNumber) throws AtlasServerException {
+        progressUpdater.updateProgress((int) (recordNumber * 100 / numberOfRecords), recordNumber + "/" + numberOfRecords + " processed");
     }
 
     private long yagoIdToHash(String yagoId) {
@@ -123,10 +154,13 @@ public class YagoParser {
     private void setLocationIdFromYagoId(String yagoLocationId, YagoPerson yagoPerson, boolean born) {
         long locationId = yagoIdToHash(yagoLocationId);
         YagoLocation yagoLocation = locationsMap.get(locationId);
-        if (yagoLocation != null && born) {
-            yagoPerson.setBornInLocation(locationId);
-        } else if (yagoLocation != null) {
-            yagoPerson.setDiedInLocation(locationId);
+        if (yagoLocation != null) {
+            yagoLocation.setUsed(true);
+            if (born) {
+                yagoPerson.setBornInLocation(locationId);
+            } else {
+                yagoPerson.setDiedInLocation(locationId);
+            }
         }
     }
 

@@ -66,6 +66,8 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
             yagoParser.parseYagoLocationFile(files.get(ParserConstants.YAGO_FACTS_TSV));
             progressLogger(++step, numberOfSteps, "Filtering out persons without birth date/place ..");
             yagoParser.validatePersonsMap();
+            progressLogger(++step, numberOfSteps, "Filtering out unused locations ..");
+            yagoParser.removeUnusedLocation();
             progressLogger(++step, numberOfSteps, "Parsing YAGO categories ..");
             yagoParser.parseYagoCategoryFile(files.get(ParserConstants.YAGO_TRANSITIVE_TYPE_TSV));
             progressLogger(++step, numberOfSteps, "Parsing YAGO labels for persons ..");
@@ -73,7 +75,7 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
             progressLogger(++step, numberOfSteps, "Parsing YAGO wikipedia info ..");
             yagoParser.parseYagoWikiFile(files.get(ParserConstants.YAGO_WIKIPEDIA_INFO_TSV));
             progressLogger(++step, numberOfSteps, "Filtering out persons without prefLabel or no labels at all ..");
-            yagoParser.ensureLabels();
+            yagoParser.ensureCategoriesLabelsAndLocations();
             logger.info("Parsing complete");
         } catch (IOException e) {
             logger.error("", e);

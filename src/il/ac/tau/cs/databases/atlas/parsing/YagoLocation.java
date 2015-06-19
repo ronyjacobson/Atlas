@@ -6,6 +6,7 @@ public class YagoLocation {
     private double latitude;
     private double longitude;
     private String wikiUrl;
+    private boolean used;
 
     public YagoLocation() {
     }
@@ -52,6 +53,14 @@ public class YagoLocation {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isUsed() {
+        return used;
+    }
+
+    public void setUsed(boolean used) {
+        this.used = used;
     }
 
     public boolean isValidLocation() {
