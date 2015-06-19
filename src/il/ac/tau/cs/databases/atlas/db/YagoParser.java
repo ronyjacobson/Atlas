@@ -11,33 +11,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class YagoParser {
-    private ProgressUpdater progressUpdater;
-
     private Map<Long, YagoPerson> personsMap; // yagoId -> Person
     private Map<Long, YagoLocation> locationsMap; // locationId -> Location
     private Map<Long, Long> geoIdToLocationIdMap; // geoId -> locationId
-
-    private Map<String, Integer> categoryTypes;
+    private ProgressUpdater progressUpdater;
 
     public YagoParser() {
-
         personsMap = new HashMap<>();
         locationsMap = new HashMap<>();
         geoIdToLocationIdMap = new HashMap<>();
-        categoryTypes = new HashMap<>();
-
-        categoryTypes.put("<wordnet_scientist_110560637>", 1);
-        categoryTypes.put("<wordnet_philosopher_110423589>", 2);
-        categoryTypes.put("<wordnet_politician_110450303>", 3);
-        categoryTypes.put("<wordnet_composer_109947232>", 4);
-        categoryTypes.put("<wordnet_football_player_110101634>", 5);
-        categoryTypes.put("<wordnet_monarchist_110327824>", 6);
-        categoryTypes.put("<wordnet_poet_110444194>", 7);
-        categoryTypes.put("<wordnet_medalist_110305062>", 8);
-    }
-
-    public void setProgressUpdater(ProgressUpdater progressUpdater) {
-        this.progressUpdater = progressUpdater;
     }
 
     public Map<Long, YagoPerson> getPersonsMap() {
@@ -48,8 +30,8 @@ public class YagoParser {
         return locationsMap;
     }
 
-    public Map<String, Integer> getCategoryTypes() {
-        return categoryTypes;
+    public void setProgressUpdater(ProgressUpdater progressUpdater) {
+        this.progressUpdater = progressUpdater;
     }
 
     public void validatePersonsMap() {
@@ -257,7 +239,7 @@ public class YagoParser {
 
             long yagoId = yagoIdToHash(cols[1]);
             String foundCategory = cols[3];
-            Integer categoryId = categoryTypes.get(foundCategory);
+            Integer categoryId = ParserConstants.CATEGORY_TYPES.get(foundCategory);
             if (categoryId != null) {
                 YagoPerson yagoPerson = personsMap.get(yagoId);
                 if (yagoPerson != null) {

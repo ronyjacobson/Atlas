@@ -102,7 +102,7 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
         try (PreparedStatement pstmt = con
                 .prepareStatement("REPLACE INTO category(category_ID,categoryName) VALUES(?,?)")) {
             Pattern p = Pattern.compile(ParserConstants.CATEGORY_REGEX);
-            for (Entry<String, Integer> categoryEntry : yagoParser.getCategoryTypes().entrySet()) {
+            for (Entry<String, Integer> categoryEntry : ParserConstants.CATEGORY_TYPES.entrySet()) {
                 Matcher m = p.matcher(categoryEntry.getKey());
                 if (m.find()) {
                     pstmt.setInt(1, categoryEntry.getValue());
