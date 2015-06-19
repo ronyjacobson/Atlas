@@ -8,7 +8,7 @@ import java.util.*;
 public interface Queries {
 	
 	//Maps between location names and id's
-	Map<String, Integer> locationsMap= new HashMap<>();
+	Map<String, Long> locationsMap= new HashMap<>();
 	
 	//Location names list
 	List<String> locationsNames= new ArrayList<>();
@@ -85,7 +85,7 @@ public interface Queries {
 	 * Add a new entry to the database
 	 * @throws AtlasServerException 
 	 */
-	public void addNew(String name, String category, Date birthDate, Integer birthlocationID, Date deathDate, Integer deathlocationID, String wikiLink, boolean isFemale) throws AtlasServerException;
+	public void addNew(String name, String category, Date birthDate, Long birthlocationID, Date deathDate, Long deathlocationID, String wikiLink, boolean isFemale) throws AtlasServerException;
 	
 	/**
 	 * Store all the chosen favorite IDs to the database
@@ -99,7 +99,7 @@ public interface Queries {
 	/**
 	 * TODO
 	 */
-	public Integer getLocationId(String locationName);
+	public Long getLocationId(String locationName);
 
 	/**
 	 * @return A list of results of all the matching entries in the database

@@ -357,12 +357,9 @@ public class Add extends JFrame {
 				MapBrowserListeners.showSpinner();
 				try {
 					// Get locations IDs
-					Integer birthLocaionID = Queries.locationsMap.get(wasBornIn
-							.getSelectedItem().toString());
-					Integer deathLocaionID = (hasDiedIn.getSelectedItem()
-							.toString().equals(NOT_DEAD_LOCATION)) ? null
-							: Queries.locationsMap.get(hasDiedIn
-									.getSelectedItem().toString());
+					Long birthLocaionID = Queries.locationsMap.get(wasBornIn.getSelectedItem().toString());
+					Long deathLocaionID = (hasDiedIn.getSelectedItem().toString().equals(NOT_DEAD_LOCATION)) ? null
+							: Queries.locationsMap.get(hasDiedIn.getSelectedItem().toString());
 					// Get dates
 					Date birthDate = wasBornOn.getDate();
 					Date deathDate = (deathLocaionID == null) ? null

@@ -11,6 +11,7 @@ import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -168,6 +169,7 @@ public class Login extends JFrame {
 			List<String> options = new ArrayList<String>(Main.queries.getAllGeoLocationsNames());
 			options.add(0, DEFAULT_LOCATION);
 			wasBornIn = new JComboBox<String>(options.toArray(new String[options.size()]));
+			wasBornIn.setPreferredSize(new Dimension(200,10));
 			wasBornIn.setFont(fieldFont);
 			wasBornIn.setEnabled(false);
 		} catch (AtlasServerException e) {

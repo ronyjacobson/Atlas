@@ -133,7 +133,7 @@ public class DBQueries implements Queries {
 	}
 
 	@Override
-	public Integer getLocationId(String locationName) {
+	public Long getLocationId(String locationName) {
 		if (!locationsMap.isEmpty()) {
 			return locationsMap.get(locationName);
 		} else {
@@ -233,7 +233,7 @@ public class DBQueries implements Queries {
 	 */
 	@Override
 	public void addNew(String name, String category, Date birthDate,
-			Integer birthlocationID, Date deathDate, Integer deathlocationID,
+			Long birthlocationID, Date deathDate, Long deathlocationID,
 			String wikiLink, boolean isFemale) throws AtlasServerException {
 		
 		// Initialize DB query
@@ -242,8 +242,7 @@ public class DBQueries implements Queries {
 					"Cant add to favorites, choose a category and then add");
 		}
 		int catId = categoriesMap.get(category);
-		AddPersonQuery query = new AddPersonQuery(name, catId, birthDate,
-				birthlocationID, deathDate, deathlocationID, wikiLink, isFemale);
+		AddPersonQuery query = new AddPersonQuery(name, catId, birthDate, birthlocationID, deathDate, deathlocationID, wikiLink, isFemale);
 
 		logger.info(String.format("Adding person: %s...", name));
 

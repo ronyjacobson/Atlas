@@ -37,7 +37,7 @@ public class RegisterUserQuery extends BaseDBCommand<User> {
 			statement.setString(1, user.getUsername());
 			statement.setString(2, user.getPassword());
 			if (user.getLocationID() != null) {
-				statement.setInt(3, user.getLocationID());
+				statement.setLong(3, user.getLocationID());
 			} else {
 				statement.setNull(3, java.sql.Types.BIGINT);
 			}

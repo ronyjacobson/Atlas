@@ -49,7 +49,7 @@ public class GetUserQuery extends BaseDBCommand<User> {
             	String username = resultSet.getString(DBConstants.USERNAME_L);
             	String password = resultSet.getString(DBConstants.PASSWORD_L);
             	Date dateOfBirth = resultSet.getDate(DBConstants.BORN_ON_DATE_L);
-            	int locationID = resultSet.getInt(DBConstants.BORN_IN_LOCATION_L);
+            	Long locationID = resultSet.getLong(DBConstants.BORN_IN_LOCATION_L);
             	int userID = resultSet.getInt(DBConstants.USER_ID_L);
             	boolean isFemail = resultSet.getBoolean(DBConstants.IS_FEMALE_L);
 				fetchedUser = new User(userID, username, password, dateOfBirth, locationID, isFemail);
