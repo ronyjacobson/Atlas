@@ -1,5 +1,6 @@
 package il.ac.tau.cs.databases.atlas.db;
 
+import il.ac.tau.cs.databases.atlas.ParserConstants;
 import il.ac.tau.cs.databases.atlas.ProgressUpdater;
 import il.ac.tau.cs.databases.atlas.parsing.*;
 
@@ -17,13 +18,6 @@ public class YagoParser {
     private Map<Long, Long> geoIdToLocationIdMap; // geoId -> locationId
 
     private Map<String, Integer> categoryTypes;
-
-    // TODO: consider changing to private members or globals in another class (ParserConstants?)
-    public static final String GEONAMES_URL_REGEX = "http://sws.geonames.org/([0-9]+)";
-    public static final String DATE_REGEX = "[0-9][0-9][0-9][0-9]-[#0-9][#0-9]-[#0-9][#0-9]";
-    public static final String CATEGORY_REGEX = "<wordnet_(.+)_[0-9]+>";
-    public static final String LABEL_REGEX = "\"(.*)\"((@eng)?)";
-    public static final String WIKI_REGEX = "<http://en\\.wikipedia\\.org/wiki/(.*)>";
 
     public YagoParser() {
 
@@ -164,7 +158,7 @@ public class YagoParser {
         long interval = numberOfLines / 100;
 
         BufferedReader br = new BufferedReader(new FileReader(yagoDateFile));
-        Pattern pattern = Pattern.compile(DATE_REGEX);
+        Pattern pattern = Pattern.compile(ParserConstants.DATE_REGEX);
 
         String line;
         while ((line = br.readLine()) != null) {
@@ -283,7 +277,7 @@ public class YagoParser {
         long interval = numberOfLines / 100;
 
         BufferedReader br = new BufferedReader(new FileReader(yagoGeonamesFile));
-        Pattern p = Pattern.compile(GEONAMES_URL_REGEX);
+        Pattern p = Pattern.compile(ParserConstants.GEONAMES_URL_REGEX);
         String line;
         while ((line = br.readLine()) != null) {
             if (++lineNumber % interval == 0) {
@@ -359,7 +353,7 @@ public class YagoParser {
         long interval = numberOfLines / 100;
 
         BufferedReader br = new BufferedReader(new FileReader(yagoWiKiFile));
-        Pattern p = Pattern.compile(WIKI_REGEX);
+        Pattern p = Pattern.compile(ParserConstants.WIKI_REGEX);
         String line;
         while ((line = br.readLine()) != null) {
             if (++lineNumber % interval == 0) {
@@ -426,7 +420,7 @@ public class YagoParser {
         long interval = numberOfLines / 100;
 
         BufferedReader br = new BufferedReader(new FileReader(yagoLabelsFile));
-        Pattern p = Pattern.compile(LABEL_REGEX);
+        Pattern p = Pattern.compile(ParserConstants.LABEL_REGEX);
         String line;
         while ((line = br.readLine()) != null) {
             if (++lineNumber % interval == 0) {

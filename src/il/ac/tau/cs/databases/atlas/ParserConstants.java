@@ -21,4 +21,10 @@ public class ParserConstants {
             YAGO_LITERAL_FACTS_TSV,
             YAGO_GEONAMES_ENTITY_IDS_TSV,
             CITIES1000_TXT};
+
+    public static final String GEONAMES_URL_REGEX = "http://sws.geonames.org/([0-9]+)";
+    public static final String DATE_REGEX = "[0-9][0-9][0-9][0-9]-[#0-9][#0-9]-[#0-9][#0-9]";
+    public static final String CATEGORY_REGEX = "<wordnet_(.+)_[0-9]+>";
+    public static final String LABEL_REGEX = "\"(.*)\"((@eng)?)";
+    public static final String WIKI_REGEX = "<http://en\\.wikipedia\\.org/wiki/(.*)>";
 }
