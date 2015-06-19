@@ -7,14 +7,20 @@ import java.util.*;
 
 public interface Queries {
 	
-	//Maps between location names and id's
+	// Maps between location names and id's
 	Map<String, Long> locationsMap= new HashMap<>();
 	
-	//Location names list
+	// Location names list
 	List<String> locationsNames= new ArrayList<>();
 	
-	//Maps between category names and ids
+	// Maps between category names and ids
 	Map<String, Integer> categoriesMap= new HashMap<>();
+	
+	// List of last fetched reuslts
+	List<Result> lastResults= new ArrayList<Result>();
+	
+	// last SQL query executed
+	String lastQueryExecuted="";
 	
 	
 	/**
