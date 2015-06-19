@@ -115,7 +115,7 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
                 Matcher m = p.matcher(categoryEntry.getKey());
                 if (m.find()) {
                     pstmt.setInt(1, categoryEntry.getValue());
-                    pstmt.setString(2, m.group(1));
+                    pstmt.setString(2, prettifyCategoryName(m.group(1)));
                     pstmt.addBatch();
                 }
             }
@@ -125,6 +125,15 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
             throw new AtlasServerException("Failed to populate `categories` table");
         }
         logger.info("'categories' table populated successfully");
+    }
+
+    private String prettifyCategoryName(String cat) {
+        String[] words = cat.split("_");
+        String output = "";
+        for (String word : words) {
+            output += word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase() + " ";
+        }
+        return output.trim();
     }
 
     private void createPersonLabelsTable(Connection con) throws AtlasServerException {

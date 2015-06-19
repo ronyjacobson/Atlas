@@ -45,7 +45,7 @@ public class ParserConstants {
         CATEGORY_TYPES.put("<wordnet_legislator_110253995>", 13);
         CATEGORY_TYPES.put("<wordnet_painter_110391653>", 14);
         CATEGORY_TYPES.put("<wordnet_writer_110794014>", 15);
-        CATEGORY_TYPES.put("<wordnet_entertainer_109616922>", 16);
+        CATEGORY_TYPES.put("<wordnet_creator_109614315>", 16);
         CATEGORY_TYPES.put("<wordnet_comedian_109940146>", 17);
         CATEGORY_TYPES.put("<wordnet_performer_110415638>", 18);
         CATEGORY_TYPES.put("<wordnet_military_officer_110317007>", 19);
@@ -58,8 +58,10 @@ public class ParserConstants {
         CATEGORY_TYPES.put("<wordnet_film_maker_110088390>", 26);
         CATEGORY_TYPES.put("<wordnet_historian_110177150>", 27);
         CATEGORY_TYPES.put("<wordnet_businessperson_109882716>", 28);
-        CATEGORY_TYPES.put("<wordnet_sailor_110546633>", 29);
-        CATEGORY_TYPES.put("<wordnet_revolutionist_110527334>", 30);
+        CATEGORY_TYPES.put("<wordnet_lawyer_110249950>", 29);
+        CATEGORY_TYPES.put("<wordnet_educator_110045713>", 30);
+        CATEGORY_TYPES.put("<wordnet_academician_109759069>", 31);
+        CATEGORY_TYPES.put("<wordnet_medical_practitioner_110305802>", 32);
 
     }
 }
