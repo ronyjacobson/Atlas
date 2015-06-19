@@ -11,7 +11,8 @@ import il.ac.tau.cs.databases.atlas.parsing.YagoPerson;
 import java.io.*;
 import java.sql.*;
 import java.sql.Date;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,30 +44,30 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
             logger.info("Parser started");
             int numberOfSteps = 12;
             int step = 0;
-            progressLogger(++step, numberOfSteps, "Parsing YAGO literal facts info..");
+            progressLogger(++step, numberOfSteps, "Parsing YAGO literal facts info ..");
             yagoParser.parseYagoLiteralFacts(files.get(ParserConstants.YAGO_LITERAL_FACTS_TSV));
-            progressLogger(++step, numberOfSteps, "Parsing YAGO labels for locations..");
+            progressLogger(++step, numberOfSteps, "Parsing YAGO labels for locations ..");
             yagoParser.parseYagoLabelsFile(files.get(ParserConstants.YAGO_LABELS_TSV), true);
-            progressLogger(++step, numberOfSteps, "Parsing YAGO geonames info..");
+            progressLogger(++step, numberOfSteps, "Parsing YAGO geonames info ..");
             yagoParser.parseYagoGeonamesFile(files.get(ParserConstants.YAGO_GEONAMES_ENTITY_IDS_TSV));
-            progressLogger(++step, numberOfSteps, "Parsing Geonames cities info..");
+            progressLogger(++step, numberOfSteps, "Parsing Geonames cities info ..");
             yagoParser.parseGeonamesCitiesFile(files.get(ParserConstants.CITIES1000_TXT));
-            progressLogger(++step, numberOfSteps, "Validating locations..");
+            progressLogger(++step, numberOfSteps, "Filtering out locations with incomplete records ..");
             yagoParser.validateLocationsMap();
-            progressLogger(++step, numberOfSteps, "Parsing YAGO dates..");
+            progressLogger(++step, numberOfSteps, "Parsing YAGO dates ..");
             yagoParser.parseYagoDateFile(files.get(ParserConstants.YAGO_DATE_FACTS_TSV));
-            progressLogger(++step, numberOfSteps, "Parsing YAGO locations facts..");
+            progressLogger(++step, numberOfSteps, "Parsing YAGO locations facts ..");
             yagoParser.parseYagoLocationFile(files.get(ParserConstants.YAGO_FACTS_TSV));
-            progressLogger(++step, numberOfSteps, "Filtering out persons without birth date/place..");
+            progressLogger(++step, numberOfSteps, "Filtering out persons without birth date/place ..");
             yagoParser.validatePersonsMap();
-            progressLogger(++step, numberOfSteps, "Parsing YAGO categories..");
+            progressLogger(++step, numberOfSteps, "Parsing YAGO categories ..");
             yagoParser.parseYagoCategoryFile(files.get(ParserConstants.YAGO_TRANSITIVE_TYPE_TSV));
-            progressLogger(++step, numberOfSteps, "Parsing YAGO labels for persons..");
+            progressLogger(++step, numberOfSteps, "Parsing YAGO labels for persons ..");
             yagoParser.parseYagoLabelsFile(files.get(ParserConstants.YAGO_LABELS_TSV), false);
-            progressLogger(++step, numberOfSteps, "Parsing YAGO wikipedia info..");
+            progressLogger(++step, numberOfSteps, "Parsing YAGO wikipedia info ..");
             yagoParser.parseYagoWikiFile(files.get(ParserConstants.YAGO_WIKIPEDIA_INFO_TSV));
-            progressLogger(++step, numberOfSteps, "Ensuring labels..");
-            yagoParser.ensureLabels(); // remove persons without prefLabel or no labels at all
+            progressLogger(++step, numberOfSteps, "Filtering out persons without prefLabel or no labels at all ..");
+            yagoParser.ensureLabels();
             logger.info("Parsing complete");
         } catch (IOException e) {
             logger.error("", e);
@@ -97,8 +98,8 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
     }
 
     private void createCategoriesTable(Connection con) throws AtlasServerException {
-        progressLogger("Populating 'categories' table");
-        progressUpdater.updateProgress(50, "Creating categories in DB");
+        progressLogger("Populating 'categories' table ..");
+        progressUpdater.updateProgress(50, "Creating categories in DB ..");
         try (PreparedStatement pstmt = con
                 .prepareStatement("REPLACE INTO category(category_ID,categoryName) VALUES(?,?)")) {
             Pattern p = Pattern.compile(ParserConstants.CATEGORY_REGEX);
@@ -119,9 +120,9 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
     }
 
     private void createPersonLabelsTable(Connection con) throws AtlasServerException {
-        progressLogger("Populating 'person_labels' table");
+        progressLogger("Populating 'person_labels' table ..");
+        progressUpdater.updateProgress(50, "Updating labels in DB ..");
         Map<Long, YagoPerson> personsMap = yagoParser.getPersonsMap();
-        progressUpdater.updateProgress(50, "Updating labels in DB");
         try (PreparedStatement pstmt = con
                 .prepareStatement("REPLACE INTO person_labels(label, person_ID) VALUES (?, ?)")) {
             for (YagoPerson yagoPerson : personsMap.values()) {
@@ -141,9 +142,9 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
     }
 
     private void createPersonHasCategoryTable(Connection con) throws AtlasServerException {
-        progressLogger("Populating 'person_has_category' table");
+        progressLogger("Populating 'person_has_category' table ..");
+        progressUpdater.updateProgress(50, "Updating categories in DB ..");
         Map<Long, YagoPerson> personsMap = yagoParser.getPersonsMap();
-        progressUpdater.updateProgress(50, "Updating categories in DB");
         try (PreparedStatement pstmt = con
                 .prepareStatement("REPLACE INTO person_has_category(person_ID, category_ID) VALUES (?, ?)")) {
             for (YagoPerson yagoPerson : personsMap.values()) {
@@ -163,14 +164,13 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
     }
 
     private void createPersonTable(Connection con, int addedByUser) throws AtlasServerException {
-        progressLogger("Populating 'person' table");
+        progressLogger("Populating 'person' table ..");
         Map<Long, YagoPerson> personsMap = yagoParser.getPersonsMap();
         logger.info("Total number of records to be inserted: " + personsMap.size() + " persons");
-
         ResultSet rs = null;
         Statement stmt = null;
 
-        progressUpdater.updateProgress(0, "Uploading persons..");
+        progressUpdater.updateProgress(0, "Uploading persons to DB ..");
         long interval = personsMap.size() / 100;
         long recordCount = 0;
 
@@ -231,7 +231,7 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
     }
 
     private int addYagoUser(Connection con) throws AtlasServerException {
-        logger.info("Setting YAGO user for adding all Yago persons");
+        logger.info("Setting YAGO user for adding all Yago persons ..");
         int newUserId;
         ResultSet rs = null;
         try (PreparedStatement pstmt = con
@@ -256,8 +256,8 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
     }
 
     private void createLocationsTable(Connection con) throws AtlasServerException {
-        progressLogger("Populating 'location' table");
-        progressUpdater.updateProgress(50, "Updating locations in DB");
+        progressLogger("Populating 'location' table ..");
+        progressUpdater.updateProgress(50, "Updating locations in DB ..");
         Map<Long, YagoLocation> locationsMap = yagoParser.getLocationsMap();
         logger.info("Total number of records to be inserted: " + locationsMap.size() + " locations");
         try (PreparedStatement pstmt = con
