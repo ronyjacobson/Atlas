@@ -199,6 +199,13 @@
       	imageUrl: "http://i0.kym-cdn.com/photos/images/masonry/000/162/317/2vA1a.png" });
       }
 
+      <!--Show a message telling a person was updated successfuly-->
+      function personUpdated(name) {
+          swal({title: "Yes We Can!",
+              text: "Thank you for updating " + name + " in Atlas!",
+              imageUrl: "http://memeorama.com/wp-content/uploads/2012/02/you-got-it-obama-meme.png" });
+      }
+
        <!--Show a message telling a person added already exists -->
       function personExists(name) {
       	swal({title: "No duplicates please!",
