@@ -101,8 +101,8 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
         progressUpdater.updateProgress(50, "Creating categories in DB");
         try (PreparedStatement pstmt = con
                 .prepareStatement("REPLACE INTO category(category_ID,categoryName) VALUES(?,?)")) {
-            Pattern p = Pattern.compile(YagoParser.CATEGORY_REGEX);
-            for (Entry<String, Integer> categoryEntry : yagoParser.getCategoryTypes().entrySet()) {
+            Pattern p = Pattern.compile(ParserConstants.CATEGORY_REGEX);
+            for (Entry<String, Integer> categoryEntry : ParserConstants.CATEGORY_TYPES.entrySet()) {
                 Matcher m = p.matcher(categoryEntry.getKey());
                 if (m.find()) {
                     pstmt.setInt(1, categoryEntry.getValue());

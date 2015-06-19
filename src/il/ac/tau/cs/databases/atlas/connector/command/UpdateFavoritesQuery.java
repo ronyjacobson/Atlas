@@ -44,7 +44,7 @@ public class UpdateFavoritesQuery extends BaseDBCommand<Void> {
                 addStmt.addBatch();
             }
             
-            System.out.println(String.format("Executing DB query:\n %s.",
+            logger.info(String.format("Executing DB query:\n %s.",
 					addStmt.toString()));
             addStmt.executeBatch();
             
@@ -63,7 +63,7 @@ public class UpdateFavoritesQuery extends BaseDBCommand<Void> {
             	removeStmt.setInt(2, Main.user.getUserID());
             	removeStmt.addBatch();
             }
-            System.out.println(String.format("Executing DB query:\n %s.",
+            logger.info(String.format("Executing DB query:\n %s.",
             		removeStmt.toString()));
             removeStmt.executeBatch();
             
@@ -76,7 +76,7 @@ public class UpdateFavoritesQuery extends BaseDBCommand<Void> {
 			safelyClose(addStmt);
 			safelyClose(removeStmt);
 		}
-		System.out.println("Query executed properly.");
+		logger.info("Query executed properly.");
 		return null;
 	}
 }

@@ -10,11 +10,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.log4j.Logger;
+
 /**
  * Created by user on 19/05/2015.
  */
 public enum DynamicConnectionPool implements ConnectionPool {
+	
     INSTANCE;
+    
+    private static final Logger log = Logger.getLogger(ConnectionPool.class);
 
     private String userName;
     private String password;
@@ -75,14 +80,14 @@ public enum DynamicConnectionPool implements ConnectionPool {
             Class.forName("com.mysql.jdbc.Driver");
             // connection = DriverManager.getConnection(dbBaseUrl + ip + ":" + port + "/" + dbName, userName, password);
             connection = DriverManager.getConnection(dbBaseUrl + ip + ":" + port + "/" + dbName + "?rewriteBatchedStatements=true", userName, password);
-            System.out.println("Created new connection: " + connection);
+            log.info("Created new connection: " + connection);
         } catch (SQLException sqle) {
-            System.err.println("SQLException: " + sqle);
-            System.out.println("Unable to connect - " + sqle.getMessage());
+            log.error("SQLException: " + sqle);
+            log.info("Unable to connect - " + sqle.getMessage());
             throw new AtlasServerException("Unable to create connection pool");
         } catch (ClassNotFoundException cnfe) {
-            System.err.println("ClassNotFoundException: " + cnfe);
-            System.out.println("Unable to load the MySQL JDBC driver..");
+            log.error("ClassNotFoundException: " + cnfe);
+            log.info("Unable to load the MySQL JDBC driver..");
             throw new AtlasServerException("Unable to create connection pool");
         }
         return connection;

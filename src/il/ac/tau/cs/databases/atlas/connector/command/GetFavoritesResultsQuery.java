@@ -48,13 +48,13 @@ public class GetFavoritesResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 		String hashIDPref;
 		
 		if (isBirth) {
-			System.out.println("Fetching births of favorites...");
+			logger.info("Fetching births of favorites...");
 			hashIDPref = "birth";
 		} else {
-			System.out.println("Fetching deaths of favorites...");
+			logger.info("Fetching deaths of favorites...");
 			hashIDPref = "death";
 		}
-		System.out.println(String.format("Executing DB query: %s.",
+		logger.info(String.format("Executing DB query: %s.",
 				statement.toString()));
 		resultSet = statement.executeQuery();
 

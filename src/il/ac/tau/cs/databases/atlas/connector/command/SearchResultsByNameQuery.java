@@ -56,10 +56,10 @@ public class SearchResultsByNameQuery extends BaseDBCommand<ArrayList<Result>> {
 		String hashIDPref;
 		
 		if (isBirth) {
-			System.out.println("Fetching births by name...");
+			logger.info("Fetching births by name...");
 			hashIDPref = "birth";
 		} else {
-			System.out.println("Fetching deaths by name...");
+			logger.info("Fetching deaths by name...");
 			hashIDPref = "death";
 		}
 		
@@ -73,7 +73,7 @@ public class SearchResultsByNameQuery extends BaseDBCommand<ArrayList<Result>> {
 		st = "SELECT DISTINCT * FROM (" + st + ") AS results";
 		statement = con.prepareStatement(st);
 
-		System.out.println(String.format("Executing DB query: %s.",
+		logger.info(String.format("Executing DB query: %s.",
 				statement.toString()));
 
 		// Execute:

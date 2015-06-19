@@ -45,7 +45,7 @@ public class Map extends JFrame {
 	private static final int GAP_BETWEEN_COMPONENTS = 10;
 	private static final int TIMELINE_MAX = 2015;
 	private static final int TIMELINE_MIN = 1000;
-	private static final int TIMELINE_EXTENT = 100;
+	private static final int TIMELINE_EXTENT = 10;
 	private static final int TIMELINE_INITIAL_VALUE = 1000;
 	public static final String DEFAULT_CATEGORY = "Choose a category...";
 	public static final String FAVORITES_CATEGORY = "Favorites";
@@ -261,8 +261,7 @@ public class Map extends JFrame {
 				try {
 					new Add();
 				} catch (IOException e) {
-					JOptionPane.showMessageDialog(null, "Exception occured while using the add screen.", GrapicUtils.PROJECT_NAME,
-							JOptionPane.ERROR_MESSAGE);
+					MapBrowserListeners.executeJS("showError(\"Exception occured while using the add screen.\");");
 				}
 			}
 		});
@@ -272,8 +271,7 @@ public class Map extends JFrame {
 				try {
 					new Search();
 				} catch (IOException e) {
-					JOptionPane.showMessageDialog(null, "Exception occured while using the search screen.", GrapicUtils.PROJECT_NAME,
-							JOptionPane.ERROR_MESSAGE);
+					MapBrowserListeners.executeJS("showError(\"Exception occured while using the search screen.\");");
 				}
 			}
 		});

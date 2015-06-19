@@ -44,14 +44,14 @@ public class RegisterUserQuery extends BaseDBCommand<User> {
 			statement.setBoolean(4, user.isFemale());
 			statement.setDate(5, new java.sql.Date(user.getDateOfBirth().getTime()));
 
-			System.out.println(String.format("Executing DB query: %s.", statement.toString()));
+			logger.info(String.format("Executing DB query: %s.", statement.toString()));
 			
 			statement.executeUpdate();
 			resultSet = statement.getGeneratedKeys();
 			resultSet.next();
             int genID = resultSet.getInt(1);
             user.setUserID(genID);
-            System.out.println("User added successfully - The generated user ID is: "+ genID);
+            logger.info("User added successfully - The generated user ID is: "+ genID);
 
 		} catch (SQLException e) {
 			Integer errorCode = e.getErrorCode();
@@ -67,7 +67,7 @@ public class RegisterUserQuery extends BaseDBCommand<User> {
 		} finally {
 			safelyClose(statement, resultSet);
 		}
-		System.out.println("Query executed properly.");
+		logger.info("Query executed properly.");
 		return user;
 	}
 
