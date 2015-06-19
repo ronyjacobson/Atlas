@@ -161,7 +161,20 @@ public class Map extends JFrame {
 			MapBrowserListeners.setMap(map);
 			
 			// Create temporary flag PNG files
-			String[] pngFiles = { "favorite.png", "addfavorite.png", "removefavorite.png", "flag-birth-favorites.png", "flag-birth-kings-and-queens.png", "flag-birth-philosophers.png", "flag-birth-scientists.png", "flag-birth.png", "flag-death-favorites.png", "flag-death-kings-and-queens.png", "flag-death-philosophers.png", "flag-death-scientists.png", "flag-death.png" };
+			String[] pngFiles = {
+					"favorite.png",
+					"addfavorite.png",
+					"removefavorite.png",
+					"flag-birth-favorites.png",
+					"flag-birth-monarchist.png",
+					"flag-birth-philosopher.png",
+					"flag-birth-scientist.png",
+					"flag-birth.png",
+					"flag-death-favorites.png",
+					"flag-death-monarchist.png",
+					"flag-death-philosopher.png",
+					"flag-death-scientist.png",
+					"flag-death.png" };
 			String tempDir = System.getProperty("java.io.tmpdir");
 			for (String pngFile: pngFiles){
 				String pngURL = GrapicUtils.RESOURCES_MAP_FOLDER + pngFile;

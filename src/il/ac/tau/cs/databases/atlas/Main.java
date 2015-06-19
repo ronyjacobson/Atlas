@@ -9,6 +9,8 @@ import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
 import java.awt.Toolkit;
 import java.util.Date;
 
+import javax.swing.JOptionPane;
+
 import org.apache.log4j.Logger;
 
 public class Main {
@@ -34,7 +36,6 @@ public class Main {
 			State.autoLoad();
 			//TODO(etan) - server exception
 		} catch (Exception e) {
-			// Throw exception to main screen
 			throw e;
 		}
 	}
@@ -55,8 +56,9 @@ public class Main {
 				new Splash();
 			}
 		} catch (Exception e) {
-			// TODO Handle Exception
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null,
+					"Unable to connect to DB.", GrapicUtils.PROJECT_NAME,
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 }

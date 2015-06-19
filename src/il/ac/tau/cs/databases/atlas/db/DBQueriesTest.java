@@ -69,7 +69,7 @@ public class DBQueriesTest {
 			return;
 		}
 		assertTrue(Queries.locationsMap.isEmpty());
-		queries.getGeoLocationsHashMap();
+		queries.getGeoLocationsIntoHashMap();
 		assertFalse(Queries.locationsMap.isEmpty());
 	}
 
