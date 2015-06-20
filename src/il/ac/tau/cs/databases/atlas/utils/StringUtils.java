@@ -1,7 +1,5 @@
 package il.ac.tau.cs.databases.atlas.utils;
 
-import com.sun.javafx.binding.StringFormatter;
-
 import java.util.Collection;
 
 public class StringUtils {
