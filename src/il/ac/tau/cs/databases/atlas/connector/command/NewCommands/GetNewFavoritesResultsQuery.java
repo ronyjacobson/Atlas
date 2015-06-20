@@ -25,7 +25,8 @@ public class GetNewFavoritesResultsQuery extends GetResultsGeneralQuery {
 	@Override
 	protected String makeWhereStmt() {
 		return super.makeWhereStmt() + 
-				"		AND user_favorites.user_ID = '"+ Main.user.getUserID() + "'\n";
+				"		AND user_favorites.user_ID = '"+ Main.user.getUserID() + "'\n" 
+				+ "		AND person.person_ID = user_favorites.person_ID\n";
 	}
 	
 	@Override
