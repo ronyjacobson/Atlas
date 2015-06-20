@@ -1,5 +1,7 @@
 package il.ac.tau.cs.databases.atlas;
 
+import il.ac.tau.cs.databases.atlas.connector.ConnectionPool;
+import il.ac.tau.cs.databases.atlas.connector.ConnectionPoolHolder;
 import il.ac.tau.cs.databases.atlas.db.DBFilesUplaodListner;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 import il.ac.tau.cs.databases.atlas.graphics.map.MapBrowser;
@@ -36,6 +38,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 
 public class Map extends JFrame {
 
@@ -67,6 +70,7 @@ public class Map extends JFrame {
 	private static JButton buttonUpdate;
 	private static JScrollBar timeline = new JScrollBar(JScrollBar.HORIZONTAL, TIMELINE_INITIAL_VALUE, TIMELINE_EXTENT, TIMELINE_MIN,
 	TIMELINE_MAX);
+	private final Logger log = Logger.getLogger(this.getClass().getName());
 
 	/**
 	 * Creates and shows the map screen.
@@ -93,6 +97,16 @@ public class Map extends JFrame {
 		// Set Actions
 		setResizable(false);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent we) {
+				log.info("Closing map window");
+				final ConnectionPool connectionPool = ConnectionPoolHolder.INSTANCE.get();
+				if (connectionPool != null) {
+					connectionPool.close();
+				}
+			}
+		});
 
 		// Set up the content pane.
 		addComponentsToPanel(getContentPane());

@@ -1,5 +1,7 @@
 package il.ac.tau.cs.databases.atlas;
 
+import il.ac.tau.cs.databases.atlas.connector.ConnectionPool;
+import il.ac.tau.cs.databases.atlas.connector.ConnectionPoolHolder;
 import il.ac.tau.cs.databases.atlas.db.DBConstants;
 import il.ac.tau.cs.databases.atlas.db.DBFilesUplaodListner;
 import il.ac.tau.cs.databases.atlas.db.Queries;
@@ -10,7 +12,6 @@ import il.ac.tau.cs.databases.atlas.utils.AudioUtils;
 import il.ac.tau.cs.databases.atlas.utils.DateUtils;
 import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -19,10 +20,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,6 +43,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import com.toedter.calendar.JDateChooser;
+import org.apache.log4j.Logger;
 
 /**
  * Create and show a login screen.
@@ -57,6 +56,7 @@ public class Login extends JFrame {
 	private static final int NUM_OF_COMPONENTS = 12;
 	private static final int GAP_BETWEEN_COMPONENTS = 10;
 	private static final String DEFAULT_LOCATION = "Choose birth place...";
+	private final Logger log = Logger.getLogger(this.getClass().getName());
 
 	private User fetchedUser = null;
 	private JLabel label;
@@ -95,15 +95,26 @@ public class Login extends JFrame {
 		// Set Actions
 		setResizable(false);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent we) {
+				log.info("Closing login window");
+				final ConnectionPool connectionPool = ConnectionPoolHolder.INSTANCE.get();
+				if (connectionPool != null) {
+					connectionPool.close();
+				}
+			}
+		});
 
 		// Add login panel
 //		setLayout(new BorderLayout());
 		setLayout(new FlowLayout());
 		GridLayout panelLayout = new GridLayout(NUM_OF_COMPONENTS, 1);
-		panelLayout.setVgap(GAP_BETWEEN_COMPONENTS-5);
+		panelLayout.setVgap(GAP_BETWEEN_COMPONENTS - 5);
 		JPanel panel = new JPanel(panelLayout);
 		createLoginPanel(panel, width, height);
 		add(panel);
+
 
 		// Show login screen
 		setVisible(true);
@@ -376,7 +387,6 @@ public class Login extends JFrame {
 
 		// Close login screen
 		setVisible(false);
-		dispose();
 
 		// Play audio
 		Runnable r = new Runnable() {

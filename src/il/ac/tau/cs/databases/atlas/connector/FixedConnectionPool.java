@@ -106,6 +106,7 @@ public class FixedConnectionPool implements ConnectionPool {
     }
 
     public void close() {
+        log.info("closing connection pool");
         for (Connection conn : connectionPool)
             try {
                 if (conn != null) conn.close();

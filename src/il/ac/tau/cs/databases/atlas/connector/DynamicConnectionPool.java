@@ -94,8 +94,10 @@ public class DynamicConnectionPool implements ConnectionPool {
     }
 
     private void closeConnection(Connection connection){
+        log.info("closing connection: " + connection);
         try {
             connection.close();
+            log.info("closing connection done");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -120,6 +122,7 @@ public class DynamicConnectionPool implements ConnectionPool {
 
     @Override
     public synchronized void close() {
+        log.info("Closing connection pool");
         for (Connection connection : locked.keySet()) {
             try {
                 if (connection != null) {
