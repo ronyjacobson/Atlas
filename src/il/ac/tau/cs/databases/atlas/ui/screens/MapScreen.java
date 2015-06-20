@@ -1,12 +1,12 @@
 package il.ac.tau.cs.databases.atlas.ui.screens;
 
 import il.ac.tau.cs.databases.atlas.Main;
+import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
 import il.ac.tau.cs.databases.atlas.db.connection.ConnectionPool;
 import il.ac.tau.cs.databases.atlas.db.connection.ConnectionPoolHolder;
 import il.ac.tau.cs.databases.atlas.ui.listeners.DBFilesUploadListner;
-import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
-import il.ac.tau.cs.databases.atlas.ui.map.MapBrowser;
 import il.ac.tau.cs.databases.atlas.ui.listeners.MapBrowserListeners;
+import il.ac.tau.cs.databases.atlas.ui.map.MapBrowser;
 import il.ac.tau.cs.databases.atlas.ui.utils.AudioUtils;
 import il.ac.tau.cs.databases.atlas.ui.utils.GraphicUtils;
 
@@ -48,7 +48,7 @@ public class MapScreen extends JFrame {
 	private static final int GAP_BETWEEN_COMPONENTS = 10;
 	private static final int TIMELINE_MAX = 2015;
 	private static final int TIMELINE_MIN = 1000;
-	private static final int TIMELINE_EXTENT = 100;
+	private static int TIMELINE_EXTENT = 100;
 	private static final int TIMELINE_INITIAL_VALUE = 1000;
 	public static final String DEFAULT_CATEGORY = "Choose a category...";
 	public static final String FAVORITES_CATEGORY = "Favorites";
@@ -336,5 +336,10 @@ public class MapScreen extends JFrame {
 	}
 	public static void setButtonDisplayAsTableDisabled() {
 		MapScreen.buttonDisplayAsTable.setEnabled(false);
+	}
+
+	public static void setTimelineExtent(int ext) {
+		TIMELINE_EXTENT = ext;
+		timeline.getModel().setExtent(ext);
 	}
 }

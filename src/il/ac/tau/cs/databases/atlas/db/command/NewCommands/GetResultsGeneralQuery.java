@@ -18,7 +18,6 @@ import java.util.Map;
  * Created by user on 22/05/2015.
  */
 public class GetResultsGeneralQuery extends BaseDBCommand<Map<String, Result>> {
-	int limitNumOfResults = DBConstants.LIMIT;
 	PreparedStatement statement = null;
 	ResultSet resultSet = null;
 

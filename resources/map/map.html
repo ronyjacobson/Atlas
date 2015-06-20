@@ -34,7 +34,12 @@
       var infowindow;
       var timespanControlText;
       var categoryControlText;
+      var numOfResultsControlDiv;
       var spinnerEl;
+      var timelineRangeControlText;
+      var rangeSelected = 100;
+      var limit = 1000;
+
 
 
 
@@ -367,48 +372,100 @@
         controlUI.appendChild(categoryControlText);
       }
 
-       function timelineRangeControl(controlDiv, map) {
+       function TimelineRangeControl(controlDiv, map) {
         // Set CSS for the control border
         var controlUI = document.createElement('div');
-        // controlUI.style.backgroundColor = '#fff';
-        // controlUI.style.border = '2px solid #fff';
         controlUI.style.borderRadius = '3px';
-        // controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
         controlUI.style.cursor = 'pointer';
-        controlUI.style.marginLeft = '20px';
+        controlUI.style.marginRight = '20px';
         controlUI.style.textAlign = 'center';
         controlUI.title = 'Timeline Range';
         controlDiv.appendChild(controlUI);
 
         // Set CSS for the control interior
-        categoryControlText = document.createElement('div');
-        categoryControlText.style.color = 'rgb(255,255,255)';
-        categoryControlText.style.border = 'rgb(255,255,255)';
-        //categoryControlText.style.textShadow = "3px 3px 1px #000000"
-        categoryControlText.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
-        categoryControlText.style.borderRadius = "25px";
-        categoryControlText.style.fontFamily = 'Century Gothic';
-        categoryControlText.style.fontSize = '40px';
-        categoryControlText.style.lineHeight = '38px';
-        categoryControlText.style.paddingLeft = '5px';
-        categoryControlText.style.paddingRight = '5px';
-        categoryControlText.style.marginTop = '5px';
-        categoryControlText.style.paddingBottom = '5px';
-        categoryControlText.innerHTML = 'Select Timelime Range';
+        timelineRangeControlText = document.createElement('div');
+        timelineRangeControlText.id = 'range';
+        timelineRangeControlText.style.color = 'rgb(255,255,255)';
+        timelineRangeControlText.style.border = 'rgb(255,255,255)';
+        timelineRangeControlText.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
+        timelineRangeControlText.style.borderRadius = "10px";
+        timelineRangeControlText.style.fontFamily = 'Century Gothic';
+        timelineRangeControlText.style.fontSize = '10px';
+        timelineRangeControlText.style.lineHeight = '12px';
+        timelineRangeControlText.style.paddingLeft = '3px';
+        timelineRangeControlText.style.paddingRight = '3px';
+        timelineRangeControlText.style.paddingTop = '3px';
+        timelineRangeControlText.style.paddingBottom = '3px';
+        timelineRangeControlText.innerHTML = "<b>Timelime Hops</b><br>"+
+        		"<input type=\"Radio\" name=\"TimelineRangeRadioBox\" onclick=\"setRangeSelected(20)\"> 20 <br>" +
+    	    	"<input type=\"Radio\" name=\"TimelineRangeRadioBox\" onclick=\"setRangeSelected(50)\"> 50<br>" +
+    	    	"<input type=\"Radio\" name=\"TimelineRangeRadioBox\" checked onclick=\"setRangeSelected(100)\"> 100<br>" +
+    	    	"<input type=\"Radio\" name=\"TimelineRangeRadioBox\" onclick=\"setRangeSelected(300)\"> 300<br>";
+        controlUI.appendChild(timelineRangeControlText);
+        //<input type="Radio" name="TimelineRange" value="10" checked>10<br>
 
-        chack1 = document.createElement('div');
+    }
 
 
-
-
-        categoryControlText.appendChild
-        controlUI.appendChild(categoryControlText);
+      <!-- Set range of timespan to new range -->
+      function setRangeSelected(newRange) {
+           rangeSelected = newRange;
       }
+
+      <!-- Set range of timespan to new range -->
+      function getRangeSelected() {
+          return rangeSelected+"";
+      }
+
+    function NumOfResultsControl(controlDiv, map) {
+        // Set CSS for the control border
+        var controlUI = document.createElement('div');
+        controlUI.style.borderRadius = '3px';
+        controlUI.style.cursor = 'pointer';
+        controlUI.style.marginRight = '20px';
+        controlUI.style.textAlign = 'center';
+        controlUI.title = 'Timeline Range';
+        controlDiv.appendChild(controlUI);
+
+        // Set CSS for the control interior
+        numOfResultsText = document.createElement('div');
+        numOfResultsText.id = 'range';
+        numOfResultsText.style.color = 'rgb(255,255,255)';
+        numOfResultsText.style.border = 'rgb(255,255,255)';
+        numOfResultsText.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
+        numOfResultsText.style.borderRadius = "10px";
+        numOfResultsText.style.fontFamily = 'Century Gothic';
+        numOfResultsText.style.fontSize = '10px';
+        numOfResultsText.style.lineHeight = '12px';
+        numOfResultsText.style.paddingLeft = '3px';
+        numOfResultsText.style.paddingRight = '3px';
+        numOfResultsText.style.paddingTop = '3px';
+        numOfResultsText.style.paddingBottom = '3px';
+        numOfResultsText.innerHTML = "<b>Maximum number of<br>persons to fetch:</b><br>"+
+        		"<input type=\"Radio\" name=\"numOfResults\" onclick=\"setLimit(100)\"> 100 <br>" +
+    	    	"<input type=\"Radio\" name=\"numOfResults\" onclick=\"setLimit(500)\"> 500<br>" +
+    	    	"<input type=\"Radio\" name=\"numOfResults\" checked  onclick=\"setLimit(1000)\"> 1000<br>" +
+    	    	"<input type=\"Radio\" name=\"numOfResults\" onclick=\"setLimit(1500)\"> 1500<br>";
+        controlUI.appendChild(numOfResultsText);
+        //<input type="Radio" name="TimelineRange" value="10" checked>10<br>
+    }
 
       <!-- Set timespan to new range -->
       function setTimespan(start,end) {
             timespanControlText.innerHTML = start + '-' + end;
       }
+
+
+      <!-- Set range of timespan to new range -->
+      function setLimit(lim) {
+           limit = lim;
+      }
+
+      <!-- Set range of timespan to new range -->
+      function getLimit() {
+           return limit+"";
+      }
+
 
 
       <!-- Set category -->
@@ -502,6 +559,13 @@
         var cateogryControl = new CateogryControl(categoryControlDiv, map);
         categoryControlDiv.index = 1;
         map.controls[google.maps.ControlPosition.TOP].push(categoryControlDiv);
+
+        // Add select timeRange
+        var timelineRangeControlDiv = document.createElement('div');
+        var timelineRangeControl = new TimelineRangeControl(timelineRangeControlDiv, map);
+        timelineRangeControlDiv.index = 1;
+        map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(timelineRangeControlDiv);
+
       }
 
       <!-- Main -->
@@ -516,7 +580,10 @@
 
   <body>
     <div id="ajaxContentHolder" style="visibility: hidden"></div>
-    <div id="map-canvas"></div>
+    <div id="map-canvas">
+    
+
+    </div>
   </body>
 
 </html>

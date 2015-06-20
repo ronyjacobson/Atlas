@@ -6,6 +6,7 @@ import il.ac.tau.cs.databases.atlas.ui.screens.PersonTableScreen;
 import il.ac.tau.cs.databases.atlas.core.ResultsHolder;
 import il.ac.tau.cs.databases.atlas.core.modal.Result;
 import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
+import il.ac.tau.cs.databases.atlas.db.DBConstants;
 import il.ac.tau.cs.databases.atlas.ui.map.MapBrowser;
 import il.ac.tau.cs.databases.atlas.ui.utils.GraphicUtils;
 
@@ -74,15 +75,14 @@ public class MapBrowserListeners {
 					if (map != null) {
 						map.getBrowser().execute("showError(\"" + msg + "\");");
 					} else {
-						// TODO Show message?  (Rony)
+						// TODO Show message? (Rony)
 					}
 				}
 			});
 		}
 	}
 
-	public static class BrowserAddMarkerActionListener implements
-			ActionListener {
+	public static class BrowserAddMarkerActionListener implements ActionListener {
 		static boolean firstQuery = true;
 		JScrollBar timeline;
 		JComboBox<String> categoriesComboBox;
@@ -95,6 +95,8 @@ public class MapBrowserListeners {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			showSpinner();
+
 			if (firstQuery) {
 				firstQuery = false;
 				// Set up favorites list
@@ -110,17 +112,18 @@ public class MapBrowserListeners {
 				List<Result> results = null;
 				try {
 					if (category.equals(MapScreen.DEFAULT_CATEGORY)) {
+						hideSpinner();
 						executeJS("showError(\""
 								+ "Please select a category.\");");
 					} else if (category.equals(MapScreen.FAVORITES_CATEGORY)) {
-						showSpinner();
-						results = Main.queries.getFavorites();						
+
+						results = Main.queries.getFavorites();
 					} else {
-						showSpinner();
 						results = Main.queries.getResults(startYear, endYear,
 								category);
 					}
 				} catch (AtlasServerException ase) {
+					hideSpinner();
 					executeJS("showError(\"" + ase.getMessage() + "\");");
 					ase.printStackTrace();
 				}
@@ -128,7 +131,7 @@ public class MapBrowserListeners {
 					showResultsOnMap(results, category);
 				}
 			} else {
-				// TODO Show message?  (Rony)
+				// TODO Show message? (Rony)
 			}
 		}
 	}
@@ -221,7 +224,7 @@ public class MapBrowserListeners {
 					if (map != null) {
 						map.getBrowser().execute("deleteMarkers();");
 					} else {
-						// TODO Show message?  (Rony)
+						// TODO Show message? (Rony)
 					}
 				}
 			});
@@ -273,7 +276,7 @@ public class MapBrowserListeners {
 						hideSpinner();
 						map.getBrowser().execute("showStats(\"" + msg + "\");");
 					} else {
-						// TODO Show message?  (Rony)
+						// TODO Show message? (Rony)
 					}
 				}
 			});
@@ -332,11 +335,21 @@ public class MapBrowserListeners {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
 					if (map != null) {
-						JScrollBar timeline = (JScrollBar) e.getAdjustable();
-						int start = timeline.getValue();
-						int end = timeline.getValue()
-								+ timeline.getModel().getExtent();
-						setTimespan(start, end);
+
+						// Get extent
+						int extent = Integer.parseInt((String) map.getBrowser()
+								.evaluate("return getRangeSelected();"));
+
+						// Update Extent
+						MapScreen.setTimelineExtent(extent);
+						JScrollBar thisTimeline = (JScrollBar) e.getAdjustable();
+						thisTimeline.getModel().setExtent(extent);
+
+						// Move Timeline
+						int start = thisTimeline.getValue();
+						int end = thisTimeline.getValue()
+								+ thisTimeline.getModel().getExtent();
+						map.getBrowser().execute("setTimespan(" + start + "," + end + ");");
 					} else {
 						// TODO Show message? (Rony)
 					}
