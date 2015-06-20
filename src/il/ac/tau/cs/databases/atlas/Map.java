@@ -301,12 +301,7 @@ public class Map extends JFrame {
 		buttonAdd.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				try {
-					new Add();
-				} catch (IOException e) {
-					MapBrowserListeners
-							.executeJS("showError(\"Exception occured while using the add screen.\");");
-				}
+				new Add();
 			}
 		});
 		buttonSearch.addActionListener(new ActionListener() {

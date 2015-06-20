@@ -66,13 +66,13 @@ public abstract class BaseModifyPerson extends JFrame {
 	protected JTextField name;
 	protected JComboBox<String> category;
 	private JPanel datesPanel;
-	private JDateChooser wasBornOn;
-	private JDateChooser hasDiedOn;
+	protected JDateChooser wasBornOn;
+	protected JDateChooser hasDiedOn;
 	private JPanel locationsPanel;
-	private JComboBox<String> wasBornIn;
-	private JComboBox<String> hasDiedIn;
-	private JTextField wikiLink;
-	private JRadioButton isMale;
+	protected JComboBox<String> wasBornIn;
+	protected JComboBox<String> hasDiedIn;
+	protected JTextField wikiLink;
+	protected JRadioButton isMale;
 	protected JRadioButton isFemale;
 	private JPanel sexPanel;
 	private JButton addButton;
@@ -80,15 +80,22 @@ public abstract class BaseModifyPerson extends JFrame {
 	public String stringName;
 	List<String> locations;
 
-	public BaseModifyPerson() throws IOException {
+	public BaseModifyPerson() {
 		logger.info("Creating Add/Edit Dialog window...");
 		String addImagePath = GrapicUtils.getSkin() + "SecondaryScreen.png";
-
+		int width;
+		int height;
 		// Get graphics attributes
-		InputStream imageStream = getClass().getResourceAsStream(addImagePath);
-		BufferedImage image = ImageIO.read(imageStream);
-		int width = image.getWidth();
-		int height = image.getHeight();
+		try {
+			InputStream imageStream = getClass().getResourceAsStream(addImagePath);
+			BufferedImage image = ImageIO.read(imageStream);
+			width = image.getWidth();
+			height = image.getHeight();
+		} catch (IOException e) {
+			logger.warn("Failed to load image ('" + addImagePath + "'), using default background instead");
+			width = 487;
+			height = 589;
+		}
 
 		// Set graphics
 		URL imageURL = getClass().getResource(addImagePath);

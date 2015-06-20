@@ -10,13 +10,41 @@ import java.util.Date;
 public class UpdatePerson extends BaseModifyPerson{
 
     private int personId;
+    private String personName;
+    private String bLocation;
+    private Date bDate;
+    private String dLocation;
+    private Date dDate;
+    private String wikiURL;
+    private boolean personIsFemale;
 
-    public UpdatePerson(int personId) throws IOException {
+    public UpdatePerson(int personId, String personName, String bLocation, Date bDate, String dLocation, Date dDate, String wikiURL, boolean personIsFemale) {
         this.personId = personId;
+        this.personName = personName;
+        this.bLocation = bLocation;
+        this.bDate = bDate;
+        this.dLocation = dLocation;
+        this.dDate = dDate;
+        this.wikiURL = wikiURL;
+        this.personIsFemale = personIsFemale;
+
+        populateFields();
     }
 
-    public UpdatePerson(int personId, String name, String bLocation, Date bDate, String dLocation, Date dDate, String wikiURL) throws IOException {
-        this.personId = personId;
+    public void populateFields() {
+        name.setText(personName);
+        if (personIsFemale) {
+            isFemale.setSelected(true);
+            isMale.setSelected(false);
+        } else {
+            isFemale.setSelected(false);
+            isMale.setSelected(true);
+        }
+        wasBornIn.setSelectedItem(bLocation);
+        hasDiedIn.setSelectedItem(dLocation);
+        wasBornOn.setDate(bDate);
+        hasDiedOn.setDate(dDate);
+        wikiLink.setText(wikiURL);
     }
 
     @Override
@@ -42,6 +70,6 @@ public class UpdatePerson extends BaseModifyPerson{
         dynamicConnectionPool.initialize("DbMysql06", "DbMysql06", "localhost", "3306", "DbMysql06");
         ConnectionPoolHolder.INSTANCE.set(dynamicConnectionPool);
 
-        new UpdatePerson(123);
+        new UpdatePerson(123, "paz", "London", new Date(325454643), "London", new Date(1253254), "http://www.etan.rona", true);
     }
 }

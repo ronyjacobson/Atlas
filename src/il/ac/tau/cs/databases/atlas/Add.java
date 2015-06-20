@@ -2,13 +2,9 @@ package il.ac.tau.cs.databases.atlas;
 
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 
-import java.io.IOException;
 import java.util.Date;
 
 public class Add extends BaseModifyPerson {
-
-	public Add() throws IOException {
-	}
 
 	@Override
 	protected String getButtonText() {
