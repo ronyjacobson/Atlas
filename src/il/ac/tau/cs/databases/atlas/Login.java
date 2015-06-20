@@ -42,6 +42,8 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
+
 import com.toedter.calendar.JDateChooser;
 import org.apache.log4j.Logger;
 
@@ -72,6 +74,7 @@ public class Login extends JFrame {
 	private boolean signupEnabled = false;
 	private boolean wereCredentialsEntered = false;
 	private JLabel installLabel;
+	List<String> options;
 	private JButton installButton;
 
 	public Login() throws IOException {
@@ -181,9 +184,11 @@ public class Login extends JFrame {
 		wasBornOn.setEnabled(false);
 
 		try {
-			List<String> options = new ArrayList<String>(Main.queries.getAllGeoLocationsNames());
+			options = new ArrayList<String>(Main.queries.getAllGeoLocationsNames());
 			options.add(0, DEFAULT_LOCATION);
 			wasBornIn = new JComboBox<>(options.toArray(new String[options.size()]));
+			wasBornIn.setEditable(true);
+			AutoCompleteDecorator.decorate(wasBornIn);
 			wasBornIn.setPreferredSize(new Dimension(200,10));
 			wasBornIn.setFont(fieldFont);
 			wasBornIn.setEnabled(false);
@@ -316,6 +321,10 @@ public class Login extends JFrame {
 				JOptionPane.showMessageDialog(null, "<HTML>Password can not exceed "+DBConstants.PASSWORD_SIZE+" characters.</HTML>", GrapicUtils.PROJECT_NAME, 1);
 			} else if (DateUtils.isToday(wasBornOn.getCalendar()) && signupEnabled) {
 				JOptionPane.showMessageDialog(null, "No way you were born today, enter a valid birthday.", GrapicUtils.PROJECT_NAME, 1);
+			} else if (!options.contains(wasBornIn.getSelectedItem().toString())) { 
+				JOptionPane.showMessageDialog(null,
+						"Please choose a birth place that exists in the list.",
+						GrapicUtils.PROJECT_NAME, 1);
 			} else if (!isFemale.isSelected() && !isMale.isSelected() && signupEnabled) {
 				JOptionPane.showMessageDialog(null, "Please choose male or female.", GrapicUtils.PROJECT_NAME, 1);
 			} else {

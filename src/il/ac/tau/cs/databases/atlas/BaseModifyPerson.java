@@ -39,6 +39,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import org.apache.log4j.Logger;
+import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -77,6 +78,7 @@ public abstract class BaseModifyPerson extends JFrame {
 	private JButton addButton;
 	private boolean wereDetailsEntered = false;
 	public String stringName;
+	List<String> locations;
 
 	public BaseModifyPerson() throws IOException {
 		logger.info("Creating Add/Edit Dialog window...");
@@ -275,18 +277,22 @@ public abstract class BaseModifyPerson extends JFrame {
 
 		// Create location pickers
 		try {
-			List<String> locations = new ArrayList<String>(
+			locations = new ArrayList<String>(
 					Main.queries.getAllGeoLocationsNames());
 			
 			locations.add(0, DEFAULT_BIRTH_LOCATION);
 			wasBornIn = new JComboBox<String>(
 					locations.toArray(new String[locations.size()]));
+			wasBornIn.setEditable(true);
+			AutoCompleteDecorator.decorate(wasBornIn);
 			Dimension d= new Dimension(100,10);		
 			wasBornIn.setPreferredSize(d);
 			locations.set(0, DEFAULT_DEATH_LOCATION);
 			locations.add(1, NOT_DEAD_LOCATION);
 			hasDiedIn = new JComboBox<String>(
 					locations.toArray(new String[locations.size()]));
+			hasDiedIn.setEditable(true);
+			AutoCompleteDecorator.decorate(hasDiedIn);
 			hasDiedIn.setPreferredSize(d);
 
 		} catch (AtlasServerException e) {
@@ -463,6 +469,16 @@ public abstract class BaseModifyPerson extends JFrame {
 				.equals(DEFAULT_BIRTH_LOCATION)) {
 			JOptionPane.showMessageDialog(null,
 					"Please choose a birth place from the list.",
+					GrapicUtils.PROJECT_NAME, 1);
+			return false;
+		} else if (!locations.contains(wasBornIn.getSelectedItem().toString())) { 
+			JOptionPane.showMessageDialog(null,
+					"Please choose a birth place that exists in the list.",
+					GrapicUtils.PROJECT_NAME, 1);
+			return false;
+		} else if (!locations.contains(hasDiedIn.getSelectedItem().toString())) { 
+			JOptionPane.showMessageDialog(null,
+					"Please choose a death place that exists in the list.",
 					GrapicUtils.PROJECT_NAME, 1);
 			return false;
 		} else if (hasDiedIn.getSelectedItem().toString()
