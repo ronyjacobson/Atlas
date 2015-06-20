@@ -1,4 +1,6 @@
 package il.ac.tau.cs.databases.atlas.utils;
+import il.ac.tau.cs.databases.atlas.ui.utils.GraphicUtils;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -16,7 +18,7 @@ public class DateUtils {
     public static boolean isSameDay(Date date1, Date date2) {
         if (date1 == null || date2 == null) {
         	String msg = "Please enter a valid date.";
-        	JOptionPane.showMessageDialog(null, msg, GrapicUtils.PROJECT_NAME, 1);
+        	JOptionPane.showMessageDialog(null, msg, GraphicUtils.PROJECT_NAME, 1);
             throw new IllegalArgumentException("Dates can not be null.");
             
         }
@@ -37,7 +39,7 @@ public class DateUtils {
     public static boolean isSameDay(Calendar cal1, Calendar cal2) {
         if (cal1 == null || cal2 == null) {
         	String msg = "Please enter a valid date.";
-        	JOptionPane.showMessageDialog(null, msg, GrapicUtils.PROJECT_NAME, 1);
+        	JOptionPane.showMessageDialog(null, msg, GraphicUtils.PROJECT_NAME, 1);
             throw new IllegalArgumentException("Dates can not be null.");
         }
         return (cal1.get(Calendar.ERA) == cal2.get(Calendar.ERA) &&
@@ -75,7 +77,7 @@ public class DateUtils {
     public static boolean isBeforeDay(Date date1, Date date2) {
         if (date1 == null || date2 == null) {
         	String msg = "Please enter a valid date.";
-        	JOptionPane.showMessageDialog(null, msg, GrapicUtils.PROJECT_NAME, 1);
+        	JOptionPane.showMessageDialog(null, msg, GraphicUtils.PROJECT_NAME, 1);
             throw new IllegalArgumentException("Dates can not be null.");
         }
         Calendar cal1 = Calendar.getInstance();
@@ -95,7 +97,7 @@ public class DateUtils {
     public static boolean isBeforeDay(Calendar cal1, Calendar cal2) {
         if (cal1 == null || cal2 == null) {
         	String msg = "Please enter a valid date.";
-        	JOptionPane.showMessageDialog(null, msg, GrapicUtils.PROJECT_NAME, 1);
+        	JOptionPane.showMessageDialog(null, msg, GraphicUtils.PROJECT_NAME, 1);
             throw new IllegalArgumentException("Dates can not be null.");
         }
         if (cal1.get(Calendar.ERA) < cal2.get(Calendar.ERA)) return true;
@@ -115,7 +117,7 @@ public class DateUtils {
     public static boolean isAfterDay(Date date1, Date date2) {
         if (date1 == null || date2 == null) {
         	String msg = "Please enter a valid date.";
-        	JOptionPane.showMessageDialog(null, msg, GrapicUtils.PROJECT_NAME, 1);
+        	JOptionPane.showMessageDialog(null, msg, GraphicUtils.PROJECT_NAME, 1);
             throw new IllegalArgumentException("Dates can not be null.");
         }
         Calendar cal1 = Calendar.getInstance();
@@ -135,7 +137,7 @@ public class DateUtils {
     public static boolean isAfterDay(Calendar cal1, Calendar cal2) {
         if (cal1 == null || cal2 == null) {
         	String msg = "Please enter a valid date.";
-        	JOptionPane.showMessageDialog(null, msg, GrapicUtils.PROJECT_NAME, 1);
+        	JOptionPane.showMessageDialog(null, msg, GraphicUtils.PROJECT_NAME, 1);
             throw new IllegalArgumentException("Dates can not be null.");
         }
         if (cal1.get(Calendar.ERA) < cal2.get(Calendar.ERA)) return false;
@@ -155,7 +157,7 @@ public class DateUtils {
     public static boolean isWithinDaysFuture(Date date, int days) {
         if (date == null) {
         	String msg = "Please enter a valid date.";
-        	JOptionPane.showMessageDialog(null, msg, GrapicUtils.PROJECT_NAME, 1);
+        	JOptionPane.showMessageDialog(null, msg, GraphicUtils.PROJECT_NAME, 1);
             throw new IllegalArgumentException("Dates can not be null.");
         }
         Calendar cal = Calendar.getInstance();
@@ -173,7 +175,7 @@ public class DateUtils {
     public static boolean isWithinDaysFuture(Calendar cal, int days) {
         if (cal == null) {
         	String msg = "Please enter a valid date.";
-        	JOptionPane.showMessageDialog(null, msg, GrapicUtils.PROJECT_NAME, 1);
+        	JOptionPane.showMessageDialog(null, msg, GraphicUtils.PROJECT_NAME, 1);
             throw new IllegalArgumentException("Dates can not be null.");
         }
         Calendar today = Calendar.getInstance();

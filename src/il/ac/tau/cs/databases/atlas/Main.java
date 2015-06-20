@@ -1,14 +1,18 @@
 package il.ac.tau.cs.databases.atlas;
 
-import il.ac.tau.cs.databases.atlas.connector.ConnectionPool;
-import il.ac.tau.cs.databases.atlas.connector.ConnectionPoolHolder;
-import il.ac.tau.cs.databases.atlas.connector.DynamicConnectionPool;
-import il.ac.tau.cs.databases.atlas.connector.FixedConnectionPool;
-import il.ac.tau.cs.databases.atlas.db.DBQueries;
-import il.ac.tau.cs.databases.atlas.db.Queries;
-import il.ac.tau.cs.databases.atlas.db.User;
-import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
-import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
+import il.ac.tau.cs.databases.atlas.db.connection.ConnectionPool;
+import il.ac.tau.cs.databases.atlas.db.connection.ConnectionPoolHolder;
+import il.ac.tau.cs.databases.atlas.db.connection.DynamicConnectionPool;
+import il.ac.tau.cs.databases.atlas.db.connection.FixedConnectionPool;
+import il.ac.tau.cs.databases.atlas.db.queries.DBQueries;
+import il.ac.tau.cs.databases.atlas.db.queries.Queries;
+import il.ac.tau.cs.databases.atlas.core.modal.User;
+import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
+import il.ac.tau.cs.databases.atlas.ui.screens.LoginScreen;
+import il.ac.tau.cs.databases.atlas.ui.screens.MapScreen;
+import il.ac.tau.cs.databases.atlas.ui.screens.SplashScreen;
+import il.ac.tau.cs.databases.atlas.ui.utils.State;
+import il.ac.tau.cs.databases.atlas.ui.utils.GraphicUtils;
 
 import java.awt.Toolkit;
 import java.io.FileInputStream;
@@ -30,7 +34,7 @@ public class Main {
 	
 	//DEBUG
 	static boolean SKIP_SPLASH=false;
-	static boolean SKIP_LOGIN = true;
+	static boolean SKIP_LOGIN = false;
 	
 	
 	/**
@@ -43,7 +47,7 @@ public class Main {
 		
 		// Get the user's screen size
 		logger.debug("Atlas started");
-		GrapicUtils.screenSize = Toolkit.getDefaultToolkit().getScreenSize();		
+		GraphicUtils.screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		
 		// Initialize DB
 		Properties prop = readConfFile(pathToConfFile);
@@ -143,21 +147,21 @@ public class Main {
 			initialize(pathToConfFile);
 			
 			if (SKIP_SPLASH) {
-				new Login();
+				new LoginScreen();
 			} else if (SKIP_LOGIN){
 				Main.user = new User(2,"Rony", "0000");
-				new Map();
+				new MapScreen();
 			} else {
 				try {
 					new ArrayList<String>(Main.queries.getAllGeoLocationsNames());
 				} catch (AtlasServerException e){
-					JOptionPane.showMessageDialog(null, e.getMessage(), GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, e.getMessage(), GraphicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
 				}
 				// Show splash screen
-				new Splash();
+				new SplashScreen();
 			}
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, e.getMessage(), GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, e.getMessage(), GraphicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
 			logger.error("Terminating program", e);
 		}
 	}
