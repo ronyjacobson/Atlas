@@ -21,8 +21,7 @@ import java.util.Map;
 
 public class PersonTable {
 
-    public static final String[] COLUMNS = {"Name", "Born in", "Date of Birth", "Died in", "Date of Death", "Wiki Link"};
-    private Shell shell;
+    public static final String[] COLUMNS = {"Name", "Sex", "Born in", "Date of Birth", "Died in", "Date of Death", "Wiki Link"};
     private Display display;
     private final Table table;
 
@@ -35,6 +34,7 @@ public class PersonTable {
         shell.setLayout(layout);
         final Button editPersonButton = new Button(shell, SWT.PUSH);
         editPersonButton.setText("Edit selected person");
+        editPersonButton.setEnabled(false);
         editPersonButton.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent selectionEvent) {
@@ -49,7 +49,7 @@ public class PersonTable {
                     if (deathResult != null ) {
                         new UpdatePerson(personID, personRow.getText(), birthResult.getLocation().getName(), birthResult.getDate(), deathResult.getLocation().getName(), deathResult.getDate(), birthResult.getWikiLink(), birthResult.isFemale());
                     } else {
-                        new UpdatePerson(personID, personRow.getText(), birthResult.getLocation().getName(), birthResult.getDate(), null, null, birthResult.getWikiLink(), birthResult.isBirth());
+                        new UpdatePerson(personID, personRow.getText(), birthResult.getLocation().getName(), birthResult.getDate(), null, null, birthResult.getWikiLink(), birthResult.isFemale());
                     }
                 }
             }
@@ -80,16 +80,30 @@ public class PersonTable {
 
             TableItem item = new TableItem(table, SWT.NONE);
             item.setText(0, bornResult.getName()); // Name
-            item.setText(1, bornResult.getLocation().getName()); // Location
-            item.setText(2, bornResult.getDateToString()); // Birth Date
-            item.setText(3, deathResult == null ? " " : deathResult.getLocation().getName()); // Death Location
-            item.setText(4, deathResult == null ? " " : deathResult.getDateToString()); // Death Date
-            item.setText(5, bornResult.getWikiLink()); // WikiLink
+            item.setText(1, bornResult.isFemale() ? "Female" : "Male"); // Sex
+            item.setText(2, bornResult.getLocation().getName()); // Location
+            item.setText(3, bornResult.getDateToString()); // Birth Date
+            item.setText(4, deathResult == null ? " " : deathResult.getLocation().getName()); // Death Location
+            item.setText(5, deathResult == null ? " " : deathResult.getDateToString()); // Death Date
+            item.setText(6, bornResult.getWikiLink()); // WikiLink
         }
+
+        table.addSelectionListener(new SelectionListener() {
+            @Override
+            public void widgetSelected(SelectionEvent selectionEvent) {
+                editPersonButton.setEnabled(true);
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent selectionEvent) {
+
+            }
+        });
 
         for (int i = 0; i < COLUMNS.length; i++) {
             table.getColumn(i).pack();
         }
+
         shell.pack();
         shell.open();
         while (!shell.isDisposed()) {
