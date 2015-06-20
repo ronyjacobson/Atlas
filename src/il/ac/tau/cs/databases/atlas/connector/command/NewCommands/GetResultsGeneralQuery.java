@@ -22,7 +22,7 @@ public class GetResultsGeneralQuery extends BaseDBCommand<Map<String, Result>> {
 	PreparedStatement statement = null;
 	ResultSet resultSet = null;
 
-	HashMap<String, Result> results = new HashMap<String, Result>();
+	HashMap<String, Result> results = new HashMap<>();
 	private int minYear = 3000;
 	private int maxYear = 0;
 
@@ -93,7 +93,7 @@ public class GetResultsGeneralQuery extends BaseDBCommand<Map<String, Result>> {
 				// Add to result set
 				addToHash("b" + personID, birthResult, results);
 
-				if (diedOn != null) {
+				if (diedOn != null && d_location.getName() != null) {
 					Result deathResult = new Result(personID, name, d_location,
 							diedOn, false, category, personUrl, isFemale,
 							category);
