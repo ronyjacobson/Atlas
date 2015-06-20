@@ -283,11 +283,13 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
             pstmt.setString(2, "yagohasnopassword");
             long locationId = yagoParser.getLocationsMap().entrySet().iterator().next().getValue().getLocationId();
             pstmt.setLong(3, locationId);
+            logger.info(String.format("Executing DB query: %s.",
+                    pstmt.toString()));
             pstmt.executeUpdate();
             rs = pstmt.getGeneratedKeys();
             rs.next();
             newUserId = rs.getInt(1);
-            logger.info("YAGO user id=" + newUserId);
+            logger.info("Query executed properly, YAGO user id=" + newUserId);
             return newUserId;
         } catch (SQLException e) {
             logger.error("Failed to create YAGO user", e);
