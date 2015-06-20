@@ -43,7 +43,7 @@ public class Splash {
 		// Show splash screen
 		splashWindow.setVisible(true);
 		try {
-		    Thread.sleep(3000);
+		    Thread.sleep(6000);
 		} catch (InterruptedException e) {
 		    // If someone stops the splash screen, do nothing
 		}
