@@ -51,8 +51,7 @@ public class Map extends JFrame {
 	private static final int TIMELINE_INITIAL_VALUE = 1000;
 	public static final String DEFAULT_CATEGORY = "Choose a category...";
 	public static final String FAVORITES_CATEGORY = "Favorites";
-	private static final String GO_BUTTON = "GO!";
-	private static final String UPDATE_BUTTON = "UPDATE";
+	private static final String GO_BUTTON = "GO!";	
 	private static int width;
 	private static int height;
 
@@ -241,15 +240,17 @@ public class Map extends JFrame {
 		buttonsPanel.add(buttonGo);
 
 		// Add an Edit button
-		buttonUpdate = new JButton(UPDATE_BUTTON);
-		buttonUpdate.setPreferredSize(dimensionGo);
+		buttonUpdate = new JButton("");
+		buttonUpdate.setIcon(new ImageIcon(getClass().getResource(
+				GrapicUtils.getSkin() + "Edit.png")));
+		buttonUpdate.setPreferredSize(dimensionOther);
 		buttonUpdate.setFont(fieldFont);
 		buttonsPanel.add(buttonUpdate);
 
 		// Add a button for statistics
 		buttonStats = new JButton("");
 		buttonStats.setIcon(new ImageIcon(getClass().getResource(GrapicUtils.getSkin() + "Stats.png")));
-		buttonStats.setPreferredSize(dimensionGo);
+		buttonStats.setPreferredSize(dimensionOther);
 		buttonStats.setFont(fieldFont);
 		buttonsPanel.add(buttonStats);
 
@@ -269,7 +270,7 @@ public class Map extends JFrame {
 		buttonSearch.setFont(fieldFont);
 		buttonsPanel.add(buttonSearch);
 
-		// Add a button for favorites update
+		// Add a button for favorites sync
 		buttonUpdateFavorites = new JButton("");
 		buttonUpdateFavorites.setIcon(new ImageIcon(getClass().getResource(
 				GrapicUtils.getSkin() + "Update.png")));

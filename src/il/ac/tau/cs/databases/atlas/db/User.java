@@ -20,9 +20,13 @@ public class User {
 		this.password = password;
 	}
 	
+	public User(int userID, String username, String password) {
+		this(username, password);
+		this.userID = userID;
+	}
+	
 	public User(String username, String password, Date dateOfBirth, Long locationID, boolean isFemale) {
-		this.username = username;
-		this.password = password;
+		this(username, password);
 		this.dateOfBirth = dateOfBirth;
 		this.locationID = locationID;
 		this.isFemale = isFemale;
