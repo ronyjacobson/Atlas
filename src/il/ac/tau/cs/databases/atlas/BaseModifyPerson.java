@@ -386,6 +386,7 @@ public abstract class BaseModifyPerson extends JFrame {
 					if (!link.toLowerCase().contains("http://")) {
 						link = "http://"+link;
 					}
+					
 
 					execQuery(birthLocationId, deathLocationId, birthDate, deathDate, link);
 
@@ -440,7 +441,7 @@ public abstract class BaseModifyPerson extends JFrame {
 		} else if (category.getSelectedItem().toString()
 				.equals(DEFAULT_CATEGORY)) {
 			JOptionPane.showMessageDialog(null,
-					"Please choose a category place from the list.",
+					"Please choose a category from the list.",
 					GrapicUtils.PROJECT_NAME, 1);
 			return false;
 		} else if (wasBornOn.getCalendar() == null) {
@@ -499,8 +500,16 @@ public abstract class BaseModifyPerson extends JFrame {
 							+ DBConstants.WIKI_URL_SIZE + " characters.",
 					GrapicUtils.PROJECT_NAME, 1);
 			return false;
-		} else if (hasDiedIn.getSelectedItem().toString()
-				.equals(NOT_DEAD_LOCATION)) {
+		} else if (hasDiedOn.getCalendar() == null) {
+			//make sure the date is valid if a location was entered
+			if (!hasDiedIn.getSelectedItem().toString().equals(NOT_DEAD_LOCATION) &&
+					!hasDiedIn.getSelectedItem().toString().equals(DEFAULT_DEATH_LOCATION)) {
+				JOptionPane.showMessageDialog(null,
+						"Please choose a death date or remove the death location",
+						GrapicUtils.PROJECT_NAME, 1);
+				return false;
+			}
+		} else if (hasDiedIn.getSelectedItem().toString().equals(NOT_DEAD_LOCATION)) {
 			if (hasDiedOn.getCalendar() != null) {
 				int reply = JOptionPane
 						.showConfirmDialog(

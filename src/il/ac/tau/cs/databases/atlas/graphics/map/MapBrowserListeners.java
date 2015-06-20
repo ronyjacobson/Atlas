@@ -95,14 +95,12 @@ public class MapBrowserListeners {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			showSpinner();
 			if (firstQuery) {
 				firstQuery = false;
 				// Set up favorites list
 				MapBrowserListeners.updateFavorites();
 			}
 			if (map != null) {
-
 				int startYear = timeline.getModel().getValue();
 				int endYear = timeline.getModel().getValue()
 						+ timeline.getModel().getExtent();
@@ -116,9 +114,11 @@ public class MapBrowserListeners {
 								+ "Please select a category.\");");
 					} else if (category.equals(Map.FAVORITES_CATEGORY)) {
 						results = Main.queries.getFavorites();
+						showSpinner();
 					} else {
 						results = Main.queries.getResults(startYear, endYear,
 								category);
+						showSpinner();
 					}
 				} catch (AtlasServerException ase) {
 					executeJS("showError(\"" + ase.getMessage() + "\");");
