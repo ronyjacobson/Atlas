@@ -73,7 +73,7 @@ public class Add extends BaseModifyPerson {
 					"Please choose male or female.", GrapicUtils.PROJECT_NAME,
 					JOptionPane.INFORMATION_MESSAGE);
 			return false;
-		} else if (name.getText().equalsIgnoreCase("")) {
+		} else if (name.getText().trim().equalsIgnoreCase("")) {
 			JOptionPane.showMessageDialog(null, "Name can not be blank.",
 					GrapicUtils.PROJECT_NAME, JOptionPane.INFORMATION_MESSAGE);
 			return false;
@@ -133,7 +133,7 @@ public class Add extends BaseModifyPerson {
 					"Please choose a death place from the list.",
 					GrapicUtils.PROJECT_NAME, JOptionPane.INFORMATION_MESSAGE);
 			return false;
-		} else if (wikiLink.getText().equalsIgnoreCase("")) {
+		} else if (wikiLink.getText().trim().equalsIgnoreCase("")) {
 			JOptionPane.showMessageDialog(null,
 					"Wikipedia link can not be blank.",
 					GrapicUtils.PROJECT_NAME, JOptionPane.INFORMATION_MESSAGE);
