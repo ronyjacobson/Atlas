@@ -27,7 +27,7 @@ public class AudioUtils {
      * @param filename the name of the file that is going to be played
      */
     public void playSound(){
-
+        /*
         try {
         	String audioPath = GrapicUtils.RESOURCES_FOLDER + AudioUtils.AUDIO_FILE_NAME;
             final InputStream resourceAsStream = getClass().getResourceAsStream(audioPath);
@@ -70,6 +70,7 @@ public class AudioUtils {
 
         sourceLine.drain();
         sourceLine.close();
+        */
     }
     
     /**
