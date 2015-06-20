@@ -15,7 +15,6 @@ import java.awt.event.AdjustmentListener;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -113,12 +112,12 @@ public class MapBrowserListeners {
 						executeJS("showError(\""
 								+ "Please select a category.\");");
 					} else if (category.equals(Map.FAVORITES_CATEGORY)) {
-						results = Main.queries.getFavorites();
 						showSpinner();
+						results = Main.queries.getFavorites();						
 					} else {
+						showSpinner();
 						results = Main.queries.getResults(startYear, endYear,
 								category);
-						showSpinner();
 					}
 				} catch (AtlasServerException ase) {
 					executeJS("showError(\"" + ase.getMessage() + "\");");
@@ -127,7 +126,6 @@ public class MapBrowserListeners {
 				if (results != null) {
 					showResultsOnMap(results, category);
 				}
-				hideSpinner();
 			} else {
 				// TODO Show message?
 			}
@@ -147,19 +145,20 @@ public class MapBrowserListeners {
 
 	public static void showResultsOnMap(final List<Result> results,
 			final String category) {
-		Display.getDefault().asyncExec(new Runnable() {
-			public void run() {
-				map.getBrowser().execute("deleteMarkers();");
-				if (results.isEmpty()) {
-					if (category.equals(Map.FAVORITES_CATEGORY)) {
-						map.getBrowser().execute("noFavoritesResults();"); 
-					} else {
-						map.getBrowser().execute("noResults();");
-					}
-					MapBrowserListeners.setCategory("");
-					hideSpinner();
-				} else {
-					MapBrowserListeners.setCategory(category);
+
+		executeJS("deleteMarkers();");
+		if (results.isEmpty()) {
+			if (category.equals(Map.FAVORITES_CATEGORY)) {
+				executeJS("noFavoritesResults();");
+			} else {
+				executeJS("noResults();");
+			}
+			MapBrowserListeners.setCategory("");
+			hideSpinner();
+		} else {
+
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
 
 					for (Result result : results) {
 						if (!result.isValidResult()) {
@@ -170,15 +169,16 @@ public class MapBrowserListeners {
 						double lng = result.getLocation().getLng();
 
 						// Offset the coordinates a little so
-						// results in the same place won't be in the exact mark on the map				
-						
+						// results in the same place won't be in the exact mark
+						// on the map
+
 						String imageIcon = "flag-";
 						if (result.isBirth()) {
 							imageIcon += "birth";
 						} else {
 							imageIcon += "death";
 							lat += 0.0005;
-							lng += 0.0005;	
+							lng += 0.0005;
 						}
 						if (!result.getCategory().equalsIgnoreCase("")) {
 							// Check for existing category flag
@@ -204,8 +204,11 @@ public class MapBrowserListeners {
 
 					}
 				}
-			}
-		});
+
+			});
+
+			setCategory(category);
+		}
 	}
 
 	public static class BrowserDeleteMarkersActionListener implements
@@ -359,7 +362,7 @@ public class MapBrowserListeners {
 
 	public static void setCategory(String cat) {
 		String exec = "setCategory(\"" + cat + "\");";
-		logger.info("Adjusting category label by executing JS:" + exec);
-		map.getBrowser().execute(exec);
+		logger.info("Adjusting category label and hiding spinner...");
+		executeJS(exec+"hideSpinner();");
 	}
 }

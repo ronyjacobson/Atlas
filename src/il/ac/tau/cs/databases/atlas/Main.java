@@ -14,18 +14,23 @@ import java.awt.Toolkit;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import javax.swing.JOptionPane;
 
-import javax.swing.*;
+import org.apache.log4j.Logger;
 
 public class Main {
 	private static final Logger logger = Logger.getLogger(Main.class);
 	// DB queries object
 	public static final Queries queries = new DBQueries();
 	public static User user;
+	
+	
+	//DEBUG
+	static boolean SKIP_SPLASH=false;
+	static boolean SKIP_LOGIN = true;
+	
 	
 	/**
 	 * Initialize the program parameters and load its state.
@@ -34,11 +39,11 @@ public class Main {
 	 * @param pathToConfFile
 	 */
 	private static void initialize(String pathToConfFile) throws Exception {
+		
 		// Get the user's screen size
 		logger.debug("Atlas started");
-		GrapicUtils.screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		// Load earlier state
-
+		GrapicUtils.screenSize = Toolkit.getDefaultToolkit().getScreenSize();		
+		
 		// Initialize DB
 		Properties prop = readConfFile(pathToConfFile);
 		ConnectionPool connectionPool;
@@ -54,6 +59,8 @@ public class Main {
 				prop.getProperty("port"),
 				prop.getProperty("schemaName"));
 		ConnectionPoolHolder.INSTANCE.set(connectionPool);
+		
+		// Load earlier state
 		State.autoLoad();
 	}
 
@@ -125,16 +132,19 @@ public class Main {
 	 * Main running method
 	 */
 	public static void main(String[] args) {
-		boolean SKIP_LOGIN = false;
 		try {
 			// Initialize the program
 			String pathToConfFile = "config.properties";
 			if (args.length > 0) {
 				pathToConfFile = args[0];
 			}
+			
 			initialize(pathToConfFile);
-			if (SKIP_LOGIN) {
-				Main.user = new User(1, "rony", "0000", new Date(), Long.parseLong("1") , true);
+			
+			if (SKIP_SPLASH) {
+				new Login();
+			} else if (SKIP_LOGIN){
+				Main.user = new User(2,"Rony", "0000");
 				new Map();
 			} else {
 				// Show splash screen
