@@ -147,8 +147,13 @@ public class AddPersonQuery extends BaseDBCommand<Void> {
 			throw new AtlasServerException(e.getMessage());
 		} finally {
 			safelyClose(statement, resultSet);
+			try {
+				con.setAutoCommit(true);
+			} catch (Exception e) {
+			}
 		}
 		logger.info("Query executed properly.");
 		return null;
 	}
+
 }
