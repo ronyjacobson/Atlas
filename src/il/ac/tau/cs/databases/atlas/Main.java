@@ -14,6 +14,7 @@ import java.awt.Toolkit;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import javax.swing.JOptionPane;
@@ -147,6 +148,11 @@ public class Main {
 				Main.user = new User(2,"Rony", "0000");
 				new Map();
 			} else {
+				try {
+					new ArrayList<String>(Main.queries.getAllGeoLocationsNames());
+				} catch (AtlasServerException e){
+					JOptionPane.showMessageDialog(null, e.getMessage(), GrapicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
+				}
 				// Show splash screen
 				new Splash();
 			}

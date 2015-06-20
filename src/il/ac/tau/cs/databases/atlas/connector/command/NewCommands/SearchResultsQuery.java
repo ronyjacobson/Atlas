@@ -67,10 +67,10 @@ public class SearchResultsQuery extends GetResultsGeneralQuery {
 	}
 
 	protected String whereByDates() {
-		return "	AND (person.wasBornOnDate >= '" + sDate
-				+ "' AND person.wasBornOnDate <= '" + eDate
-				+ "') OR (person.diedOnDate >= '" + sDate
-				+ "' AND person.diedOnDate <= '" + eDate + "'))\n";
+		return "	AND ((person.wasBornOnDate >= '" + new java.sql.Date(this.sDate.getTime())
+				+ "' AND person.wasBornOnDate <= '" + new java.sql.Date(this.eDate.getTime())
+				+ "') OR (person.diedOnDate >= '" + new java.sql.Date(this.sDate.getTime())
+				+ "' AND person.diedOnDate <= '" + new java.sql.Date(this.eDate.getTime()) + "'))\n";
 	}
 
 	/**
