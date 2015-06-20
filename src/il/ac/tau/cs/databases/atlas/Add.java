@@ -22,9 +22,10 @@ public class Add extends BaseModifyPerson {
 	}
 
 	@Override
-	protected void execQuery(Long birthLocationID, Long deathLocationID, Date birthDate, Date deathDate, String link) throws AtlasServerException {
-		Main.queries.addNew(name.getText(), category
-						.getSelectedItem().toString(), birthDate,
-				birthLocationID, deathDate, deathLocationID, link, isFemale.isSelected());
+	protected void execQuery(Long birthLocationId, Long deathLocationId, Date birthDate, Date deathDate, String link) throws AtlasServerException {
+		Main.queries.addNew(
+				name.getText(), category.getSelectedItem().toString(),
+				birthDate, birthLocationId, deathDate, deathLocationId,
+				link, isFemale.isSelected());
 	}
 }

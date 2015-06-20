@@ -27,8 +27,10 @@ public class UpdatePerson extends BaseModifyPerson{
     }
 
     @Override
-    protected void execQuery(Long birthLocaionID, Long deathLocaionID, Date birthDate, Date deathDate, String link) throws AtlasServerException {
-        Main.queries.updateRecord(personId, name.getText(), category.getSelectedItem().toString(), birthDate, birthLocaionID, deathDate, deathLocaionID, link, isFemale.isSelected());
+    protected void execQuery(Long birthLocationId, Long deathLocationId, Date birthDate, Date deathDate, String link) throws AtlasServerException {
+        Main.queries.updateRecord(
+                personId, name.getText(), birthDate, birthLocationId,
+                deathDate, deathLocationId, link, isFemale.isSelected());
     }
 
     public static void main(String[] args) throws IOException, AtlasServerException {

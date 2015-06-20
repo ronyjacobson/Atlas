@@ -367,12 +367,12 @@ public abstract class BaseModifyPerson extends JFrame {
 				MapBrowserListeners.showSpinner();
 				try {
 					// Get locations IDs
-					Long birthLocaionID = Queries.locationsMap.get(wasBornIn.getSelectedItem().toString());
-					Long deathLocaionID = (hasDiedIn.getSelectedItem().toString().equals(NOT_DEAD_LOCATION)) ? null
+					Long birthLocationId = Queries.locationsMap.get(wasBornIn.getSelectedItem().toString());
+					Long deathLocationId = (hasDiedIn.getSelectedItem().toString().equals(NOT_DEAD_LOCATION)) ? null
 							: Queries.locationsMap.get(hasDiedIn.getSelectedItem().toString());
 					// Get dates
 					Date birthDate = wasBornOn.getDate();
-					Date deathDate = (deathLocaionID == null) ? null
+					Date deathDate = (deathLocationId == null) ? null
 							: hasDiedOn.getDate();
 					
 					//get wikiLink
@@ -381,7 +381,7 @@ public abstract class BaseModifyPerson extends JFrame {
 						link = "http://"+link;
 					}
 
-					execQuery(birthLocaionID, deathLocaionID, birthDate, deathDate, link);
+					execQuery(birthLocationId, deathLocationId, birthDate, deathDate, link);
 
 					// Succeeded- Show message.
 					showMessage();
@@ -409,7 +409,7 @@ public abstract class BaseModifyPerson extends JFrame {
 		MapBrowserListeners.executeJS(code);
 	}
 
-	protected abstract void execQuery(Long birthLocaionID, Long deathLocaionID, Date birthDate, Date deathDate, String link) throws AtlasServerException;
+	protected abstract void execQuery(Long birthLocationId, Long deathLocationId, Date birthDate, Date deathDate, String link) throws AtlasServerException;
 
 	private boolean isInputValidated() {
 		if (!wereDetailsEntered) {

@@ -228,7 +228,7 @@ public class MockQueries implements Queries {
 	}
 
 	@Override
-	public void updateRecord(int personId, String name, String category, Date birthDate, Long birthlocationID, Date deathDate, Long deathlocationID, String wikiLink, boolean isFemale) throws AtlasServerException {
+	public void updateRecord(int personId, String name, Date birthDate, Long birthlocationID, Date deathDate, Long deathlocationID, String wikiLink, boolean isFemale) throws AtlasServerException {
 
 	}
 

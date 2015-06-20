@@ -289,18 +289,13 @@ public class DBQueries implements Queries {
 	 * @throws AtlasServerException
 	 */
 	@Override
-	public void updateRecord(int personId, String name, String category,
-			Date birthDate, Long birthlocationID, Date deathDate,
-			Long deathlocationID, String wikiLink, boolean isFemale)
+	public void updateRecord(int personId, String name,
+			Date birthDate, Long birthLocationId, Date deathDate,
+			Long deathLocationId, String wikiLink, boolean isFemale)
 			throws AtlasServerException {
 
-		// Initialize DB query
-		if (category.equals("Favorites")) {
-			throw new AtlasServerException(
-					"Cant add to favorites, choose a category and then add");
-		}
 		UpdatePersonQuery query = new UpdatePersonQuery(personId, name,
-				birthDate, birthlocationID, deathDate, deathlocationID,
+				birthDate, birthLocationId, deathDate, deathLocationId,
 				wikiLink, isFemale);
 
 		logger.info(String.format("Updating person: %s...", name));
