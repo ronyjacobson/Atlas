@@ -36,7 +36,7 @@ public class GraphicUtils {
 
 		public void actionPerformed(ActionEvent e) {
 			try {
-				State.autoSave();
+//				State.autoSave();
 			} catch (Exception exception) {
 				//new XDialog("Error", exception.getMessage());
 			}
@@ -69,7 +69,7 @@ public class GraphicUtils {
 
 		public void mouseUp(MouseEvent e) {
 			try {
-				State.autoSave();
+//				State.autoSave();
 			} catch (Exception exception) {
 			}
 			System.exit(0);

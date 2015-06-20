@@ -65,8 +65,6 @@ public class Main {
 				prop.getProperty("schemaName"));
 		ConnectionPoolHolder.INSTANCE.set(connectionPool);
 		
-		// Load earlier state
-		State.autoLoad();
 	}
 
 	private static Properties readConfFile(String pathToConfFile) throws AtlasServerException {
