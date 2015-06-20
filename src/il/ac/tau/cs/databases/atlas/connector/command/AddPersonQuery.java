@@ -47,8 +47,8 @@ public class AddPersonQuery extends BaseDBCommand<Void> {
 			// Assert that this person does not exits
 			statement = con.prepareStatement(
 					"SELECT COUNT(*) FROM "
-					+ DBConstants.PersonLabels.TABLE_NAME
-					+ " WHERE label = ?");
+					+ DBConstants.Person.TABLE_NAME
+					+ " WHERE prefLabel = ?");
 			statement.setString(1, name);
 			
 			logger.info(String.format("Executing DB query: %s.",

@@ -53,14 +53,13 @@ public abstract class BaseModifyPerson extends JFrame {
 	protected final Logger logger = Logger.getLogger(this.getClass().getName());
 	
 	private static final long serialVersionUID = 1L;
-	private static final int NUM_OF_COMPONENTS = 10;
-	private static final int GAP_BETWEEN_COMPONENTS = 16;
-	private static final String DEFAULT_CATEGORY = "Choose a category...";
-	private static final String DEFAULT_BIRTH_LOCATION = "Choose place of birth...";
-	private static final String DEFAULT_DEATH_LOCATION = "Choose place of death...";
+	protected int NUM_OF_COMPONENTS = 10;
+	protected int GAP_BETWEEN_COMPONENTS = 16;
+	protected static final String DEFAULT_BIRTH_LOCATION = "Choose place of birth...";
+	protected static final String DEFAULT_DEATH_LOCATION = "Choose place of death...";
 	private static final String DEFAULT_BIRTH_DATE = "Birth date:";
 	private static final String DEFAULT_DEATH_DATE = "Death date (Optional):";
-	private static final String NOT_DEAD_LOCATION = "NOT DEAD";
+	protected static final String NOT_DEAD_LOCATION = "NOT DEAD";
 
 	private JLabel label;
 	protected JTextField name;
@@ -76,7 +75,7 @@ public abstract class BaseModifyPerson extends JFrame {
 	protected JRadioButton isFemale;
 	private JPanel sexPanel;
 	private JButton addButton;
-	private boolean wereDetailsEntered = false;
+	protected boolean wereDetailsEntered = false;
 	public String stringName;
 	List<String> locations;
 
@@ -140,7 +139,6 @@ public abstract class BaseModifyPerson extends JFrame {
 		panel.setOpaque(false);
 
 		// Create buttons and text boxes
-		ClearTextBox clearTextBoxListner = new ClearTextBox();
 		Font labelFont = new Font("Century Gothic", Font.PLAIN,
 				GrapicUtils.FONT_SIZE_LABEL);
 		Font fieldFont = new Font("Century Gothic", Font.PLAIN,
@@ -151,17 +149,8 @@ public abstract class BaseModifyPerson extends JFrame {
 		label.setFont(labelFont);
 
 		name = new JTextField("Full Name");
-		name.addMouseListener(clearTextBoxListner);
 		name.setFont(fieldFont);
-		try {
-			List<String> categories = Main.queries.getAllCategoriesNames();
-			categories.add(0, DEFAULT_CATEGORY);
-			category = new JComboBox<String>(
-					categories.toArray(new String[categories.size()]));
-			category.setFont(fieldFont);
-		} catch (AtlasServerException e) {
-			// TODO handle exception
-		}
+		setCategoriesComboBox(fieldFont);
 
 		isMale = new JRadioButton("Male");
 		isMale.setFont(fieldFont);
@@ -179,12 +168,12 @@ public abstract class BaseModifyPerson extends JFrame {
 		sexPanel.add(isFemale);
 		sexPanel.setOpaque(false);
 
+
 		createDatesPanel();
 
 		createLocationsPanel();
 
 		wikiLink = new JTextField("Link to wikipedia...");
-		wikiLink.addMouseListener(clearTextBoxListner);
 		wikiLink.setFont(fieldFont);
 
 		addButton = new JButton(getButtonText());
@@ -195,17 +184,25 @@ public abstract class BaseModifyPerson extends JFrame {
 		JLabel paddingLabel1 = new JLabel(" ");
 		paddingLabel1.setFont(labelFont);
 
+		addClearTextBoxListenersIfNeeded();
+
 		// Add buttons and text boxes
 		panel.add(paddingLabel1); // Pad
 		panel.add(label);
 		panel.add(sexPanel);
 		panel.add(name);
-		panel.add(category);
+		addCategoryBarToPanel(panel);
 		panel.add(datesPanel);
 		panel.add(locationsPanel);
 		panel.add(wikiLink);
 		panel.add(addButton);
 	}
+
+	protected abstract void addClearTextBoxListenersIfNeeded();
+
+	protected abstract void setCategoriesComboBox(Font fieldFont);
+
+	protected abstract void addCategoryBarToPanel(JPanel panel);
 
 	protected abstract String getButtonText();
 
@@ -317,7 +314,7 @@ public abstract class BaseModifyPerson extends JFrame {
 	/**
 	 * Clear text boxes
 	 */
-	private class ClearTextBox implements MouseListener {
+	protected class ClearTextBox implements MouseListener {
 
 		@Override
 		public void mouseClicked(MouseEvent arg0) {
@@ -425,113 +422,5 @@ public abstract class BaseModifyPerson extends JFrame {
 
 	protected abstract void execQuery(Long birthLocationId, Long deathLocationId, Date birthDate, Date deathDate, String link) throws AtlasServerException;
 
-	private boolean isInputValidated() {
-		if (!wereDetailsEntered) {
-			JOptionPane.showMessageDialog(null,
-					"Please enter the needed details.",
-					GrapicUtils.PROJECT_NAME, 1);
-			return false;
-		} else if (!isFemale.isSelected() && !isMale.isSelected()) {
-			JOptionPane.showMessageDialog(null,
-					"Please choose male or female.", GrapicUtils.PROJECT_NAME,
-					1);
-			return false;
-		} else if (name.getText().equalsIgnoreCase("")) {
-			JOptionPane.showMessageDialog(null, "Name can not be blank.",
-					GrapicUtils.PROJECT_NAME, 1);
-			return false;
-		} else if (name.getText().length() > DBConstants.PREF_LABEL_SIZE) {
-			JOptionPane.showMessageDialog(null, "Name can not exceed "
-					+ DBConstants.PREF_LABEL_SIZE + " characters.",
-					GrapicUtils.PROJECT_NAME, 1);
-			return false;
-		} else if (category.getSelectedItem().toString()
-				.equals(DEFAULT_CATEGORY)) {
-			JOptionPane.showMessageDialog(null,
-					"Please choose a category from the list.",
-					GrapicUtils.PROJECT_NAME, 1);
-			return false;
-		} else if (wasBornOn.getCalendar() == null) {
-			JOptionPane.showMessageDialog(null, "Please choose a birth date",
-					GrapicUtils.PROJECT_NAME, 1);
-			return false;
-		} else if ((hasDiedOn.getCalendar() != null)
-				&& DateUtils.isSameDay(wasBornOn.getCalendar(),
-						hasDiedOn.getCalendar())
-				&& (!hasDiedIn.getSelectedItem().toString()
-						.equals(NOT_DEAD_LOCATION))) {
-			JOptionPane.showMessageDialog(null,
-					"No way that the birth and death dates are the same.",
-					GrapicUtils.PROJECT_NAME, 1);
-			return false;
-		} else if (hasDiedOn.getCalendar() != null
-				&& DateUtils.isAfterDay(wasBornOn.getCalendar(),
-						hasDiedOn.getCalendar())
-				&& (!hasDiedIn.getSelectedItem().toString()
-						.equals(NOT_DEAD_LOCATION))) {
-			JOptionPane.showMessageDialog(null,
-					"No way that the birth date is after the death date.",
-					GrapicUtils.PROJECT_NAME, 1);
-			return false;
-		} else if (wasBornIn.getSelectedItem().toString()
-				.equals(DEFAULT_BIRTH_LOCATION)) {
-			JOptionPane.showMessageDialog(null,
-					"Please choose a birth place from the list.",
-					GrapicUtils.PROJECT_NAME, 1);
-			return false;
-		} else if (!locations.contains(wasBornIn.getSelectedItem().toString())) { 
-			JOptionPane.showMessageDialog(null,
-					"Please choose a birth place that exists in the list.",
-					GrapicUtils.PROJECT_NAME, 1);
-			return false;
-		} else if (!locations.contains(hasDiedIn.getSelectedItem().toString())) { 
-			JOptionPane.showMessageDialog(null,
-					"Please choose a death place that exists in the list.",
-					GrapicUtils.PROJECT_NAME, 1);
-			return false;
-		} else if (hasDiedIn.getSelectedItem().toString()
-				.equals(DEFAULT_DEATH_LOCATION)
-				&& hasDiedOn.getCalendar() != null) {
-			JOptionPane.showMessageDialog(null,
-					"Please choose a death place from the list.",
-					GrapicUtils.PROJECT_NAME, 1);
-			return false;
-		} else if (wikiLink.getText().equalsIgnoreCase("")) {
-			JOptionPane.showMessageDialog(null,
-					"Wikipedia link can not be blank.",
-					GrapicUtils.PROJECT_NAME, 1);
-			return false;
-		} else if (wikiLink.getText().length() > DBConstants.WIKI_URL_SIZE) {
-			JOptionPane.showMessageDialog(null,
-					"Wikipedia link can not exceed "
-							+ DBConstants.WIKI_URL_SIZE + " characters.",
-					GrapicUtils.PROJECT_NAME, 1);
-			return false;
-		} else if (hasDiedOn.getCalendar() == null) {
-			//make sure the date is valid if a location was entered
-			if (!hasDiedIn.getSelectedItem().toString().equals(NOT_DEAD_LOCATION) &&
-					!hasDiedIn.getSelectedItem().toString().equals(DEFAULT_DEATH_LOCATION)) {
-				JOptionPane.showMessageDialog(null,
-						"Please choose a death date or remove the death location",
-						GrapicUtils.PROJECT_NAME, 1);
-				return false;
-			}
-		} else if (hasDiedIn.getSelectedItem().toString().equals(NOT_DEAD_LOCATION)) {
-			if (hasDiedOn.getCalendar() != null) {
-				int reply = JOptionPane
-						.showConfirmDialog(
-								null,
-								"<html>You mentioned this person is not dead but entered a death date.<br>"
-										+ "This person will be added without the death date.<br>Continue anyway?</html>",
-								GrapicUtils.PROJECT_NAME,
-								JOptionPane.YES_NO_OPTION);
-				if (reply == JOptionPane.YES_OPTION) {
-					return true;
-				} else {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
+	protected abstract boolean isInputValidated();
 }

@@ -362,7 +362,7 @@ public class MapBrowserListeners {
 
 	public static void setCategory(String cat) {
 		String exec = "setCategory(\"" + cat + "\");";
-		logger.info("Adjusting category label and hiding spinner...");
-		executeJS(exec+"hideSpinner();");
+		logger.info("Adjusting category label by executing JS:" + exec);
+		map.getBrowser().execute(exec + "hideSpinner();");
 	}
 }
