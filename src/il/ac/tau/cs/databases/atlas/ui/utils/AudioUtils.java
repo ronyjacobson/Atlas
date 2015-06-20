@@ -2,10 +2,11 @@ package il.ac.tau.cs.databases.atlas.ui.utils;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.*;
 
 public class AudioUtils {
 
@@ -18,12 +19,10 @@ public class AudioUtils {
 
     /**
      * Plays a wav file
-     * @param filename the name of the file that is going to be played
      */
     public void playSound(){
-        /*
         try {
-        	String audioPath = GrapicUtils.RESOURCES_FOLDER + AudioUtils.AUDIO_FILE_NAME;
+        	String audioPath = GraphicUtils.RESOURCES_FOLDER + AudioUtils.AUDIO_FILE_NAME;
             final InputStream resourceAsStream = getClass().getResourceAsStream(audioPath);
             InputStream stream = new BufferedInputStream(resourceAsStream);
             audioStream = AudioSystem.getAudioInputStream(stream);
@@ -64,7 +63,6 @@ public class AudioUtils {
 
         sourceLine.drain();
         sourceLine.close();
-        */
     }
     
     /**
