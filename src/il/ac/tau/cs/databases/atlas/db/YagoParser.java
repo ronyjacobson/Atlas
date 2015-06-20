@@ -45,8 +45,13 @@ public class YagoParser {
                 updateProgress(numberOfRecords, recordNumber);
             }
             Entry<Long, YagoPerson> entry = it.next();
-            if (! entry.getValue().isValidPerson()) {
+            YagoPerson yagoPerson = entry.getValue();
+            if (! yagoPerson.isValidPerson()) {
                 it.remove();
+            } else if (yagoPerson.getDiedInLocation() == null || yagoPerson.getDiedOnDate() == null ) {
+                // no person with only one of the two
+                yagoPerson.setDiedInLocation(null);
+                yagoPerson.setDiedOnDate(null);
             }
         }
     }
