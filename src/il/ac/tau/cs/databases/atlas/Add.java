@@ -14,6 +14,11 @@ public class Add extends BaseModifyPerson {
 	private static final String DEFAULT_CATEGORY = "Choose a category...";
 
 	@Override
+	protected String getTitleText() {
+		return "Add a new person:";
+	}
+
+	@Override
 	protected void addClearTextBoxListenersIfNeeded() {
 		name.addMouseListener(new ClearTextBox(name));
 		wikiLink.addMouseListener(new ClearTextBox(wikiLink));

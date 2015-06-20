@@ -55,16 +55,18 @@ public class UpdatePerson extends BaseModifyPerson {
     }
 
     @Override
+    protected String getTitleText() {
+        return "Edit this person:";
+    }
+
+    @Override
     protected void addClearTextBoxListenersIfNeeded() {}
 
     @Override
-    protected void setCategoriesComboBox(Font fieldFont) {
-
-    }
+    protected void setCategoriesComboBox(Font fieldFont) {}
 
     @Override
-    protected void addCategoryBarToPanel(JPanel panel) {
-    }
+    protected void addCategoryBarToPanel(JPanel panel) {}
 
     @Override
     protected String getButtonText() {

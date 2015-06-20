@@ -1,7 +1,9 @@
 package il.ac.tau.cs.databases.atlas.connector.command;
 
 import il.ac.tau.cs.databases.atlas.connector.command.base.BaseDBCommand;
+import il.ac.tau.cs.databases.atlas.db.DBConstants;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
+import il.ac.tau.cs.databases.atlas.exception.PersonExistsError;
 
 import java.sql.*;
 import java.util.Date;
@@ -31,8 +33,34 @@ public class UpdatePersonQuery extends BaseDBCommand<Void> {
 
 	@Override
 	protected Void innerExecute(Connection con) throws AtlasServerException {
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+
 		try (PreparedStatement pstmt = con
-				.prepareStatement("UPDATE person SET wikiURL = ?, diedOnDate = ?, wasBornOnDate = ?, wasBornInLocation = ?, diedInLocation = ?, isFemale = ?, prefLabel = ? WHERE person_ID = ?")) {
+				.prepareStatement("UPDATE " + DBConstants.Person.TABLE_NAME +
+						" SET wikiURL = ?, diedOnDate = ?, wasBornOnDate = ?, " +
+						"wasBornInLocation = ?, diedInLocation = ?, isFemale = ?, " +
+						"prefLabel = ? WHERE person_ID = ?")) {
+
+			// Assert that this person does not exits
+			statement = con.prepareStatement(
+					"SELECT COUNT(*) FROM "
+							+ DBConstants.Person.TABLE_NAME
+							+ " WHERE prefLabel = ?");
+			statement.setString(1, name);
+
+			logger.info(String.format("Executing DB query: %s.",
+					statement.toString()));
+			resultSet = statement.executeQuery();
+
+			resultSet.next();
+			if (resultSet.getInt(1) != 0) {
+				throw new PersonExistsError(name);
+			}
+
+			statement.close();
+			resultSet.close();
+
 			String wikiUrl = wikiLink;
 			if (wikiUrl == null) {
 				pstmt.setNull(1, java.sql.Types.VARCHAR);
@@ -64,8 +92,10 @@ public class UpdatePersonQuery extends BaseDBCommand<Void> {
 					pstmt.toString()));
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
-			logger.error("Failed to update 'person' table", e);
-			throw new AtlasServerException("Failed to update 'person' table");
+			logger.error("Failed to update '" + DBConstants.Person.TABLE_NAME + "' table", e);
+			throw new AtlasServerException("Failed to update '" + DBConstants.Person.TABLE_NAME + "' table");
+		} finally {
+			safelyClose(statement, resultSet);
 		}
 		logger.info("Query executed properly.");
 		return null;

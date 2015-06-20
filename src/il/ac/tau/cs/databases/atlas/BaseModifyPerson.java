@@ -144,7 +144,7 @@ public abstract class BaseModifyPerson extends JFrame {
 		Font fieldFont = new Font("Century Gothic", Font.PLAIN,
 				GrapicUtils.FONT_SIZE_FIELD);
 
-		label = new JLabel("Add a new person:", SwingConstants.CENTER);
+		label = new JLabel(getTitleText(), SwingConstants.CENTER);
 		label.setForeground(Color.DARK_GRAY);
 		label.setFont(labelFont);
 
@@ -197,6 +197,8 @@ public abstract class BaseModifyPerson extends JFrame {
 		panel.add(wikiLink);
 		panel.add(addButton);
 	}
+
+	protected abstract String getTitleText();
 
 	protected abstract void addClearTextBoxListenersIfNeeded();
 
