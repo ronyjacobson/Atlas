@@ -8,6 +8,7 @@ import il.ac.tau.cs.databases.atlas.db.YagoParser;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 import il.ac.tau.cs.databases.atlas.parsing.YagoLocation;
 import il.ac.tau.cs.databases.atlas.parsing.YagoPerson;
+import il.ac.tau.cs.databases.atlas.utils.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,10 +19,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 public class ParseFilesCommand extends BaseProgressDBCommand {
     private YagoParser yagoParser;
@@ -298,6 +301,19 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
             throw new AtlasServerException("Failed to populate 'location' table");
         }
         logger.info("'location' table populated successfully");
+    }
+
+    /**
+     * @return "INSERT INTO table(f_1,..,f_n) VALUES (?,..,?) ON DUPLICATE KEY UPDATE f_1=VALUE(f_1),..,f_n=VALUE(f_n)"
+     */
+    private String getInsertIntoOnDuplicateKeyUpdateSql(String tableName, List<String> fields) {
+        StringBuilder sb = new StringBuilder("INSERT INTO " + tableName + "(");
+        sb.append(StringUtils.concatWithCommas(fields));
+        sb.append(") VALUES (");
+        sb.append(StringUtils.concatWithCommas("?", fields.size()));
+        sb.append(") ON DUPLICATE KEY UPDATE ");
+        sb.append(StringUtils.concatValuesWithCommas(fields));
+        return sb.toString();
     }
 
     public static void main(String[] args) throws AtlasServerException {
