@@ -27,6 +27,7 @@ public class PersonTable {
     private final Table table;
 
     public PersonTable(final Map<String, Result> resultMap) {
+        final Map<String, Integer> personNameToId = new HashMap<>();
         display = Display.getCurrent();
         Shell shell = new Shell(display);
         final GridLayout layout = new GridLayout();
@@ -41,7 +42,15 @@ public class PersonTable {
                 if (selection == null || selection.length == 0) {
                     JOptionPane.showMessageDialog(null, "You must select a person to edit!", GrapicUtils.PROJECT_NAME, JOptionPane.WARNING_MESSAGE);
                 } else {
-//                    new UpdatePerson()
+                    final TableItem personRow = selection[0];
+                    final Integer personID = personNameToId.get(personRow.getText());
+                    final Result birthResult = resultMap.get("b" + personID);
+                    final Result deathResult = resultMap.get("d" + personID);
+                    if (deathResult != null ) {
+                        new UpdatePerson(personID, personRow.getText(), birthResult.getLocation().getName(), birthResult.getDate(), deathResult.getLocation().getName(), deathResult.getDate(), birthResult.getWikiLink(), birthResult.isFemale());
+                    } else {
+                        new UpdatePerson(personID, personRow.getText(), birthResult.getLocation().getName(), birthResult.getDate(), null, null, birthResult.getWikiLink(), birthResult.isBirth());
+                    }
                 }
             }
 
@@ -66,6 +75,8 @@ public class PersonTable {
             }
             final Result bornResult = idToResultQuery.getValue();
             final Result deathResult = resultMap.get("d" + bornResult.getID());
+
+            personNameToId.put(bornResult.getName(), Integer.parseInt(bornResult.getID()));
 
             TableItem item = new TableItem(table, SWT.NONE);
             item.setText(0, bornResult.getName()); // Name
