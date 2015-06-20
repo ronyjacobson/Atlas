@@ -66,7 +66,7 @@ public class Map extends JFrame {
 	private static JButton buttonUpdateDBFiles;
 	private static JButton buttonAudio;
 
-	private static JButton buttonUpdate;
+	private static JButton buttonDisplayAsTable;
 	private static JScrollBar timeline = new JScrollBar(JScrollBar.HORIZONTAL, TIMELINE_INITIAL_VALUE, TIMELINE_EXTENT, TIMELINE_MIN,
 	TIMELINE_MAX);
 	private final Logger log = Logger.getLogger(this.getClass().getName());
@@ -240,12 +240,14 @@ public class Map extends JFrame {
 		buttonsPanel.add(buttonGo);
 
 		// Add an Edit button
-		buttonUpdate = new JButton("");
-		buttonUpdate.setIcon(new ImageIcon(getClass().getResource(
+		buttonDisplayAsTable = new JButton("");
+		buttonDisplayAsTable.setIcon(new ImageIcon(getClass().getResource(
 				GrapicUtils.getSkin() + "Edit.png")));
-		buttonUpdate.setPreferredSize(dimensionOther);
-		buttonUpdate.setFont(fieldFont);
-		buttonsPanel.add(buttonUpdate);
+		buttonDisplayAsTable.setPreferredSize(dimensionOther);
+		buttonDisplayAsTable.setFont(fieldFont);
+		buttonDisplayAsTable.setEnabled(false);
+		buttonsPanel.add(buttonDisplayAsTable);
+		
 
 		// Add a button for statistics
 		buttonStats = new JButton("");
@@ -322,9 +324,16 @@ public class Map extends JFrame {
 		buttonAudio
 				.addActionListener(new AudioUtils.AudioToggleActionListener());
 
-		buttonUpdate.addActionListener(new MapBrowserListeners.UpdateListener());
+		buttonDisplayAsTable.addActionListener(new MapBrowserListeners.UpdateListener());
 
 		// Return the panel
 		return buttonsPanel;
+	}
+
+	public static void setButtonDisplayAsTableEnabled() {
+		Map.buttonDisplayAsTable.setEnabled(true);
+	}
+	public static void setButtonDisplayAsTableDisabled() {
+		Map.buttonDisplayAsTable.setEnabled(false);
 	}
 }

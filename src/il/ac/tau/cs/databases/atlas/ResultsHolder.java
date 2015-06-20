@@ -11,7 +11,7 @@ public enum ResultsHolder {
     INSTANCE;
     
     // Last fetched reuslts
-    private Map<String, Result> resultMap;
+    private java.util.Map<String, Result> resultMap;
 	
     // Last SQL query executed details
     private String lastResultQueryExecuted="";
@@ -35,6 +35,11 @@ public enum ResultsHolder {
 
     public void setResultMap(Map<String, Result> resultMap) {
         this.resultMap = resultMap;
+        if (resultMap.isEmpty()) {
+        	il.ac.tau.cs.databases.atlas.Map.setButtonDisplayAsTableDisabled();
+        } else {
+        	il.ac.tau.cs.databases.atlas.Map.setButtonDisplayAsTableEnabled();
+        }
     }
 
 	public void incNumOfResults() {
