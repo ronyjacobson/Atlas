@@ -239,19 +239,16 @@ public abstract class BaseModifyPerson extends JFrame {
 
 		// Create dates
 		Date today = new Date();
-		ClearTextBox clearTextBoxListner = new ClearTextBox();
 
 		wasBornOn = new JDateChooser();
 		wasBornOn.setDate(null);
 		wasBornOn.setMaxSelectableDate(today);
-		wasBornOn.addMouseListener(clearTextBoxListner);
 		wasBornOn.setFont(fieldFont);
 
 		hasDiedOn = new JDateChooser();
 		hasDiedOn.setDate(null);
 		hasDiedOn.setToolTipText(DEFAULT_DEATH_DATE);
 		hasDiedOn.setMaxSelectableDate(today);
-		hasDiedOn.addMouseListener(clearTextBoxListner);
 		hasDiedOn.setFont(fieldFont);
 
 		// Add to panels
@@ -316,13 +313,15 @@ public abstract class BaseModifyPerson extends JFrame {
 	 */
 	protected class ClearTextBox implements MouseListener {
 
+		private JTextField textField;
+		public ClearTextBox(JTextField textField) {
+			this.textField = textField;
+		}
+
 		@Override
 		public void mouseClicked(MouseEvent arg0) {
-			if (!wereDetailsEntered) {
-				name.setText("");
-				wikiLink.setText("");
+				textField.setText("");
 				wereDetailsEntered = true;
-			}
 		}
 
 		@Override
@@ -358,8 +357,6 @@ public abstract class BaseModifyPerson extends JFrame {
 			isMale.setSelected(!this.female);
 			isFemale.setSelected(this.female);
 			if (!wereDetailsEntered) {
-				name.setText("");
-				wikiLink.setText("");
 				wereDetailsEntered = true;
 			}
 		}

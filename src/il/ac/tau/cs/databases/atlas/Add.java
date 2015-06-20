@@ -15,9 +15,8 @@ public class Add extends BaseModifyPerson {
 
 	@Override
 	protected void addClearTextBoxListenersIfNeeded() {
-		ClearTextBox clearTextBoxListner = new ClearTextBox();
-		name.addMouseListener(clearTextBoxListner);
-		wikiLink.addMouseListener(clearTextBoxListner);
+		name.addMouseListener(new ClearTextBox(name));
+		wikiLink.addMouseListener(new ClearTextBox(wikiLink));
 	}
 
 	@Override
