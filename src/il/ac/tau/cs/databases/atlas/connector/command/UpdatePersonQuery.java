@@ -17,10 +17,12 @@ public class UpdatePersonQuery extends BaseDBCommand<Void> {
 	private Date deathDate;
 	private Long birthLocID;
 	private Long deathLocID;
+	private boolean checkIfPersonExists;
 
-	public UpdatePersonQuery(int personId, String name, Date birthDate,
-							 Long birthlocationID, Date deathDate, Long deathlocationID,
-							 String wikiLink, boolean isFemale) {
+	public UpdatePersonQuery(
+			int personId, String name, Date birthDate,
+			Long birthlocationID, Date deathDate, Long deathlocationID,
+			String wikiLink, boolean isFemale, boolean checkIfPersonExists) {
 		this.personId = personId;
 		this.name = name;
 		this.wikiLink = wikiLink;
@@ -29,6 +31,7 @@ public class UpdatePersonQuery extends BaseDBCommand<Void> {
 		this.deathDate = deathDate;
 		this.birthLocID = birthlocationID;
 		this.deathLocID = deathlocationID;
+		this.checkIfPersonExists = checkIfPersonExists;
 	}
 
 	@Override
@@ -42,24 +45,25 @@ public class UpdatePersonQuery extends BaseDBCommand<Void> {
 						"wasBornInLocation = ?, diedInLocation = ?, isFemale = ?, " +
 						"prefLabel = ? WHERE person_ID = ?")) {
 
-			// Assert that this person does not exits
-			statement = con.prepareStatement(
-					"SELECT COUNT(*) FROM "
-							+ DBConstants.Person.TABLE_NAME
-							+ " WHERE prefLabel = ?");
-			statement.setString(1, name);
+			if (checkIfPersonExists) {
+				statement = con.prepareStatement(
+						"SELECT COUNT(*) FROM "
+								+ DBConstants.Person.TABLE_NAME
+								+ " WHERE prefLabel = ?");
+				statement.setString(1, name);
 
-			logger.info(String.format("Executing DB query: %s.",
-					statement.toString()));
-			resultSet = statement.executeQuery();
+				logger.info(String.format("Executing DB query: %s.",
+						statement.toString()));
+				resultSet = statement.executeQuery();
 
-			resultSet.next();
-			if (resultSet.getInt(1) != 0) {
-				throw new PersonExistsError(name);
+				resultSet.next();
+				if (resultSet.getInt(1) != 0) {
+					throw new PersonExistsError(name);
+				}
+
+				statement.close();
+				resultSet.close();
 			}
-
-			statement.close();
-			resultSet.close();
 
 			String wikiUrl = wikiLink;
 			if (wikiUrl == null) {

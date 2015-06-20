@@ -284,12 +284,12 @@ public class DBQueries implements Queries {
 	@Override
 	public void updateRecord(int personId, String name,
 			Date birthDate, Long birthLocationId, Date deathDate,
-			Long deathLocationId, String wikiLink, boolean isFemale)
-			throws AtlasServerException {
+			Long deathLocationId, String wikiLink, boolean isFemale,
+			boolean checkIfPersonExists) throws AtlasServerException {
 
 		UpdatePersonQuery query = new UpdatePersonQuery(personId, name,
 				birthDate, birthLocationId, deathDate, deathLocationId,
-				wikiLink, isFemale);
+				wikiLink, isFemale, checkIfPersonExists);
 
 		logger.info(String.format("Updating person: %s...", name));
 

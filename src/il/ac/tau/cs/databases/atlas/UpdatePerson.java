@@ -81,14 +81,20 @@ public class UpdatePerson extends BaseModifyPerson {
 
     @Override
     protected void execQuery(Long birthLocationId, Long deathLocationId, Date birthDate, Date deathDate, String link) throws AtlasServerException {
+
+        // if name wasn't changed we are changing the very same person, so he's obviously in the db
+        boolean checkIfPersonExists = true;
+        if (name.equals(name.getText())) {
+            checkIfPersonExists = false;
+        }
         Main.queries.updateRecord(
                 personId, name.getText(), birthDate, birthLocationId,
-                deathDate, deathLocationId, link, isFemale.isSelected());
+                deathDate, deathLocationId, link, isFemale.isSelected(), checkIfPersonExists);
     }
 
     @Override
     protected boolean isInputValidated() {
-        if (name.getText().equalsIgnoreCase("")) {
+        if (name.getText().trim().equalsIgnoreCase("")) {
             JOptionPane.showMessageDialog(null, "Name can not be blank.",
                     GrapicUtils.PROJECT_NAME, JOptionPane.INFORMATION_MESSAGE);
             return false;
