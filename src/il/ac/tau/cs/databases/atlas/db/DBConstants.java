@@ -5,7 +5,7 @@ public class DBConstants {
 	/* Shared Labels (Between TABLEs)
 	 * Here so we will only change a String once when needed
 	 */
-	public static final int LIMIT = 100;
+	public static final int LIMIT = 1000;
 	public static final String PERSON_ID_L = "person_ID";
 	public static final String PERSON_YAGO_ID_L = "yago_ID";
 	public static final String BORN_IN_LOCATION_L = "wasBornInLocation";

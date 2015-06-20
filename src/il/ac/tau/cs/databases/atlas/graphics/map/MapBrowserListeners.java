@@ -15,6 +15,7 @@ import java.awt.event.AdjustmentListener;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -151,7 +152,7 @@ public class MapBrowserListeners {
 				map.getBrowser().execute("deleteMarkers();");
 				if (results.isEmpty()) {
 					if (category.equals(Map.FAVORITES_CATEGORY)) {
-						map.getBrowser().execute("noResults();"); //TODO
+						map.getBrowser().execute("noFavoritesResults();"); 
 					} else {
 						map.getBrowser().execute("noResults();");
 					}
@@ -167,17 +168,17 @@ public class MapBrowserListeners {
 
 						double lat = result.getLocation().getLat();
 						double lng = result.getLocation().getLng();
+
+						// Offset the coordinates a little so
+						// results in the same place won't be in the exact mark on the map				
+						
 						String imageIcon = "flag-";
 						if (result.isBirth()) {
 							imageIcon += "birth";
-							// TODO can offset the coordinates a little so
-							// results in the same place
-							// won't be in the exact mark on the map
 						} else {
 							imageIcon += "death";
-							// TODO can offset the coordinates a little so
-							// results in the same place
-							// won't be in the exact mark on the map
+							lat += 0.0005;
+							lng += 0.0005;	
 						}
 						if (!result.getCategory().equalsIgnoreCase("")) {
 							// Check for existing category flag
