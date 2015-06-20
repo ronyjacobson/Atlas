@@ -4,6 +4,7 @@ import il.ac.tau.cs.databases.atlas.ParserConstants;
 import il.ac.tau.cs.databases.atlas.connector.ConnectionPoolHolder;
 import il.ac.tau.cs.databases.atlas.connector.DynamicConnectionPool;
 import il.ac.tau.cs.databases.atlas.connector.command.base.BaseProgressDBCommand;
+import il.ac.tau.cs.databases.atlas.db.DBConstants;
 import il.ac.tau.cs.databases.atlas.db.YagoParser;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 import il.ac.tau.cs.databases.atlas.parsing.YagoLocation;
@@ -114,10 +115,12 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
     }
 
     private void createCategoriesTable(Connection con) throws AtlasServerException {
-        progressLogger("Populating 'categories' table (2/5)...");
+        progressLogger("Populating '" + DBConstants.Category.TABLE_NAME + "' table (2/5)...");
         progressUpdater.updateProgress(50, "Creating categories in DB ..");
-        try (PreparedStatement pstmt = con
-                .prepareStatement("REPLACE INTO category(category_ID,categoryName) VALUES(?,?)")) {
+        try (PreparedStatement pstmt = con.prepareStatement(
+                getInsertIntoOnDuplicateKeyUpdateSql(
+                        DBConstants.Category.TABLE_NAME,
+                        DBConstants.Category.FIELDS_LIST))) {
             Pattern p = Pattern.compile(ParserConstants.CATEGORY_REGEX);
             for (Entry<String, Integer> categoryEntry : ParserConstants.CATEGORY_TYPES.entrySet()) {
                 Matcher m = p.matcher(categoryEntry.getKey());
@@ -129,10 +132,10 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
             }
             pstmt.executeBatch();
         } catch (SQLException e) {
-            logger.error("Failed to populate 'categories' table", e);
-            throw new AtlasServerException("Failed to populate `categories` table");
+            logger.error("Failed to populate '" + DBConstants.Category.TABLE_NAME + "' table", e);
+            throw new AtlasServerException("Failed to populate '" + DBConstants.Category.TABLE_NAME + "' table");
         }
-        logger.info("'categories' table populated successfully");
+        logger.info("'" + DBConstants.Category.TABLE_NAME + "' table populated successfully");
     }
 
     private String prettifyCategoryName(String cat) {
@@ -145,11 +148,13 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
     }
 
     private void createPersonLabelsTable(Connection con) throws AtlasServerException {
-        progressLogger("Populating 'person_labels' table (5/5)...");
+        progressLogger("Populating '" + DBConstants.PersonLabels.TABLE_NAME + "' table (5/5)...");
         progressUpdater.updateProgress(50, "Updating labels in DB ..");
         Map<Long, YagoPerson> personsMap = yagoParser.getPersonsMap();
-        try (PreparedStatement pstmt = con
-                .prepareStatement("REPLACE INTO person_labels(label, person_ID) VALUES (?, ?)")) {
+        try (PreparedStatement pstmt = con.prepareStatement(
+                getInsertIntoOnDuplicateKeyUpdateSql(
+                        DBConstants.PersonLabels.TABLE_NAME,
+                        DBConstants.PersonLabels.FIELDS_LIST))) {
             for (YagoPerson yagoPerson : personsMap.values()) {
                 int personId = yagoPerson.getPersonId();
                 for (String label : yagoPerson.getLabels()) {
@@ -160,18 +165,20 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
             }
             pstmt.executeBatch();
         } catch (SQLException e) {
-            logger.error("Failed to populate 'person_labels' table", e);
-            throw new AtlasServerException("Failed to populate 'person_labels' table");
+            logger.error("Failed to populate '" + DBConstants.PersonLabels.TABLE_NAME + "' table", e);
+            throw new AtlasServerException("Failed to populate '" + DBConstants.PersonLabels.TABLE_NAME + "' table");
         }
-        logger.info("'person_labels' table populated successfully");
+        logger.info("'" + DBConstants.PersonLabels.TABLE_NAME + "' table populated successfully");
     }
 
     private void createPersonHasCategoryTable(Connection con) throws AtlasServerException {
-        progressLogger("Populating 'person_has_category' table (4/5)...");
+        progressLogger("Populating '" + DBConstants.PersonHasCategory.TABLE_NAME + "' table (4/5)...");
         progressUpdater.updateProgress(50, "Updating categories in DB ..");
         Map<Long, YagoPerson> personsMap = yagoParser.getPersonsMap();
-        try (PreparedStatement pstmt = con
-                .prepareStatement("REPLACE INTO person_has_category(person_ID, category_ID) VALUES (?, ?)")) {
+        try (PreparedStatement pstmt = con.prepareStatement(
+                getInsertIntoOnDuplicateKeyUpdateSql(
+                        DBConstants.PersonHasCategory.TABLE_NAME,
+                        DBConstants.PersonHasCategory.FIELDS_LIST))) {
             for (YagoPerson yagoPerson : personsMap.values()) {
                 int personId = yagoPerson.getPersonId();
                 for (Integer categoryId : yagoPerson.getCategories()) {
@@ -182,14 +189,14 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
             }
             pstmt.executeBatch();
         } catch (SQLException e) {
-            logger.error("Failed to populate 'person_has_category' table", e);
-            throw new AtlasServerException("Failed to populate 'person_has_category' table");
+            logger.error("Failed to populate '" + DBConstants.PersonHasCategory.TABLE_NAME + "' table", e);
+            throw new AtlasServerException("Failed to populate '" + DBConstants.PersonHasCategory.TABLE_NAME + "' table");
         }
-        logger.info("'person_has_category' table populated successfully");
+        logger.info("'" + DBConstants.PersonHasCategory.TABLE_NAME + "' table populated successfully");
     }
 
     private void createPersonTable(Connection con, int addedByUser) throws AtlasServerException {
-        progressLogger("Populating 'person' table (3/5)...");
+        progressLogger("Populating '" + DBConstants.Person.TABLE_NAME + "' table (3/5)...");
         Map<Long, YagoPerson> personsMap = yagoParser.getPersonsMap();
         logger.info("Total number of records to be inserted: " + personsMap.size() + " persons");
         ResultSet rs = null;
@@ -199,9 +206,15 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
         long interval = personsMap.size() / 100;
         long recordCount = 0;
 
-        try (PreparedStatement pstmt = con
-                .prepareStatement("INSERT INTO person(wikiURL, diedOnDate, wasBornOnDate, addedByUser, wasBornInLocation, diedInLocation, isFemale, yago_ID, prefLabel) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE wikiURL=VALUES(wikiURL), diedOnDate=VALUES(diedOnDate), wasBornOnDate=VALUES(wasBornOnDate), addedByUser=VALUES(addedByUser), wasBornInLocation=VALUES(wasBornInLocation), diedInLocation=VALUES(diedInLocation), isFemale=VALUES(isFemale), prefLabel=VALUES(prefLabel)",
-                        Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement pstmt = con.prepareStatement(
+                "INSERT INTO person(wikiURL, diedOnDate, wasBornOnDate, addedByUser, " +
+                        "wasBornInLocation, diedInLocation, isFemale, yago_ID, prefLabel) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE " +
+                        "wikiURL=VALUES(wikiURL), diedOnDate=VALUES(diedOnDate), " +
+                        "wasBornOnDate=VALUES(wasBornOnDate), addedByUser=VALUES(addedByUser), " +
+                        "wasBornInLocation=VALUES(wasBornInLocation), diedInLocation=VALUES(diedInLocation), " +
+                        "isFemale=VALUES(isFemale), prefLabel=VALUES(prefLabel)",
+                Statement.RETURN_GENERATED_KEYS)) {
             for (YagoPerson yagoPerson : personsMap.values()) {
                 String wikiUrl = yagoPerson.getWikiUrl();
                 if (wikiUrl == null) {
@@ -238,7 +251,8 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
                 rs = pstmt.getGeneratedKeys();
                 if (! rs.next()) {
                     stmt = con.createStatement();
-                    rs = stmt.executeQuery("SELECT person_ID FROM person WHERE yago_ID=" + yagoPerson.getYagoId());
+                    rs = stmt.executeQuery("SELECT person_ID FROM " + DBConstants.Person.TABLE_NAME + " WHERE yago_ID=" + yagoPerson.getYagoId());
+                    rs.next();
                 }
                 int personId = rs.getInt(1);
                 yagoPerson.setPersonId(personId);
@@ -247,21 +261,24 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
                 }
             }
         } catch (SQLException e) {
-            logger.error("Failed to populate 'person' table", e);
-            throw new AtlasServerException("Failed to populate 'person' table");
+            logger.error("Failed to populate '" + DBConstants.Person.TABLE_NAME + "' table", e);
+            throw new AtlasServerException("Failed to populate '" + DBConstants.Person.TABLE_NAME + "' table");
         } finally {
             safelyClose(rs, stmt);
         }
-        logger.info("'person' table populated successfully");
+        logger.info("'" + DBConstants.Person.TABLE_NAME + "' table populated successfully");
     }
 
     private int addYagoUser(Connection con) throws AtlasServerException {
         logger.info("Setting YAGO user for adding all Yago persons ..");
         int newUserId;
         ResultSet rs = null;
-        try (PreparedStatement pstmt = con
-                .prepareStatement("INSERT INTO user(username, password, wasBornInLocation, isFemale) VALUES (?, ?, ?, 0) ON DUPLICATE KEY UPDATE username=VALUES(username), password=VALUES(password), wasBornInLocation=VALUES(wasBornInLocation), isFemale=1-isFemale",
-                        Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement pstmt = con.prepareStatement(
+                "INSERT INTO user(username, password, wasBornInLocation, isFemale) " +
+                        "VALUES (?, ?, ?, 0) ON DUPLICATE KEY UPDATE " +
+                        "username=VALUES(username), password=VALUES(password), " +
+                        "wasBornInLocation=VALUES(wasBornInLocation), isFemale=1-isFemale",
+                Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, "YAGO");
             pstmt.setString(2, "yagohasnopassword");
             long locationId = yagoParser.getLocationsMap().entrySet().iterator().next().getValue().getLocationId();
@@ -281,12 +298,14 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
     }
 
     private void createLocationsTable(Connection con) throws AtlasServerException {
-        progressLogger("Populating 'location' table (1/5)...");
+        progressLogger("Populating '" + DBConstants.Location.TABLE_NAME + "' table (1/5)...");
         progressUpdater.updateProgress(50, "Updating locations in DB ..");
         Map<Long, YagoLocation> locationsMap = yagoParser.getLocationsMap();
         logger.info("Total number of records to be inserted: " + locationsMap.size() + " locations");
-        try (PreparedStatement pstmt = con
-                .prepareStatement("REPLACE INTO location(geo_name, latitude, longitude, wikiURL, location_ID) VALUES (?, ?, ?, ?, ?)")) {
+        try (PreparedStatement pstmt = con.prepareStatement(
+                getInsertIntoOnDuplicateKeyUpdateSql(
+                        DBConstants.Location.TABLE_NAME,
+                        DBConstants.Location.FIELDS_LIST))) {
             for (YagoLocation yagoLocation : locationsMap.values()) {
                 pstmt.setString(1, yagoLocation.getName());
                 pstmt.setDouble(2, yagoLocation.getLatitude());
@@ -297,10 +316,10 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
             }
             pstmt.executeBatch();
         } catch (SQLException e) {
-            logger.error("Failed to populate 'location' table", e);
-            throw new AtlasServerException("Failed to populate 'location' table");
+            logger.error("Failed to populate '" + DBConstants.Location.TABLE_NAME + "' table", e);
+            throw new AtlasServerException("Failed to populate '" + DBConstants.Location.TABLE_NAME + "' table");
         }
-        logger.info("'location' table populated successfully");
+        logger.info("'" + DBConstants.Location.TABLE_NAME + "' table populated successfully");
     }
 
     /**
