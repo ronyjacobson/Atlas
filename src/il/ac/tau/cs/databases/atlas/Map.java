@@ -210,7 +210,7 @@ public class Map extends JFrame {
 		try {
 			List<String> categories = Main.queries.getAllCategoriesNames();
 			categories.add(0, DEFAULT_CATEGORY);
-			categories.add(FAVORITES_CATEGORY);
+			categories.add(1,FAVORITES_CATEGORY);
 			categoriesComboBox = new JComboBox<String>(
 					categories.toArray(new String[categories.size()]));
 			categoriesComboBox.setFont(fieldFont);

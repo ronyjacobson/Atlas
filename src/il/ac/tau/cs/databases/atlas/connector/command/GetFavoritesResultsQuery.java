@@ -1,9 +1,9 @@
 package il.ac.tau.cs.databases.atlas.connector.command;
 
 import il.ac.tau.cs.databases.atlas.Main;
+import il.ac.tau.cs.databases.atlas.ResultsHolder;
 import il.ac.tau.cs.databases.atlas.connector.command.base.BaseDBCommand;
 import il.ac.tau.cs.databases.atlas.db.DBConstants;
-import il.ac.tau.cs.databases.atlas.db.DBQueries;
 import il.ac.tau.cs.databases.atlas.db.Location;
 import il.ac.tau.cs.databases.atlas.db.Result;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
@@ -18,6 +18,7 @@ import java.util.HashMap;
 /**
  * Created by user on 22/05/2015.
  */
+@Deprecated
 public class GetFavoritesResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 	private int limitNumOfResults = DBConstants.LIMIT;
 	HashMap<String, Result> results = new HashMap<String, Result>();
@@ -84,10 +85,9 @@ public class GetFavoritesResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 				res.setSummary(category + ", " + res.getSummary());
 			} else {
 				if (isFemale) {
-					DBQueries.amountOfFemaleResults++;
-				}
-				if (isBirth) {
-					DBQueries.amountOfBirthResults++;
+					ResultsHolder.INSTANCE.incNumOfFemales();
+				} if (isBirth) {
+					ResultsHolder.INSTANCE.incNumOfBirths();
 				}
 				results.put(hashID, res);
 			}

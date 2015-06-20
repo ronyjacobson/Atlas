@@ -2,6 +2,7 @@ package il.ac.tau.cs.databases.atlas.db;
 
 import il.ac.tau.cs.databases.atlas.Main;
 import il.ac.tau.cs.databases.atlas.ParserConstants;
+import il.ac.tau.cs.databases.atlas.ResultsHolder;
 import il.ac.tau.cs.databases.atlas.connector.command.AddPersonQuery;
 import il.ac.tau.cs.databases.atlas.connector.command.CheckConnectivityCommand;
 import il.ac.tau.cs.databases.atlas.connector.command.GetCategoriesQuery;
@@ -34,10 +35,6 @@ import org.apache.log4j.Logger;
 public class DBQueries implements Queries {
 
 	protected final Logger logger = Logger.getLogger(this.getClass().getName());
-
-	public static int amountOfLatestResults = 0;
-	public static int amountOfFemaleResults = 0;
-	public static int amountOfBirthResults = 0;
 	private static int maxYear = 0;
 	private static int minYear = 0;
 
@@ -139,7 +136,7 @@ public class DBQueries implements Queries {
 	 */
 	@Override
 	public int getAmountOfLatestResults() {
-		return amountOfLatestResults;
+		return ResultsHolder.INSTANCE.getNumOfLatestResults();
 	}
 
 	/**
@@ -148,7 +145,7 @@ public class DBQueries implements Queries {
 	 */
 	@Override
 	public int getStatsOfLatestResults() {
-		return amountOfFemaleResults;
+		return ResultsHolder.INSTANCE.getNumOfFemaleResults();
 	}
 
 	/**
@@ -157,7 +154,7 @@ public class DBQueries implements Queries {
 	 */
 	@Override
 	public int getBirthsOfLatestResults() {
-		return amountOfBirthResults;
+		return ResultsHolder.INSTANCE.numOfBirthResults;
 	}
 
 	@Override
@@ -197,12 +194,10 @@ public class DBQueries implements Queries {
 	@Override
 	public List<Result> getFavorites() throws AtlasServerException {
 		List<Result> results = new ArrayList<Result>();
-		amountOfFemaleResults = 0;
-		amountOfBirthResults = 0;
+		ResultsHolder.INSTANCE.resetCounters();
 		GetNewFavoritesResultsQuery query = new GetNewFavoritesResultsQuery();
 		logger.info("Fetching Favorites...");
 		results.addAll(query.execute().values());
-		amountOfLatestResults = results.size();
 		logger.info("Fetching Favorites done.");
 		return results;
 	}
@@ -221,9 +216,7 @@ public class DBQueries implements Queries {
 				ids.add(id);
 			}
 		}
-		amountOfFemaleResults = 0;
-		amountOfBirthResults = 0;
-		amountOfLatestResults = 0;
+		ResultsHolder.INSTANCE.resetCounters();
 		return ids;
 	}
 
@@ -336,12 +329,10 @@ public class DBQueries implements Queries {
 	public List<Result> getResults(Date sdate, Date edate)
 			throws AtlasServerException {
 		List<Result> results = new ArrayList<Result>();
-		amountOfFemaleResults = 0;
-		amountOfBirthResults = 0;
+		ResultsHolder.INSTANCE.resetCounters();
 		logger.info("Fetching results by dates...");
 		SearchResultsQuery query = new SearchResultsQuery(sdate,edate);
 		results.addAll(query.execute().values());
-		amountOfLatestResults = results.size();
 		logger.info("Fetching results by dates done.");
 		return results;
 	}
@@ -349,8 +340,7 @@ public class DBQueries implements Queries {
 	@Override
 	public List<Result> getResults(String name) throws AtlasServerException {
 		List<Result> results = new ArrayList<Result>();
-		amountOfFemaleResults = 0;
-		amountOfBirthResults = 0;
+		ResultsHolder.INSTANCE.resetCounters();
 		maxYear = 0;
 		minYear = 0;
 		SearchResultsQuery query = new SearchResultsQuery(name);
@@ -358,7 +348,6 @@ public class DBQueries implements Queries {
 		results.addAll(query.execute().values());
 		maxYear = query.getMaxYear();
 		minYear = query.getMinYear();
-		amountOfLatestResults = results.size();
 		logger.info("Fetching results by name done.");
 		return results;
 	}
@@ -370,13 +359,11 @@ public class DBQueries implements Queries {
 	@Override
 	public List<Result> getResults(int startYear, int endYear, String category)
 			throws AtlasServerException {
-		amountOfFemaleResults = 0;
-		amountOfBirthResults = 0;
+		ResultsHolder.INSTANCE.resetCounters();
 		logger.info("Fetching results by category and years...");
 		List<Result> results = new ArrayList<Result>();
 		GetGoResultsQuery query = new GetGoResultsQuery(startYear, endYear, category);
 		results.addAll(query.execute().values());
-		amountOfLatestResults = results.size();
 		logger.info("Fetching results by category and years done.");
 		return results;
 	}

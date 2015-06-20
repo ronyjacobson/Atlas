@@ -6,6 +6,7 @@ import il.ac.tau.cs.databases.atlas.PersonTable;
 import il.ac.tau.cs.databases.atlas.ResultsHolder;
 import il.ac.tau.cs.databases.atlas.db.Result;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
+import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,9 +16,10 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollBar;
 
-import il.ac.tau.cs.databases.atlas.utils.GrapicUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Display;
 
@@ -148,7 +150,11 @@ public class MapBrowserListeners {
 			public void run() {
 				map.getBrowser().execute("deleteMarkers();");
 				if (results.isEmpty()) {
-					map.getBrowser().execute("noResults();");
+					if (category.equals(Map.FAVORITES_CATEGORY)) {
+						map.getBrowser().execute("noResults();"); //TODO
+					} else {
+						map.getBrowser().execute("noResults();");
+					}
 					MapBrowserListeners.setCategory("");
 					hideSpinner();
 				} else {
@@ -158,6 +164,7 @@ public class MapBrowserListeners {
 						if (!result.isValidResult()) {
 							continue;
 						}
+
 						double lat = result.getLocation().getLat();
 						double lng = result.getLocation().getLng();
 						String imageIcon = "flag-";
