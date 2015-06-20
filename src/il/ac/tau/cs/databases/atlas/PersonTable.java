@@ -26,7 +26,7 @@ public class PersonTable {
     private Display display;
     private final Table table;
 
-    public PersonTable(Map<String, Result> resultMap) {
+    public PersonTable(final Map<String, Result> resultMap) {
         display = Display.getCurrent();
         Shell shell = new Shell(display);
         final GridLayout layout = new GridLayout();
@@ -41,7 +41,7 @@ public class PersonTable {
                 if (selection == null || selection.length == 0) {
                     JOptionPane.showMessageDialog(null, "You must select a person to edit!", GrapicUtils.PROJECT_NAME, JOptionPane.WARNING_MESSAGE);
                 } else {
-                    System.out.println("you chose: " + selection[0].getText());
+//                    new UpdatePerson()
                 }
             }
 
@@ -84,7 +84,6 @@ public class PersonTable {
         while (!shell.isDisposed()) {
             if (!display.readAndDispatch()) display.sleep();
         }
-        display.dispose();
     }
 
 

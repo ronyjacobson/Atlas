@@ -15,6 +15,10 @@ public class UpdatePerson extends BaseModifyPerson{
         this.personId = personId;
     }
 
+    public UpdatePerson(int personId, String name, String bLocation, Date bDate, String dLocation, Date dDate, String wikiURL) throws IOException {
+        this.personId = personId;
+    }
+
     @Override
     protected String getButtonText() {
         return "Update Record";
