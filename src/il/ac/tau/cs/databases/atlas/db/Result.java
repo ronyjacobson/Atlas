@@ -59,6 +59,7 @@ public class Result {
 			boolean isBirth, String category, String wikiLink,
 			boolean isFemale, String cat) {
 		this(id, name, location, date, isBirth, category, "", wikiLink);
+		this.isFemale= isFemale;
 		this.summary = (isBirth ? String.format("%s.\\<br\\>Born: %s, in %s.",
 				cat, getDateToString(), location.getName()) : String.format(
 				"%s.\\<br\\>Died: %s, in %s.", cat, getDateToString(),

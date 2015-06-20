@@ -84,15 +84,26 @@ public class GetResultsGeneralQuery extends BaseDBCommand<Map<String, Result>> {
 
 				Result birthResult = new Result(personID, name, b_location,
 						bornOn, true, category, personUrl, isFemale, category);
+
+				// Set validity of result- whether show it on map or nor
 				birthResult.setValidResult(ExtraValidateResult(birthResult));
+				// Statistics:
+				setStatistics(birthResult);
+
+				// Add to result set
 				addToHash("b" + personID, birthResult, results);
 
 				if (diedOn != null) {
 					Result deathResult = new Result(personID, name, d_location,
 							diedOn, false, category, personUrl, isFemale,
 							category);
+					// Set validity of result- whether show it on map or nor
 					deathResult
 							.setValidResult(ExtraValidateResult(deathResult));
+					// Statistics:
+					setStatistics(deathResult);
+
+					// Add to results set
 					addToHash("d" + personID, deathResult, results);
 				}
 
@@ -108,6 +119,17 @@ public class GetResultsGeneralQuery extends BaseDBCommand<Map<String, Result>> {
 
 		ResultsHolder.INSTANCE.setResultMap(results);
 		return results;
+
+	}
+
+	private void setStatistics(Result result) {
+		ResultsHolder.INSTANCE.incNumOfResults();
+		if (result.isBirth()) {
+			ResultsHolder.INSTANCE.incNumOfBirths();
+		}
+		if (result.isFemale()) {
+			ResultsHolder.INSTANCE.incNumOfFemales();
+		}
 
 	}
 

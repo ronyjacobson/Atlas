@@ -9,9 +9,14 @@ import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
 import il.ac.tau.cs.databases.atlas.parsing.YagoLocation;
 import il.ac.tau.cs.databases.atlas.parsing.YagoPerson;
 
-import java.io.*;
-import java.sql.*;
+import java.io.File;
+import java.io.IOException;
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -106,7 +111,7 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
     }
 
     private void createCategoriesTable(Connection con) throws AtlasServerException {
-        progressLogger("Populating 'categories' table ..");
+        progressLogger("Populating 'categories' table (2/5)...");
         progressUpdater.updateProgress(50, "Creating categories in DB ..");
         try (PreparedStatement pstmt = con
                 .prepareStatement("REPLACE INTO category(category_ID,categoryName) VALUES(?,?)")) {
@@ -137,7 +142,7 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
     }
 
     private void createPersonLabelsTable(Connection con) throws AtlasServerException {
-        progressLogger("Populating 'person_labels' table ..");
+        progressLogger("Populating 'person_labels' table (5/5)...");
         progressUpdater.updateProgress(50, "Updating labels in DB ..");
         Map<Long, YagoPerson> personsMap = yagoParser.getPersonsMap();
         try (PreparedStatement pstmt = con
@@ -159,7 +164,7 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
     }
 
     private void createPersonHasCategoryTable(Connection con) throws AtlasServerException {
-        progressLogger("Populating 'person_has_category' table ..");
+        progressLogger("Populating 'person_has_category' table (4/5)...");
         progressUpdater.updateProgress(50, "Updating categories in DB ..");
         Map<Long, YagoPerson> personsMap = yagoParser.getPersonsMap();
         try (PreparedStatement pstmt = con
@@ -181,7 +186,7 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
     }
 
     private void createPersonTable(Connection con, int addedByUser) throws AtlasServerException {
-        progressLogger("Populating 'person' table ..");
+        progressLogger("Populating 'person' table (3/5)...");
         Map<Long, YagoPerson> personsMap = yagoParser.getPersonsMap();
         logger.info("Total number of records to be inserted: " + personsMap.size() + " persons");
         ResultSet rs = null;
@@ -273,7 +278,7 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
     }
 
     private void createLocationsTable(Connection con) throws AtlasServerException {
-        progressLogger("Populating 'location' table ..");
+        progressLogger("Populating 'location' table (1/5)...");
         progressUpdater.updateProgress(50, "Updating locations in DB ..");
         Map<Long, YagoLocation> locationsMap = yagoParser.getLocationsMap();
         logger.info("Total number of records to be inserted: " + locationsMap.size() + " locations");

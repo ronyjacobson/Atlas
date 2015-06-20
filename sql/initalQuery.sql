@@ -16,11 +16,7 @@ SELECT DISTINCT
     location.geo_name AS d_geoname,
     location.wikiURL AS d_LocURL,
     location.longitude AS d_longitude,
-    location.latitude AS d_latitude,
-    MAX(year(person.wasBornOnDate)) AS maxBirthYear,
-    MAX(year(person.diedOnDate)) AS maxDeathYear,
-    MIN(year(person.wasBornOnDate)) AS minBirthYear,
-    MIN(year(person.diedOnDate)) AS minDeathYear
+    location.latitude AS d_latitude
     
 FROM
     location b_location,
@@ -30,16 +26,17 @@ FROM
     person
         LEFT OUTER JOIN
     location ON person.diedInLocation = location.location_ID
+    , person_labels
+    #, tableName
 WHERE
     person.person_ID = person_has_category.person_ID
 	AND person.wasBornInLocation = b_location.location_ID
-	AND category.categoryName = 'monarchist' #'category'
-	AND ((YEAR(person.wasBornOnDate) >= '1760' AND YEAR(person.wasBornOnDate) <= '1780') OR (YEAR(person.diedOnDate) >= '1760' AND YEAR(person.diedOnDate) <= '1780')) #'end'
+    AND person_labels.label LIKE '%eli%'
+    AND person_labels.person_ID = person.person_ID
+	# AND conditions
         
-        
-        
-ORDER BY RAND()
-LIMIT 100
+#ORDER BY RAND()
+#LIMIT 100
         
 
 

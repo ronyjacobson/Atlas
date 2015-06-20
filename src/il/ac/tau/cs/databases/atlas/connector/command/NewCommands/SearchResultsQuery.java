@@ -14,7 +14,7 @@ public class SearchResultsQuery extends GetResultsGeneralQuery {
 	int limitNumOfResults = DBConstants.LIMIT;
 	PreparedStatement statement = null;
 	ResultSet resultSet = null;
-	
+
 	private Date sDate;
 	private Date eDate;
 	private String name;
@@ -26,14 +26,14 @@ public class SearchResultsQuery extends GetResultsGeneralQuery {
 		this.eDate = eDate;
 		this.name = name;
 	}
-	
+
 	public SearchResultsQuery(Date sDate, Date eDate) {
 		super();
 		this.sDate = sDate;
 		this.eDate = eDate;
 		this.name = null;
 	}
-	
+
 	public SearchResultsQuery(String name) {
 		super();
 		this.sDate = null;
@@ -48,28 +48,29 @@ public class SearchResultsQuery extends GetResultsGeneralQuery {
 		String where = makeWhereStmt();
 		String rest = makeRestOfStmt();
 		if (byName()) {
-			from +=fromByName();
-			where +=whereByName();
+			from += fromByName();
+			where += whereByName();
 		}
 		if (byDates()) {
 			where += whereByDates();
 		}
 		return select + from + where + rest;
 	}
-	
 
 	protected String fromByName() {
 		return "	, person_labels\n";
 	}
+
 	protected String whereByName() {
-		return "	AND person_labels.label LIKE '%"+name+"%'\n"+
-			   "	AND person_labels.person_ID = person.person_ID\n";
+		return "	AND person_labels.label LIKE '%" + name + "%'\n"
+				+ "	AND person_labels.person_ID = person.person_ID\n";
 	}
+
 	protected String whereByDates() {
-		return "	AND (person.wasBornOnDate >= '"+ sDate +
-				"' AND person.wasBornOnDate <= '"+ eDate +
-				"') OR (person.diedOnDate >= '"+ sDate +
-				"' AND person.diedOnDate <= '"+ eDate +"'))\n";
+		return "	AND (person.wasBornOnDate >= '" + sDate
+				+ "' AND person.wasBornOnDate <= '" + eDate
+				+ "') OR (person.diedOnDate >= '" + sDate
+				+ "' AND person.diedOnDate <= '" + eDate + "'))\n";
 	}
 
 	/**
@@ -81,16 +82,17 @@ public class SearchResultsQuery extends GetResultsGeneralQuery {
 	 */
 	@Override
 	protected boolean ExtraValidateResult(Result result) {
+		setMaxMinYear(result);
 		boolean isValid = true;
 		if (byDates()) {
 			// Make sure to mark only dates in this range
-			if ((result.getDate().before(sDate)) && (result.getDate().after(eDate))) {
+			if ((result.getDate().before(sDate))
+					|| (result.getDate().after(eDate))) {
 				isValid = false;
 			}
 		}
 		return isValid;
 	}
-	
 
 	public Date getsDate() {
 		return sDate;
@@ -115,11 +117,17 @@ public class SearchResultsQuery extends GetResultsGeneralQuery {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
+	/**
+	 * @return true if the search is by dates.
+	 */
 	public boolean byDates() {
 		return (sDate != null) && (eDate != null);
 	}
 	
+	/**
+	 * @return true if the search is by name.
+	 */
 	public boolean byName() {
 		return (name != null);
 	}

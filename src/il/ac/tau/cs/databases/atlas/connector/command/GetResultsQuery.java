@@ -1,9 +1,9 @@
 package il.ac.tau.cs.databases.atlas.connector.command;
 
 import il.ac.tau.cs.databases.atlas.Main;
+import il.ac.tau.cs.databases.atlas.ResultsHolder;
 import il.ac.tau.cs.databases.atlas.connector.command.base.BaseDBCommand;
 import il.ac.tau.cs.databases.atlas.db.DBConstants;
-import il.ac.tau.cs.databases.atlas.db.DBQueries;
 import il.ac.tau.cs.databases.atlas.db.Location;
 import il.ac.tau.cs.databases.atlas.db.Result;
 import il.ac.tau.cs.databases.atlas.exception.AtlasServerException;
@@ -17,6 +17,7 @@ import java.util.ArrayList;
 /**
  * Created by user on 22/05/2015.
  */
+@Deprecated
 public class GetResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 	int startYear;
 	int endYear;
@@ -88,9 +89,9 @@ public class GetResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 			double lat = resultSet.getDouble(DBConstants.LAT_L);
 			boolean isFemale = resultSet.getBoolean(DBConstants.IS_FEMALE_L);
 			if (isFemale) {
-				DBQueries.amountOfFemaleResults++;
+				ResultsHolder.INSTANCE.incNumOfFemales();
 			} if (isBirth) {
-				DBQueries.amountOfBirthResults++;
+				ResultsHolder.INSTANCE.incNumOfBirths();
 			}
 			Location location = new Location((long)0, geoname, lat, lng, locUrl);
 			java.util.Date date = (isBirth ? bornOn : diedOn);
