@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.log4j.Logger;
 
 /**
- * Created by user on 19/05/2015.
+ * TODO
  */
 public class DynamicConnectionPool implements ConnectionPool {
     

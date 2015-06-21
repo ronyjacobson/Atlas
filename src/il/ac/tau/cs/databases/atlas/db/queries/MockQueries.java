@@ -11,7 +11,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-
+/**
+ * An implementation for Queries interface.
+ * This implementation mocks expected valid results from the DB.
+ * This was used mainly for testing UI.
+ */
 public class MockQueries implements Queries {
 	
 	@Override

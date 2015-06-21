@@ -6,12 +6,12 @@ import il.ac.tau.cs.databases.atlas.ui.screens.MapScreen;
 import java.util.Map;
 
 /**
- * Created by user on 19/06/2015.
+ * Holds the results and statistics after each search result.
  */
 public enum ResultsHolder {
     INSTANCE;
     
-    // Last fetched reuslts
+    // Last fetched results
     private java.util.Map<String, Result> resultMap;
 	
     // Last SQL query executed details

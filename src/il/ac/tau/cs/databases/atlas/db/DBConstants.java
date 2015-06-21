@@ -3,6 +3,9 @@ package il.ac.tau.cs.databases.atlas.db;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Serves all table names and columns names (in order to avoid typo's etc...)
+*/
 public class DBConstants {
 	
 	/* Shared Labels (Between TABLEs)

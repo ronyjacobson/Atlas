@@ -33,6 +33,10 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+/**
+ * An implementation for Queries interface. This implementation calls the
+ * DBCommands that connect with the real server.
+ */
 public class DBQueries implements Queries {
 
 	protected final Logger logger = Logger.getLogger(this.getClass().getName());
@@ -170,6 +174,7 @@ public class DBQueries implements Queries {
 	/**
 	 * @return true if the current user should be added to results set
 	 */
+	@SuppressWarnings("unused")
 	private Result AddUserToResults(int startYear, int endYear) {
 		User user = Main.user;
 		// Get year of birth
@@ -283,10 +288,10 @@ public class DBQueries implements Queries {
 	 * @throws AtlasServerException
 	 */
 	@Override
-	public void updateRecord(int personId, String name,
-			Date birthDate, Long birthLocationId, Date deathDate,
-			Long deathLocationId, String wikiLink, boolean isFemale,
-			boolean checkIfPersonExists) throws AtlasServerException {
+	public void updateRecord(int personId, String name, Date birthDate,
+			Long birthLocationId, Date deathDate, Long deathLocationId,
+			String wikiLink, boolean isFemale, boolean checkIfPersonExists)
+			throws AtlasServerException {
 
 		UpdatePersonQuery query = new UpdatePersonQuery(personId, name,
 				birthDate, birthLocationId, deathDate, deathLocationId,
@@ -327,12 +332,16 @@ public class DBQueries implements Queries {
 		List<Result> results = new ArrayList<Result>();
 		ResultsHolder.INSTANCE.resetCounters();
 		logger.info("Fetching results by dates...");
-		SearchResultsQuery query = new SearchResultsQuery(sdate,edate);
+		SearchResultsQuery query = new SearchResultsQuery(sdate, edate);
 		results.addAll(query.execute().values());
 		logger.info("Fetching results by dates done.");
 		return results;
 	}
 
+	/**
+	 * @return A list of results of all the matching entries in the database
+	 * @throws AtlasServerException
+	 */
 	@Override
 	public List<Result> getResults(String name) throws AtlasServerException {
 		List<Result> results = new ArrayList<Result>();
@@ -358,12 +367,14 @@ public class DBQueries implements Queries {
 		ResultsHolder.INSTANCE.resetCounters();
 		logger.info("Fetching results by category and years...");
 		List<Result> results = new ArrayList<Result>();
-		GetGoResultsQuery query = new GetGoResultsQuery(startYear, endYear, category);
+		GetGoResultsQuery query = new GetGoResultsQuery(startYear, endYear,
+				category);
 		results.addAll(query.execute().values());
 		logger.info("Fetching results by category and years done.");
 		return results;
 	}
 
+	/** TODO */
 	private Map<String, File> checkAndGetFiles(File fullPath)
 			throws AtlasServerException {
 		final File[] files = fullPath.listFiles();

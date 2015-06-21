@@ -14,9 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-/**
- * Created by user on 22/05/2015.
- */
+
 @Deprecated
 public class GetResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 	int startYear;

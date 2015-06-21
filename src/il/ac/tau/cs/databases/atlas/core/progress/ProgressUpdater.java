@@ -10,7 +10,7 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
 /**
- * Created by user on 17/06/2015.
+ * ProgressBar object for installation and updating the application processes.
  */
 public class ProgressUpdater {
     private final JProgressBar progressBar;
