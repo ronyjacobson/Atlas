@@ -33,7 +33,7 @@ public class AudioUtils {
             audioStream = AudioSystem.getAudioInputStream(stream);
         } catch (Exception e){
             e.printStackTrace();
-            System.exit(1);
+            return;
         }
 
         audioFormat = audioStream.getFormat();
@@ -47,7 +47,7 @@ public class AudioUtils {
             System.exit(1);
         } catch (Exception e) {
             e.printStackTrace();
-            System.exit(1);
+            return;
         }
 
         sourceLine.start();
@@ -59,6 +59,7 @@ public class AudioUtils {
                 nBytesRead = audioStream.read(abData, 0, abData.length);
             } catch (IOException e) {
                 e.printStackTrace();
+                return;
             }
             if (nBytesRead >= 0) {
                 @SuppressWarnings("unused")

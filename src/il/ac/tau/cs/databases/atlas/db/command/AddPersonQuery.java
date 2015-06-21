@@ -144,13 +144,12 @@ public class AddPersonQuery extends BaseDBCommand<Void> {
 		} catch (PersonExistsError e) {
     			throw e;
 		} catch (SQLException e) {
+			logger.error(e.getMessage());
+			rollback(con);
 			throw new AtlasServerException(e.getMessage());
 		} finally {
 			safelyClose(statement, resultSet);
-			try {
-				con.setAutoCommit(true);
-			} catch (Exception e) {
-			}
+			safelyResetAutoCommit(con);
 		}
 		logger.info("Query executed properly.");
 		return null;

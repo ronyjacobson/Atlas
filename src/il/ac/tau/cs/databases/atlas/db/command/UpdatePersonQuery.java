@@ -55,8 +55,7 @@ public class UpdatePersonQuery extends BaseDBCommand<Void> {
 								+ " WHERE prefLabel = ?");
 				statement.setString(1, name);
 
-				logger.info(String.format("Executing DB query: %s.",
-						statement.toString()));
+				logStatement(statement);
 				resultSet = statement.executeQuery();
 
 				resultSet.next();
@@ -67,6 +66,9 @@ public class UpdatePersonQuery extends BaseDBCommand<Void> {
 				statement.close();
 				resultSet.close();
 			}
+
+			// start update person
+			con.setAutoCommit(false);
 
 			String wikiUrl = wikiLink;
 			if (wikiUrl == null) {
@@ -95,16 +97,38 @@ public class UpdatePersonQuery extends BaseDBCommand<Void> {
 			pstmt.setString(7, name);
 			pstmt.setInt(8, personId);
 
-			logger.info(String.format("Executing DB query: %s.",
-					pstmt.toString()));
+			logStatement(pstmt);
 			pstmt.executeUpdate();
+			pstmt.close();
+
+			// Set label
+			statement = con.prepareStatement(String.format(
+							"INSERT IGNORE INTO %s (%s, %s) VALUES (?, ?)",
+							DBConstants.PersonLabels.TABLE_NAME,
+							DBConstants.PERSON_ID_L,
+							DBConstants.LABEL_L)
+			);
+			statement.setInt(1, personId);
+			statement.setString(2, name);
+			statement.executeUpdate();
+
+			logStatement(statement);
+
+			con.commit();
+
 		} catch (SQLException e) {
 			logger.error("Failed to update '" + DBConstants.Person.TABLE_NAME + "' table", e);
+			rollback(con);
 			throw new AtlasServerException("Failed to update '" + DBConstants.Person.TABLE_NAME + "' table");
 		} finally {
 			safelyClose(statement, resultSet);
+			safelyResetAutoCommit(con);
 		}
 		logger.info("Query executed properly.");
 		return null;
+	}
+
+	private void logStatement(PreparedStatement pstmt) {
+		logger.info(String.format("Executing DB query: %s.", pstmt.toString()));
 	}
 }
