@@ -13,7 +13,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * Created by user on 20/05/2015.
+ * TODO
  */
 public class CreateSchemaCommand extends BaseDBCommand<Boolean> {
     @Override

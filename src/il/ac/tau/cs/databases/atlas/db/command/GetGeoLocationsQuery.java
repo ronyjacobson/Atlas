@@ -11,7 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Created by user on 22/05/2015.
+ * Get all locations name and ID's from the DB
  */
 public class GetGeoLocationsQuery extends BaseDBCommand<Void> {
 

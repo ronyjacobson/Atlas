@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * Created by user on 19/06/2015.
+ * Check if we have basic connection to the DB.
  */
 public class CheckConnectivityCommand extends BaseDBCommand<Boolean> {
     @Override

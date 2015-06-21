@@ -12,7 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * A query to get a registered user and his location from the DB.
+ * A query to get a registered user and his data from the DB.
  * Will return null if the user does not exists in the DB. 
  */
 public class GetUserQuery extends BaseDBCommand<User> {

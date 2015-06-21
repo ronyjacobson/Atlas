@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.Date;
 
 /**
- * Created by user on 22/05/2015.
+ * Transaction for adding a new person to the DB.
  */
 public class AddPersonQuery extends BaseDBCommand<Void> {
 	private String name;

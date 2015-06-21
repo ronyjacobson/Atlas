@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
- * Created by user on 22/05/2015.
+ * Get all categories from the DB.
  */
 public class GetCategoriesQuery extends BaseDBCommand<ArrayList<String>> {
 
