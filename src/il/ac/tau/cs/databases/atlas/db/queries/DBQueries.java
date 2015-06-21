@@ -10,14 +10,14 @@ import il.ac.tau.cs.databases.atlas.db.command.AddPersonQuery;
 import il.ac.tau.cs.databases.atlas.db.command.CheckConnectivityCommand;
 import il.ac.tau.cs.databases.atlas.db.command.GetCategoriesQuery;
 import il.ac.tau.cs.databases.atlas.db.command.GetGeoLocationsQuery;
+import il.ac.tau.cs.databases.atlas.db.command.GetGoResultsQuery;
+import il.ac.tau.cs.databases.atlas.db.command.GetNewFavoritesResultsQuery;
 import il.ac.tau.cs.databases.atlas.db.command.GetUserQuery;
 import il.ac.tau.cs.databases.atlas.db.command.ParseFilesCommand;
 import il.ac.tau.cs.databases.atlas.db.command.RegisterUserQuery;
+import il.ac.tau.cs.databases.atlas.db.command.SearchResultsQuery;
 import il.ac.tau.cs.databases.atlas.db.command.UpdateFavoritesQuery;
 import il.ac.tau.cs.databases.atlas.db.command.UpdatePersonQuery;
-import il.ac.tau.cs.databases.atlas.db.command.NewCommands.GetGoResultsQuery;
-import il.ac.tau.cs.databases.atlas.db.command.NewCommands.GetNewFavoritesResultsQuery;
-import il.ac.tau.cs.databases.atlas.db.command.NewCommands.SearchResultsQuery;
 import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
 
 import java.io.File;

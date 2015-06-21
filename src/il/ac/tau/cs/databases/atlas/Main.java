@@ -1,17 +1,16 @@
 package il.ac.tau.cs.databases.atlas;
 
+import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
+import il.ac.tau.cs.databases.atlas.core.modal.User;
 import il.ac.tau.cs.databases.atlas.db.connection.ConnectionPool;
 import il.ac.tau.cs.databases.atlas.db.connection.ConnectionPoolHolder;
 import il.ac.tau.cs.databases.atlas.db.connection.DynamicConnectionPool;
 import il.ac.tau.cs.databases.atlas.db.connection.FixedConnectionPool;
 import il.ac.tau.cs.databases.atlas.db.queries.DBQueries;
 import il.ac.tau.cs.databases.atlas.db.queries.Queries;
-import il.ac.tau.cs.databases.atlas.core.modal.User;
-import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
 import il.ac.tau.cs.databases.atlas.ui.screens.LoginScreen;
 import il.ac.tau.cs.databases.atlas.ui.screens.MapScreen;
 import il.ac.tau.cs.databases.atlas.ui.screens.SplashScreen;
-import il.ac.tau.cs.databases.atlas.ui.utils.State;
 import il.ac.tau.cs.databases.atlas.ui.utils.GraphicUtils;
 
 import java.awt.Toolkit;

@@ -1,4 +1,4 @@
-package il.ac.tau.cs.databases.atlas.db.command;
+package il.ac.tau.cs.databases.atlas.db.command.oldCommands;
 
 import il.ac.tau.cs.databases.atlas.Main;
 import il.ac.tau.cs.databases.atlas.core.ResultsHolder;
