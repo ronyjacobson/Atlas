@@ -1,5 +1,7 @@
 package il.ac.tau.cs.databases.atlas.parsing;
-
+/** 
+ * TODO
+ * */
 public class YagoLocation {
     private long locationId;
     private String name;

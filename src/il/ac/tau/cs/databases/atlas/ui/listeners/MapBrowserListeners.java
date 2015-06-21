@@ -23,7 +23,9 @@ import javax.swing.JScrollBar;
 
 import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Display;
-
+/** 
+ * All listeners and interaction functions with the Map screen.
+ * */
 public class MapBrowserListeners {
 
 	protected final static Logger logger = Logger
@@ -33,7 +35,11 @@ public class MapBrowserListeners {
 	public static void setMap(MapBrowser map) {
 		MapBrowserListeners.map = map;
 	}
-
+	
+	/** 
+	 * Get the users favorites from the DB so that the map will
+	 * show users as favorites accordingly.
+	 * */
 	public static void updateFavorites() {
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
@@ -53,6 +59,9 @@ public class MapBrowserListeners {
 		});
 	}
 
+	/** 
+	 * Sends an error message to the map UI
+	 * */
 	public static class BrowserMessageActionListener implements ActionListener {
 
 		String msg;
@@ -77,6 +86,9 @@ public class MapBrowserListeners {
 		}
 	}
 
+	/** 
+	 * Go pressed (add results to map)
+	 * */
 	public static class BrowserAddMarkerActionListener implements ActionListener {
 		static boolean firstQuery = true;
 		JScrollBar timeline;
@@ -128,7 +140,10 @@ public class MapBrowserListeners {
 			}
 		}
 	}
-
+	
+	/** 
+	 * Wrapper for executing different JS functions  
+	 * */
 	public static void executeJS(final String code) {
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
@@ -140,6 +155,9 @@ public class MapBrowserListeners {
 		});
 	}
 
+	/** 
+	 * Add the markers toe the map according to the results.
+	 * */
 	public static void showResultsOnMap(final List<Result> results,
 			final String category) {
 
@@ -208,6 +226,10 @@ public class MapBrowserListeners {
 		}
 	}
 
+	/** 
+	 * Tells the browser to clear the map.
+	 * For initializing etc...
+	 * */
 	public static class BrowserDeleteMarkersActionListener implements
 			ActionListener {
 		@Override
@@ -222,6 +244,9 @@ public class MapBrowserListeners {
 		}
 	}
 
+	/** 
+	 * Edit button pressed handler
+	 * */
 	public static class UpdateListener implements ActionListener {
 
 		@Override
@@ -243,7 +268,10 @@ public class MapBrowserListeners {
 			});
 		}
 	}
-
+	
+	/** 
+	 * Stats button pressed handler
+	 * */
 	public static class BrowserShowStatsActionListner implements ActionListener {
 
 		@Override
@@ -273,7 +301,10 @@ public class MapBrowserListeners {
 		}
 
 	}
-
+	
+	/** 
+	 * Sync button pressed handler
+	 * */
 	public static class BrowserSyncFavoritesActionListener implements
 			ActionListener {
 
@@ -314,6 +345,9 @@ public class MapBrowserListeners {
 		}
 	}
 
+	/** 
+	 * Timeline relevant info getter
+	 * */
 	public static class BrowserTimespanAdjustmentListener implements
 			AdjustmentListener {
 
@@ -343,12 +377,15 @@ public class MapBrowserListeners {
 
 		}
 	}
-
+	
+	/** 
+	 * Timeline adjustment on the map
+	 * */
 	public static void setTimespan(int startYear, int endYear) {
 		logger.debug("Adjusting timeSpan...");
 		executeJS("setTimespan(" + startYear + "," + endYear + ");");
 	}
-
+	
 	public static void showSpinner() {
 		logger.info("Showing Spinner...");
 		executeJS("showSpinner();");
@@ -358,7 +395,10 @@ public class MapBrowserListeners {
 		logger.info("Hiding Spinner...");
 		executeJS("hideSpinner();");
 	}
-
+	
+	/** 
+	 * Categoty label adjustment on the map
+	 * */
 	public static void setCategory(String cat) {
 		String exec = "setCategory(\"" + cat + "\");";
 		logger.info("Adjusting category label by executing JS:" + exec);

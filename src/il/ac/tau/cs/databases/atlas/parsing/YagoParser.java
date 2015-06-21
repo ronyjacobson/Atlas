@@ -13,7 +13,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+/** 
+ * TODO
+ * */
 public class YagoParser {
     private Map<Long, YagoPerson> personsMap; // yagoId -> Person
     private Map<Long, YagoLocation> locationsMap; // locationId -> Location
@@ -198,6 +200,7 @@ public class YagoParser {
             numberOfLines++;
         }
         return numberOfLines;
+        //TODO  - paz - close br?
     }
 
     /**
