@@ -23,9 +23,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 /**
- * Created by user on 17/06/2015.
+ * View of all the current results displayed.
  */
-
 public class PersonTableScreen {
 
     public static final String[] COLUMNS = {"Name", "Sex", "Born in", "Date of Birth", "Died in", "Date of Death", "Wiki Link"};

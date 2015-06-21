@@ -35,7 +35,7 @@ import javax.swing.SwingConstants;
 import com.toedter.calendar.JDateChooser;
 
 /**
- * Create and show a add screen.
+ * Create and show search screen.
  * 
  * @throws IOException
  */
