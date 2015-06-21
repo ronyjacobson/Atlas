@@ -1,7 +1,7 @@
 package il.ac.tau.cs.databases.atlas.db.connection;
 
 /**
- * TODO
+ * A singleton for getting and setting the connection pool
  */
 public enum ConnectionPoolHolder {
     INSTANCE;

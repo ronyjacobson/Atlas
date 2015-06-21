@@ -1,7 +1,7 @@
 package il.ac.tau.cs.databases.atlas.db.connection;
 
 /**
- * TODO
+ * Constants for connection pooling
  */
 public class DriverConstants {
     public static final int MAX_NUM_OF_CONNECTIONS = 10;

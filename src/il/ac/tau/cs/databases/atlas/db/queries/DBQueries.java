@@ -374,7 +374,12 @@ public class DBQueries implements Queries {
 		return results;
 	}
 
-	/** TODO */
+
+	/**
+	 * @param fullPath
+	 * @return map of filenames to actual files
+	 * @throws AtlasServerException if the directory misses any files
+	 */
 	private Map<String, File> checkAndGetFiles(File fullPath)
 			throws AtlasServerException {
 		final File[] files = fullPath.listFiles();
