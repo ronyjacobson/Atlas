@@ -1,0 +1,80 @@
+2015-06-21 22:44:12 INFO  [main] Main:46 - Atlas started
+2015-06-21 22:44:12 INFO  [main] DBQueries:88 - Fetching GeoLocations names and Id's...
+2015-06-21 22:44:12 INFO  [main] ConnectionPool:46 - Checking out connection...
+2015-06-21 22:44:12 INFO  [main] ConnectionPool:85 - Created new connection: com.mysql.jdbc.JDBC4Connection@aeaf62
+2015-06-21 22:44:12 INFO  [main] ConnectionPool:75 - Checking out connection done.
+2015-06-21 22:44:12 INFO  [main] GetGeoLocationsQuery:29 - Executing DB query: com.mysql.jdbc.JDBC4PreparedStatement@46a697: SELECT location.geo_name,location.location_ID FROM location ORDER BY location.geo_name.
+2015-06-21 22:44:13 INFO  [main] GetGeoLocationsQuery:48 - Query executed properly.
+2015-06-21 22:44:13 INFO  [main] ConnectionPool:119 - Checking in connection...
+2015-06-21 22:44:13 INFO  [main] ConnectionPool:122 - Checking in connection done.
+2015-06-21 22:44:13 INFO  [main] DBQueries:90 - Fetching GeoLocations done.
+2015-06-21 22:44:19 INFO  [main] ConnectionPool:46 - Checking out connection...
+2015-06-21 22:44:19 INFO  [main] ConnectionPool:99 - closing connection: com.mysql.jdbc.JDBC4Connection@aeaf62
+2015-06-21 22:44:19 INFO  [main] ConnectionPool:102 - closing connection done
+2015-06-21 22:44:20 INFO  [main] ConnectionPool:85 - Created new connection: com.mysql.jdbc.JDBC4Connection@a4a92b
+2015-06-21 22:44:20 INFO  [main] ConnectionPool:75 - Checking out connection done.
+2015-06-21 22:44:20 INFO  [main] ConnectionPool:119 - Checking in connection...
+2015-06-21 22:44:20 INFO  [main] ConnectionPool:122 - Checking in connection done.
+2015-06-21 22:44:26 INFO  [AWT-EventQueue-0] DBQueries:53 - Checking for regitered user with username: RONY...
+2015-06-21 22:44:26 INFO  [AWT-EventQueue-0] ConnectionPool:46 - Checking out connection...
+2015-06-21 22:44:26 INFO  [AWT-EventQueue-0] ConnectionPool:99 - closing connection: com.mysql.jdbc.JDBC4Connection@a4a92b
+2015-06-21 22:44:26 INFO  [AWT-EventQueue-0] ConnectionPool:102 - closing connection done
+2015-06-21 22:44:27 INFO  [AWT-EventQueue-0] ConnectionPool:85 - Created new connection: com.mysql.jdbc.JDBC4Connection@ae506
+2015-06-21 22:44:27 INFO  [AWT-EventQueue-0] ConnectionPool:75 - Checking out connection done.
+2015-06-21 22:44:27 INFO  [AWT-EventQueue-0] GetUserQuery:37 - Executing DB query:
+ com.mysql.jdbc.JDBC4PreparedStatement@58b646: SELECT * FROM user WHERE username = 'RONY' .
+2015-06-21 22:44:27 INFO  [AWT-EventQueue-0] GetUserQuery:66 - Query executed properly.
+2015-06-21 22:44:27 INFO  [AWT-EventQueue-0] ConnectionPool:119 - Checking in connection...
+2015-06-21 22:44:27 INFO  [AWT-EventQueue-0] ConnectionPool:122 - Checking in connection done.
+2015-06-21 22:44:27 INFO  [AWT-EventQueue-0] DBQueries:127 - Fetching category names...
+2015-06-21 22:44:27 INFO  [AWT-EventQueue-0] ConnectionPool:46 - Checking out connection...
+2015-06-21 22:44:27 INFO  [AWT-EventQueue-0] GetCategoriesQuery:30 - Executing DB query: com.mysql.jdbc.JDBC4PreparedStatement@ad4944: SELECT * FROM category.
+2015-06-21 22:44:27 INFO  [AWT-EventQueue-0] GetCategoriesQuery:48 - Query executed properly.
+2015-06-21 22:44:27 INFO  [AWT-EventQueue-0] ConnectionPool:119 - Checking in connection...
+2015-06-21 22:44:27 INFO  [AWT-EventQueue-0] ConnectionPool:122 - Checking in connection done.
+2015-06-21 22:44:27 INFO  [AWT-EventQueue-0] DBQueries:135 - Fetching category names done.
+2015-06-21 22:44:27 ERROR [AWT-EventQueue-0] LoginScreen:418 - 
+il.ac.tau.cs.databases.atlas.ui.map.MapBrowser$BrowserException: Failed to initialise map browser.
+	at il.ac.tau.cs.databases.atlas.ui.screens.MapScreen.addComponentsToPanel(MapScreen.java:205)
+	at il.ac.tau.cs.databases.atlas.ui.screens.MapScreen.<init>(MapScreen.java:116)
+	at il.ac.tau.cs.databases.atlas.ui.screens.LoginScreen.loginSuccesful(LoginScreen.java:415)
+	at il.ac.tau.cs.databases.atlas.ui.screens.LoginScreen.access$1200(LoginScreen.java:60)
+	at il.ac.tau.cs.databases.atlas.ui.screens.LoginScreen$LoginAction.actionPerformed(LoginScreen.java:352)
+	at javax.swing.AbstractButton.fireActionPerformed(Unknown Source)
+	at javax.swing.AbstractButton$Handler.actionPerformed(Unknown Source)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(Unknown Source)
+	at javax.swing.DefaultButtonModel.setPressed(Unknown Source)
+	at javax.swing.plaf.basic.BasicButtonListener.mouseReleased(Unknown Source)
+	at java.awt.Component.processMouseEvent(Unknown Source)
+	at javax.swing.JComponent.processMouseEvent(Unknown Source)
+	at java.awt.Component.processEvent(Unknown Source)
+	at java.awt.Container.processEvent(Unknown Source)
+	at java.awt.Component.dispatchEventImpl(Unknown Source)
+	at java.awt.Container.dispatchEventImpl(Unknown Source)
+	at java.awt.Component.dispatchEvent(Unknown Source)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Unknown Source)
+	at java.awt.LightweightDispatcher.processMouseEvent(Unknown Source)
+	at java.awt.LightweightDispatcher.dispatchEvent(Unknown Source)
+	at java.awt.Container.dispatchEventImpl(Unknown Source)
+	at java.awt.Window.dispatchEventImpl(Unknown Source)
+	at java.awt.Component.dispatchEvent(Unknown Source)
+	at java.awt.EventQueue.dispatchEventImpl(Unknown Source)
+	at java.awt.EventQueue.access$400(Unknown Source)
+	at java.awt.EventQueue$3.run(Unknown Source)
+	at java.awt.EventQueue$3.run(Unknown Source)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(Unknown Source)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(Unknown Source)
+	at java.awt.EventQueue$4.run(Unknown Source)
+	at java.awt.EventQueue$4.run(Unknown Source)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(Unknown Source)
+	at java.awt.EventQueue.dispatchEvent(Unknown Source)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(Unknown Source)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(Unknown Source)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(Unknown Source)
+	at java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+	at java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+	at java.awt.EventDispatchThread.run(Unknown Source)
+2015-06-21 22:44:30 INFO  [AWT-EventQueue-0] MapScreen:106 - Closing map window
+2015-06-21 22:44:30 INFO  [AWT-EventQueue-0] ConnectionPool:127 - Closing connection pool
