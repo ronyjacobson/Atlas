@@ -11,7 +11,7 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 /** 
- * TODO
+ * The listener for the directory choosing session for files to upload to DB
  * */
 public class DBFilesUploadListner implements ActionListener {
 

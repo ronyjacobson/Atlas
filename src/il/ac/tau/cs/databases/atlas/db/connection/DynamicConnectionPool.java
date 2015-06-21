@@ -13,7 +13,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.log4j.Logger;
 
 /**
- * TODO
+ * When a connection is to be checked out, the pool check whether it contains a connection which is not expired. If there is such connection, the pool returns it.
+ * If not, the pool creates a new one.
+ * Once a connection is returned, it’s expiration time is prolonged.
  */
 public class DynamicConnectionPool implements ConnectionPool {
     
