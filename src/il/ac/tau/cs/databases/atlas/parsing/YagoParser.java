@@ -38,6 +38,11 @@ public class YagoParser {
         this.progressUpdater = progressUpdater;
     }
 
+    /**
+     * a. person is missing either a birth date/location? remove it
+     * b. person has only one of death date/location? set both to null
+     * @throws AtlasServerException
+     */
     public void validatePersonsMap() throws AtlasServerException {
         progressUpdater.resetProgress();
         long numberOfRecords = personsMap.size();
@@ -59,6 +64,12 @@ public class YagoParser {
         }
     }
 
+    /**
+     * person has no labels? remove it
+     * person was born/died in a location not in our db? remove it
+     * person has no categories? remove it
+     * @throws AtlasServerException
+     */
     public void ensureCategoriesLabelsAndLocations() throws AtlasServerException {
         progressUpdater.resetProgress();
         long numberOfRecords = personsMap.size();
@@ -90,6 +101,10 @@ public class YagoParser {
         }
     }
 
+    /**
+     * location has some missing properties? remove it
+     * @throws AtlasServerException
+     */
     public void validateLocationsMap() throws AtlasServerException {
         progressUpdater.resetProgress();
         long numberOfRecords = locationsMap.size();
@@ -106,6 +121,10 @@ public class YagoParser {
         }
     }
 
+    /**
+     * location is usused? remove it
+     * @throws AtlasServerException
+     */
     public void removeUnusedLocation() throws AtlasServerException {
         progressUpdater.resetProgress();
         long numberOfRecords = locationsMap.size();
@@ -321,7 +340,6 @@ public class YagoParser {
                 try {
                     long geoId = Long.parseLong(m.group(1));
                     geoIdToLocationIdMap.put(geoId, locationId);
-                    //ensureLocationIdToYagoLocation(locationId);
                 } catch (NumberFormatException e) {
                     continue;
                 }
