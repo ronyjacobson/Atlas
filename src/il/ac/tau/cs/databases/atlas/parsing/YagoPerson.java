@@ -3,7 +3,9 @@ package il.ac.tau.cs.databases.atlas.parsing;
 import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
-
+/** 
+ * TODO
+ * */
 public class YagoPerson {
     private long yagoId;
     private int personId;
