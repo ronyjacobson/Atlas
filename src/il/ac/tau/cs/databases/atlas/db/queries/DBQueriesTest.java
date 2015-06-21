@@ -17,7 +17,10 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-
+/**
+ * Test class for DBQueries
+ * Don't run unless you have a pre-populated DB that is suitable to the test cases.
+ * */
 public class DBQueriesTest {
 
 	DBQueries queries = new DBQueries();
@@ -33,7 +36,7 @@ public class DBQueriesTest {
 		}
 	}
 	
-	//@Test
+	@Test
 	public void isRegisteredUserTest() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
@@ -48,7 +51,7 @@ public class DBQueriesTest {
 		assertNull(queries.fetchUser(nonExistingUser));
 	}
 
-	// @Test
+	@Test
 	public void registerUserTest() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
@@ -67,7 +70,7 @@ public class DBQueriesTest {
 				nonExistingUser.getUsername());
 	}
 
-	//@Test
+	@Test
 	public void getGeoLocationsHashMapTest() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
@@ -77,7 +80,7 @@ public class DBQueriesTest {
 		assertFalse(Queries.locationsMap.isEmpty());
 	}
 
-	//@Test
+	@Test
 	public void getCategoriesTest() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
@@ -106,7 +109,7 @@ public class DBQueriesTest {
 		
 	}
 
-	// @Test
+	@Test
 	public void AddPerson() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
@@ -119,7 +122,7 @@ public class DBQueriesTest {
 		}
 	}
 
-	// @Test
+	@Test
 	public void AddFavorites() throws AtlasServerException {
 		if (tester != "Rony") {
 			return;
@@ -141,7 +144,6 @@ public class DBQueriesTest {
 			return;
 		}
 		Main.user = new User(1, "erer", "Sfsf", new Date(), Long.parseLong("5"), true);
-		@SuppressWarnings("deprecation")
 		List<Result> res = queries.getResults(new Date(0, 5, 1), new Date(200,
 				5, 1));
 		assertFalse(res.isEmpty());

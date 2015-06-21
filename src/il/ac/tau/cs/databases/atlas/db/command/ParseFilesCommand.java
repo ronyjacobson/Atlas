@@ -26,7 +26,6 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 public class ParseFilesCommand extends BaseProgressDBCommand {
     private YagoParser yagoParser;
     private Map<String, File> files;
@@ -335,22 +334,5 @@ public class ParseFilesCommand extends BaseProgressDBCommand {
         sb.append(") ON DUPLICATE KEY UPDATE ");
         sb.append(StringUtils.concatValuesWithCommas(fields));
         return sb.toString();
-    }
-
-    public static void main(String[] args) throws AtlasServerException {
-        DynamicConnectionPool dynamicConnectionPool = new DynamicConnectionPool();
-        dynamicConnectionPool.initialize("DbMysql06", "DbMysql06", "localhost", "3306", "DbMysql06");
-        ConnectionPoolHolder.INSTANCE.set(dynamicConnectionPool);
-
-        Map<String, File> files = new HashMap<>();
-        files.put(ParserConstants.YAGO_DATE_FACTS_TSV, new File("/Users/admin/Downloads/yagoDateFacts.tsv"));
-        files.put(ParserConstants.YAGO_LITERAL_FACTS_TSV, new File("/Users/admin/Downloads/yagoLiteralFacts.tsv"));
-        files.put(ParserConstants.YAGO_LABELS_TSV, new File("/Users/admin/Downloads/yagoLabels.tsv"));
-        files.put(ParserConstants.YAGO_FACTS_TSV, new File("/Users/admin/Downloads/yagoFacts.tsv"));
-        files.put(ParserConstants.YAGO_TRANSITIVE_TYPE_TSV, new File("/Users/admin/Downloads/yagoTransitiveType.tsv"));
-        files.put(ParserConstants.YAGO_WIKIPEDIA_INFO_TSV, new File("/Users/admin/Downloads/yagoWikipediaInfo.tsv"));
-        files.put(ParserConstants.YAGO_GEONAMES_ENTITY_IDS_TSV, new File("/Users/admin/Downloads/yagoGeonamesEntityIds.tsv"));
-        files.put(ParserConstants.CITIES1000_TXT, new File("/Users/admin/Downloads/cities1000.txt"));
-        new ParseFilesCommand(files).execute();
     }
 }

@@ -16,9 +16,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
-/**
- * Created by user on 22/05/2015.
- */
+
 @Deprecated
 public class SearchResultsByNameQuery extends BaseDBCommand<ArrayList<Result>> {
 	private String name;

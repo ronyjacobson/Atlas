@@ -25,8 +25,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 /**
- * Created by user on 17/06/2015.
- */
+ * TODO
+ * */
 public abstract class BaseProgressDBCommand extends BaseDBCommand<Boolean> {
     protected ProgressUpdater progressUpdater = null;
 

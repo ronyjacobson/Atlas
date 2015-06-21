@@ -16,9 +16,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-/**
- * Created by user on 22/05/2015.
- */
 
 @Deprecated
 public class SearchResultsByDatesQuery extends BaseDBCommand<ArrayList<Result>> {

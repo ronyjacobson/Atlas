@@ -104,6 +104,10 @@ public class YagoPerson {
         this.labels.add(label);
     }
 
+    /**
+     * true iff person has at least one label
+     * if was missing prefLabel, set it to the first label
+     */
     public boolean isValidPersonLabels() {
         String label = labels.iterator().next();
         if (prefLabel == null) {

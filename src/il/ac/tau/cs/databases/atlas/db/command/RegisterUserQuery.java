@@ -11,7 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Created by user on 22/05/2015.
+ * Query to register a new user to the DB. 
  */
 public class RegisterUserQuery extends BaseDBCommand<User> {
 	private User user;

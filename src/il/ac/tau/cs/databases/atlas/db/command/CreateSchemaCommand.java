@@ -13,7 +13,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * TODO
+ * A query that creates the Atlas DB schema with all the tables.
  */
 public class CreateSchemaCommand extends BaseDBCommand<Boolean> {
     @Override

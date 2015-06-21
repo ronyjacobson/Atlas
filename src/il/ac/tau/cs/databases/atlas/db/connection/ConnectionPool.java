@@ -5,7 +5,7 @@ import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
 import java.sql.Connection;
 
 /**
- * Created by user on 19/05/2015.
+ * TODO
  */
 public interface ConnectionPool {
     String dbBaseUrl = "jdbc:mysql://";

@@ -11,6 +11,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ * Queries Interface to allow different implementations for connecting with the server and sending queries.
+ * Defines all the queries needed from the database for the Atlas application.
+ */
 public interface Queries {
 	
 	// Maps between location names and id's

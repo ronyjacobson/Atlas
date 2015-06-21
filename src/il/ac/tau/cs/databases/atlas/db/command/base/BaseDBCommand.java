@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import org.apache.log4j.Logger;
 
 /**
- * Created by user on 14/05/2015.
+ * Base command for getting a connection from the thread pool and returning it for all commands.
  */
 public abstract class BaseDBCommand<T> {
     protected final Logger logger = Logger.getLogger(this.getClass().getName());

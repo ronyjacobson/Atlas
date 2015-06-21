@@ -4,9 +4,11 @@ import org.apache.log4j.Logger;
 
 
 /**
- * Created by user on 13/05/2015.
+ * An exception of the Atlas server.
+ * Thrown when Sql failed, connection failed etc...
  */
 
+@SuppressWarnings("serial")
 public class AtlasServerException extends Exception {
 
     protected static final Logger logger = Logger.getLogger(AtlasServerException.class.getName());

@@ -15,9 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Created by user on 22/05/2015.
- */
+
 @Deprecated
 public class GetFavoritesResultsQuery extends BaseDBCommand<ArrayList<Result>> {
 	private int limitNumOfResults = DBConstants.LIMIT;

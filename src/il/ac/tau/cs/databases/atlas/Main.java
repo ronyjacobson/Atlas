@@ -29,13 +29,11 @@ public class Main {
 	// DB queries object
 	public static final Queries queries = new DBQueries();
 	public static User user;
-	
-	
-	//DEBUG
-	static boolean SKIP_SPLASH=false;
+
+	// DEBUG
+	static boolean SKIP_SPLASH = false;
 	static boolean SKIP_LOGIN = false;
-	
-	
+
 	/**
 	 * Initialize the program parameters and load its state.
 	 * 
@@ -43,30 +41,28 @@ public class Main {
 	 * @param pathToConfFile
 	 */
 	private static void initialize(String pathToConfFile) throws Exception {
-		
+
 		// Get the user's screen size
 		logger.info("Atlas started");
 		GraphicUtils.screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		
+
 		// Initialize DB
 		Properties prop = readConfFile(pathToConfFile);
 		ConnectionPool connectionPool;
 		if ("dynamic".equals(prop.getProperty("connectionType"))) {
-			 connectionPool = new DynamicConnectionPool();
+			connectionPool = new DynamicConnectionPool();
 		} else {
 			connectionPool = new FixedConnectionPool();
 		}
-		connectionPool.initialize(
-				prop.getProperty("user"),
-				prop.getProperty("password"),
-				prop.getProperty("ip"),
-				prop.getProperty("port"),
-				prop.getProperty("schemaName"));
+		connectionPool.initialize(prop.getProperty("user"),
+				prop.getProperty("password"), prop.getProperty("ip"),
+				prop.getProperty("port"), prop.getProperty("schemaName"));
 		ConnectionPoolHolder.INSTANCE.set(connectionPool);
-		
+
 	}
 
-	private static Properties readConfFile(String pathToConfFile) throws AtlasServerException {
+	private static Properties readConfFile(String pathToConfFile)
+			throws AtlasServerException {
 		Properties prop = new Properties();
 		InputStream input = null;
 		boolean ok = true;
@@ -74,22 +70,22 @@ public class Main {
 		try {
 			input = new FileInputStream(pathToConfFile);
 			prop.load(input);
-			if (! prop.containsKey("user")) {
+			if (!prop.containsKey("user")) {
 				logger.error("missing 'user'");
 				ok = false;
 			}
 
-			if (! prop.containsKey("password")) {
+			if (!prop.containsKey("password")) {
 				logger.error("missing 'password'");
 				ok = false;
 			}
 
-			if (! prop.containsKey("schemaName")) {
+			if (!prop.containsKey("schemaName")) {
 				logger.error("missing 'schemaName'");
 				ok = false;
 			}
 
-			if (! prop.containsKey("ip")) {
+			if (!prop.containsKey("ip")) {
 				logger.error("missing 'ip'");
 				ok = false;
 			}
@@ -105,25 +101,30 @@ public class Main {
 			}
 
 			String connectionType = prop.getProperty("connectionType");
-			if (connectionType == null || !("dynamic".equals(connectionType.toLowerCase()) || "fixed".equals(connectionType.toLowerCase()))) {
+			if (connectionType == null
+					|| !("dynamic".equals(connectionType.toLowerCase()) || "fixed"
+							.equals(connectionType.toLowerCase()))) {
 				logger.error("'connectionType' must be either 'dynamic' or 'fixed'");
 				ok = false;
 			}
 
-			if (! ok) {
-				throw new AtlasServerException("Invalid configuration file, program will now terminate");
+			if (!ok) {
+				throw new AtlasServerException(
+						"Invalid configuration file, program will now terminate");
 			}
 
 		} catch (IOException ex) {
 			logger.error("", ex);
-			throw new AtlasServerException("Caught IOException while trying to read configuration file, program will now terminate");
+			throw new AtlasServerException(
+					"Caught IOException while trying to read configuration file, program will now terminate");
 		} finally {
 			if (input != null) {
 				try {
 					input.close();
 				} catch (IOException e) {
 					logger.error("", e);
-					throw new AtlasServerException("Caught IOException while trying to close configuration file, program will now terminate");
+					throw new AtlasServerException(
+							"Caught IOException while trying to close configuration file, program will now terminate");
 				}
 			}
 		}
@@ -140,25 +141,33 @@ public class Main {
 			if (args.length > 0) {
 				pathToConfFile = args[0];
 			}
-			
+
 			initialize(pathToConfFile);
-			
+
+			// Debug states for skipping screens
 			if (SKIP_SPLASH) {
+				logger.debug("Skipping splash screen");
 				new LoginScreen();
-			} else if (SKIP_LOGIN){
-				Main.user = new User(2,"Rony", "0000");
+			} else if (SKIP_LOGIN) {
+				logger.debug("Skipping login screen");
+				Main.user = new User(2, "user", "0000");
 				new MapScreen();
-			} else {
-				try {
-					new ArrayList<String>(Main.queries.getAllGeoLocationsNames());
-				} catch (AtlasServerException e){
-					JOptionPane.showMessageDialog(null, e.getMessage(), GraphicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
-				}
-				// Show splash screen
-				new SplashScreen();
 			}
+			
+			// Fetch locations for login screen while splash screen is shown.
+			try {
+				new ArrayList<String>(Main.queries.getAllGeoLocationsNames());
+			} catch (AtlasServerException e) {
+				JOptionPane.showMessageDialog(null, e.getMessage(),
+						GraphicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
+			}
+			
+			// Show splash screen
+			new SplashScreen();
+			
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, e.getMessage(), GraphicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, e.getMessage(),
+					GraphicUtils.PROJECT_NAME, JOptionPane.ERROR_MESSAGE);
 			logger.error("Terminating program", e);
 		}
 	}

@@ -4,9 +4,10 @@ import org.apache.log4j.Logger;
 
 
 /**
- * Created by user on 13/05/2015.
+ * Error signaling the the person one tried to add already exists.
  */
 
+@SuppressWarnings("serial")
 public class PersonExistsError extends AtlasServerException {
 
     protected static final Logger logger = Logger.getLogger(PersonExistsError.class.getName());
