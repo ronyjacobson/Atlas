@@ -345,7 +345,7 @@ public class MapBrowserListeners {
 	}
 
 	public static void setTimespan(int startYear, int endYear) {
-		logger.info("Adjusting timeSpan...");
+		logger.debug("Adjusting timeSpan...");
 		executeJS("setTimespan(" + startYear + "," + endYear + ");");
 	}
 

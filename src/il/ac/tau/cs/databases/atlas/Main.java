@@ -45,7 +45,7 @@ public class Main {
 	private static void initialize(String pathToConfFile) throws Exception {
 		
 		// Get the user's screen size
-		logger.debug("Atlas started");
+		logger.info("Atlas started");
 		GraphicUtils.screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		
 		// Initialize DB
