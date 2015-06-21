@@ -432,9 +432,6 @@ public class YagoParser {
 
             long locationId = yagoIdToHash(cols[1]);
             if ("<hasLatitude>".equals(cols[2])) {
-                if ("<Berlin>".equals(cols[1])) {
-                    System.out.println("233");
-                }
                 double latitude = Double.parseDouble(cols[4]);
                 ensureLocationIdToYagoLocation(locationId).setLatitude(latitude);
             } else if ("<hasLongitude>".equals(cols[2])) {
