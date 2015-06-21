@@ -8,7 +8,8 @@ import java.sql.ResultSet;
 import java.util.Date;
 
 /**
- * Created by user on 22/05/2015.
+ *  Query for searching the DB by name or by dates.
+ *  Designed to allow building combined searches and adding more filtering easily.
  */
 public class SearchResultsQuery extends GetResultsGeneralQuery {
 	int limitNumOfResults = DBConstants.LIMIT;
@@ -19,6 +20,7 @@ public class SearchResultsQuery extends GetResultsGeneralQuery {
 	private Date eDate;
 	private String name;
 
+	//For search by name and dates
 	public SearchResultsQuery(Date sDate, Date eDate, String name,
 			boolean isFemale, String continent) {
 		super();
@@ -27,6 +29,7 @@ public class SearchResultsQuery extends GetResultsGeneralQuery {
 		this.name = name;
 	}
 
+	//For search by dates
 	public SearchResultsQuery(Date sDate, Date eDate) {
 		super();
 		this.sDate = sDate;
@@ -34,6 +37,7 @@ public class SearchResultsQuery extends GetResultsGeneralQuery {
 		this.name = null;
 	}
 
+	//For search by name
 	public SearchResultsQuery(String name) {
 		super();
 		this.sDate = null;

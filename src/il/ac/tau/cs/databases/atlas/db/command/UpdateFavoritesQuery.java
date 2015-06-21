@@ -11,7 +11,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * Created by user on 22/05/2015.
+ * Transaction query to sync the users favorites.
+ * This query will remove or add person's to the current user's favorites as he selected.
  */
 public class UpdateFavoritesQuery extends BaseDBCommand<Void> {
 	List<String> favoritesList;

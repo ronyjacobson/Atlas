@@ -43,31 +43,38 @@ public class AddPersonQuery extends BaseDBCommand<Void> {
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 		try {
-
-			// Assert that this person does not exits
+			
+			 /** Verify that this person does not exist **/
+			// Prepare statement
 			statement = con.prepareStatement(
 					"SELECT COUNT(*) FROM "
 					+ DBConstants.Person.TABLE_NAME
 					+ " WHERE prefLabel = ?");
 			statement.setString(1, name);
 			
+			// Log sql statement
 			logger.info(String.format("Executing DB query: %s.",
 					statement.toString()));
+			
+			// Exectue statement
 			resultSet = statement.executeQuery();
+			
+			// Check if number of persons with same name is 0!
 			
 			resultSet.next();
 			if (resultSet.getInt(1) != 0) {
 				throw new PersonExistsError(name);
 			}
-			
 			statement.close();
 			resultSet.close();
 
+			 /** Prepare Transaction for inserting the person **/
 			con.setAutoCommit(false);
 			
-			// Add the new person to DB
+			// Insert to person table
 			if (deathDate == null && deathLocID == null) {
-			statement = con.prepareStatement(
+				// If this person does not have death details
+				statement = con.prepareStatement(
 					String.format("INSERT INTO %s (%s, %s, %s, %s, %s, %s) VALUES (?, ?, ?, ?, ?, ?)",
 							 DBConstants.Person.TABLE_NAME
 							 , DBConstants.WIKI_URL_L
@@ -78,6 +85,7 @@ public class AddPersonQuery extends BaseDBCommand<Void> {
 							 , DBConstants.PREF_LABEL_L)
 					, new String[]{DBConstants.Person.PERSON_ID});
 			} else {
+				// If this person has death details
 				statement = con.prepareStatement(
 						String.format("INSERT INTO %s (%s, %s, %s, %s, %s, %s, %s, %s) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 								 DBConstants.Person.TABLE_NAME
@@ -90,7 +98,6 @@ public class AddPersonQuery extends BaseDBCommand<Void> {
 								 , DBConstants.DIED_ON_DATE_L
 								 , DBConstants.DIED_IN_LOCATION_L)
 						, new String[]{DBConstants.Person.PERSON_ID});
-
 				statement.setDate(7, new java.sql.Date(deathDate.getTime()));
 				statement.setLong(8, deathLocID);
 			}
@@ -101,10 +108,14 @@ public class AddPersonQuery extends BaseDBCommand<Void> {
 			statement.setBoolean(5, isFemale);
 			statement.setString(6, name);
 			
+			// Log sql query
 			logger.info(String.format("Executing DB query: %s.",
 					statement.toString()));
 			
+			// Exectue
 			statement.executeUpdate();
+			
+			//Get generated ID for other insertions.
 			resultSet = statement.getGeneratedKeys();
 			resultSet.next();
             int genID = resultSet.getInt(1);
@@ -120,6 +131,7 @@ public class AddPersonQuery extends BaseDBCommand<Void> {
             statement.setInt(1, genID);
             statement.setString(2, name);
             
+            // Log sql query
             logger.info(String.format("Executing DB query: %s.",
 					statement.toString()));
 			statement.executeUpdate();
@@ -135,16 +147,24 @@ public class AddPersonQuery extends BaseDBCommand<Void> {
 			statement.setInt(1, categoryId);
 			statement.setInt(2, genID);
 			
+			// Log sql query
 			logger.info(String.format("Executing DB query: %s.",
 					statement.toString()));
 			statement.executeUpdate();
+			
+			// Complete transaction - commit if no errors occurred.
 			con.commit();
-
-            logger.info("Person added successfully - The generated person ID is: "+ genID);
+			logger.info("Person added successfully - The generated person ID is: "+ genID);
+			
+		
 		} catch (PersonExistsError e) {
-    			throw e;
+			logger.error("Person exists error", e);
+    		throw e;
+    			
 		} catch (SQLException e) {
+			logger.error("Sql error", e);
 			throw new AtlasServerException(e.getMessage());
+			
 		} finally {
 			safelyClose(statement, resultSet);
 			try {

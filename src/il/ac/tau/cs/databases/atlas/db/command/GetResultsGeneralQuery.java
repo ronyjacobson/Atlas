@@ -15,13 +15,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by user on 22/05/2015.
+ * Base Query for searching results.
+ * Contains the core logic for any search query.
  */
 public class GetResultsGeneralQuery extends BaseDBCommand<Map<String, Result>> {
 	PreparedStatement statement = null;
 	ResultSet resultSet = null;
 
+	// Results aggregator
 	HashMap<String, Result> results = new HashMap<>();
+	// Min-Max range of years for current search dates results
 	private int minYear = 3000;
 	private int maxYear = 0;
 
@@ -120,7 +123,10 @@ public class GetResultsGeneralQuery extends BaseDBCommand<Map<String, Result>> {
 		return results;
 
 	}
-
+	
+	/**
+	 * Set the statistics of this query to the results holder.
+	 */
 	private void setStatistics(Result result) {
 		ResultsHolder.INSTANCE.incNumOfResults();
 		if (result.isBirth()) {
@@ -168,7 +174,11 @@ public class GetResultsGeneralQuery extends BaseDBCommand<Map<String, Result>> {
 	public void setMaxYear(int maxYear) {
 		this.maxYear = maxYear;
 	}
-
+	
+	/**
+	 * Build the entire query
+	 * @returns the final query built from different stmts.
+	 */
 	protected String makeStmt() {
 		String select = makeSelectStmt();
 		String from = makeFromStmt();
@@ -177,6 +187,9 @@ public class GetResultsGeneralQuery extends BaseDBCommand<Map<String, Result>> {
 		return select + from + where + rest;
 	}
 
+	/**
+	 * Merges results that appear more than once (multiple categories).
+	 */
 	private void addToHash(String hashID, Result result,
 			HashMap<String, Result> results) {
 		Result res = results.get(hashID);
@@ -187,7 +200,10 @@ public class GetResultsGeneralQuery extends BaseDBCommand<Map<String, Result>> {
 		// Put the result or replace the existing one:
 		results.put(hashID, result);
 	}
-
+	
+	/**
+	 * Build the basic 'select' part of the query statement.
+	 */
 	protected String makeSelectStmt() {
 		return "SELECT DISTINCT \n" + "	person.person_ID, \n"
 				+ "	person.addedByUser, \n" + "	person.prefLabel, \n"
@@ -206,6 +222,10 @@ public class GetResultsGeneralQuery extends BaseDBCommand<Map<String, Result>> {
 				+ "	location.latitude AS d_latitude\n";
 	}
 
+	/**
+	 * Build the basic 'from' part of the query statement.
+	 * Commands that inherit this class will be able to add more tables by appending " , tableName"
+	 */
 	protected String makeFromStmt() {
 		return "FROM \n"
 				+ "	location b_location, \n"
@@ -217,7 +237,11 @@ public class GetResultsGeneralQuery extends BaseDBCommand<Map<String, Result>> {
 				+ "	location ON person.diedInLocation = location.location_ID \n";
 		// , EXTRA
 	}
-
+	
+	/**
+	 * Build the basic 'where' part of the query statement.
+	 * Commands that inherit this class will be able to add more tables by appending "AND (More Conditions)"
+	 */
 	protected String makeWhereStmt() {
 		return "WHERE \n"
 				+ "		person.person_ID = person_has_category.person_ID \n"
@@ -225,6 +249,10 @@ public class GetResultsGeneralQuery extends BaseDBCommand<Map<String, Result>> {
 		// AND MORE CONDITIONS
 	}
 
+	/**
+	 * Build the last part of the query statement.
+	 * Usually limit.
+	 */
 	protected String makeRestOfStmt() {
 		return "ORDER BY RAND() LIMIT " + DBConstants.LIMIT;
 	}

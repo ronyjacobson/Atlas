@@ -3,7 +3,7 @@ package il.ac.tau.cs.databases.atlas.db.command;
 import il.ac.tau.cs.databases.atlas.core.modal.Result;
 
 /**
- * Created by user on 22/05/2015.
+ * Query for searching the DB for results by categories and years.
  */
 public class GetGoResultsQuery extends GetResultsGeneralQuery {
 	int startYear;
