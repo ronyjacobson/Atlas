@@ -15,6 +15,16 @@ import org.eclipse.swt.widgets.Shell;
 public final class MapBrowser extends Canvas {
 
     /**
+     * Required for Linux, harmless for other OS.
+     * <p>
+     * <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=161911">SWT Component Not Displayed Bug</a>
+     */
+    static
+    {
+        System.setProperty("sun.awt.xembedserver", "true");
+    }
+
+    /**
      * SWT browser component reference.
      */
     private final AtomicReference<Browser> browserReference = new AtomicReference<>();
