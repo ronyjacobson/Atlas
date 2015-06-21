@@ -4,6 +4,9 @@ import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * java representation of a person record
+ */
 public class YagoPerson {
     private long yagoId;
     private int personId;
@@ -19,7 +22,6 @@ public class YagoPerson {
 
     public YagoPerson(long yagoId) {
         this.yagoId = yagoId;
-        //this.isFemale = false; // females are a minority in YAGO
         this.categories = new HashSet<>();
         this.labels = new HashSet<>();
     }

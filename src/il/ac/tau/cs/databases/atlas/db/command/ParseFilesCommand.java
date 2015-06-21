@@ -3,8 +3,6 @@ package il.ac.tau.cs.databases.atlas.db.command;
 import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
 import il.ac.tau.cs.databases.atlas.db.DBConstants;
 import il.ac.tau.cs.databases.atlas.db.command.base.BaseProgressDBCommand;
-import il.ac.tau.cs.databases.atlas.db.connection.ConnectionPoolHolder;
-import il.ac.tau.cs.databases.atlas.db.connection.DynamicConnectionPool;
 import il.ac.tau.cs.databases.atlas.parsing.ParserConstants;
 import il.ac.tau.cs.databases.atlas.parsing.YagoLocation;
 import il.ac.tau.cs.databases.atlas.parsing.YagoParser;
@@ -19,13 +17,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * run YagoParser and upload to DB
+ */
 public class ParseFilesCommand extends BaseProgressDBCommand {
     private YagoParser yagoParser;
     private Map<String, File> files;

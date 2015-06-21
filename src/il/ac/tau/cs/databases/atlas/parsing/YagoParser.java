@@ -14,6 +14,9 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * handles input files, extracts meaningful information and constructs objects to represent db records
+ */
 public class YagoParser {
     private Map<Long, YagoPerson> personsMap; // yagoId -> Person
     private Map<Long, YagoLocation> locationsMap; // locationId -> Location

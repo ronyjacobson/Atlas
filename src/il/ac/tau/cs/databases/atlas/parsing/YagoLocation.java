@@ -1,5 +1,8 @@
 package il.ac.tau.cs.databases.atlas.parsing;
 
+/**
+ * java representation of a location record
+ */
 public class YagoLocation {
     private long locationId;
     private String name;
