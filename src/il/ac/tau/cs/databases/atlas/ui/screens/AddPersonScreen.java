@@ -13,6 +13,7 @@ import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+
 @SuppressWarnings("serial")
 public class AddPersonScreen extends BaseModifyPersonScreen {
 

@@ -41,6 +41,9 @@ import javax.swing.JScrollBar;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
+/**
+ * Main application UI screen
+ * */
 public class MapScreen extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -52,7 +55,7 @@ public class MapScreen extends JFrame {
 	private static final int TIMELINE_INITIAL_VALUE = 1000;
 	public static final String DEFAULT_CATEGORY = "Choose a category...";
 	public static final String FAVORITES_CATEGORY = "Favorites";
-	private static final String GO_BUTTON = "GO!";	
+	private static final String GO_BUTTON = "GO!";
 	private static int width;
 	private static int height;
 
@@ -68,8 +71,8 @@ public class MapScreen extends JFrame {
 	private static JButton buttonAudio;
 
 	private static JButton buttonDisplayAsTable;
-	private static JScrollBar timeline = new JScrollBar(JScrollBar.HORIZONTAL, TIMELINE_INITIAL_VALUE, TIMELINE_EXTENT, TIMELINE_MIN,
-	TIMELINE_MAX);
+	private static JScrollBar timeline = new JScrollBar(JScrollBar.HORIZONTAL,
+			TIMELINE_INITIAL_VALUE, TIMELINE_EXTENT, TIMELINE_MIN, TIMELINE_MAX);
 	private final Logger log = Logger.getLogger(this.getClass().getName());
 
 	/**
@@ -101,7 +104,8 @@ public class MapScreen extends JFrame {
 			@Override
 			public void windowClosing(WindowEvent we) {
 				log.info("Closing map window");
-				final ConnectionPool connectionPool = ConnectionPoolHolder.INSTANCE.get();
+				final ConnectionPool connectionPool = ConnectionPoolHolder.INSTANCE
+						.get();
 				if (connectionPool != null) {
 					connectionPool.close();
 				}
@@ -213,17 +217,19 @@ public class MapScreen extends JFrame {
 		buttonsPanel.setOpaque(false);
 
 		// Define buttons attributes
-		Font fieldFont = new Font("Century Gothic", Font.PLAIN, GraphicUtils.FONT_SIZE_FIELD);
+		Font fieldFont = new Font("Century Gothic", Font.PLAIN,
+				GraphicUtils.FONT_SIZE_FIELD);
 		Dimension dimensionCategory = new Dimension(width / 7, height / 13);
 		Dimension dimensionGo = new Dimension(width / 15, height / 13);
-		Dimension dimensionOther = new Dimension((int) dimensionCategory.getWidth() / 3, (int) dimensionCategory.getHeight() / 2);
-
+		Dimension dimensionOther = new Dimension(
+				(int) dimensionCategory.getWidth() / 3,
+				(int) dimensionCategory.getHeight() / 2);
 
 		// Add categories combo box
 		try {
 			List<String> categories = Main.queries.getAllCategoriesNames();
 			categories.add(0, DEFAULT_CATEGORY);
-			categories.add(1,FAVORITES_CATEGORY);
+			categories.add(1, FAVORITES_CATEGORY);
 			categoriesComboBox = new JComboBox<String>(
 					categories.toArray(new String[categories.size()]));
 			categoriesComboBox.setFont(fieldFont);
@@ -247,11 +253,11 @@ public class MapScreen extends JFrame {
 		buttonDisplayAsTable.setFont(fieldFont);
 		buttonDisplayAsTable.setEnabled(false);
 		buttonsPanel.add(buttonDisplayAsTable);
-		
 
 		// Add a button for statistics
 		buttonStats = new JButton("");
-		buttonStats.setIcon(new ImageIcon(getClass().getResource(GraphicUtils.getSkin() + "Stats.png")));
+		buttonStats.setIcon(new ImageIcon(getClass().getResource(
+				GraphicUtils.getSkin() + "Stats.png")));
 		buttonStats.setPreferredSize(dimensionOther);
 		buttonStats.setFont(fieldFont);
 		buttonsPanel.add(buttonStats);
@@ -324,7 +330,8 @@ public class MapScreen extends JFrame {
 		buttonAudio
 				.addActionListener(new AudioUtils.AudioToggleActionListener());
 
-		buttonDisplayAsTable.addActionListener(new MapBrowserListeners.UpdateListener());
+		buttonDisplayAsTable
+				.addActionListener(new MapBrowserListeners.UpdateListener());
 
 		// Return the panel
 		return buttonsPanel;
@@ -333,6 +340,7 @@ public class MapScreen extends JFrame {
 	public static void setButtonDisplayAsTableEnabled() {
 		MapScreen.buttonDisplayAsTable.setEnabled(true);
 	}
+
 	public static void setButtonDisplayAsTableDisabled() {
 		MapScreen.buttonDisplayAsTable.setEnabled(false);
 	}

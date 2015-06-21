@@ -5,6 +5,7 @@ import il.ac.tau.cs.databases.atlas.db.connection.ConnectionPool;
 import il.ac.tau.cs.databases.atlas.db.connection.ConnectionPoolHolder;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 
@@ -44,6 +45,26 @@ public abstract class BaseDBCommand<T> {
                 resource.close();
             } catch (Exception e) {
             }
+        }
+    }
+
+    protected void rollback(Connection con) {
+        try {
+            logger.warn("Transaction failed! Rolling back");
+            con.rollback();
+            logger.info("Rollback Successfully :)");
+        } catch (SQLException e) {
+            logger.error("ERROR demoTransactions (when rollbacking) - " + e.getMessage());
+        }
+    }
+
+    /**
+     * Attempts to set the connection back to auto-commit, ignoring errors.
+     */
+    protected void safelyResetAutoCommit(Connection con) {
+        try {
+            con.setAutoCommit(true);
+        } catch (Exception e) {
         }
     }
 }

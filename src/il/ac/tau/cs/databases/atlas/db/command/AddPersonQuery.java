@@ -45,7 +45,6 @@ public class AddPersonQuery extends BaseDBCommand<Void> {
 		try {
 			
 			 /** Verify that this person does not exist **/
-			// Prepare statement
 			statement = con.prepareStatement(
 					"SELECT COUNT(*) FROM "
 					+ DBConstants.Person.TABLE_NAME
@@ -154,23 +153,18 @@ public class AddPersonQuery extends BaseDBCommand<Void> {
 			
 			// Complete transaction - commit if no errors occurred.
 			con.commit();
-			logger.info("Person added successfully - The generated person ID is: "+ genID);
-			
-		
+
+            logger.info("Person added successfully - The generated person ID is: "+ genID);
 		} catch (PersonExistsError e) {
 			logger.error("Person exists error", e);
-    		throw e;
-    			
+    			throw e;
 		} catch (SQLException e) {
 			logger.error("Sql error", e);
+			rollback(con);
 			throw new AtlasServerException(e.getMessage());
-			
 		} finally {
 			safelyClose(statement, resultSet);
-			try {
-				con.setAutoCommit(true);
-			} catch (Exception e) {
-			}
+			safelyResetAutoCommit(con);
 		}
 		logger.info("Query executed properly.");
 		return null;

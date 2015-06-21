@@ -200,6 +200,7 @@ public class YagoParser {
         while (br.readLine() != null) {
             numberOfLines++;
         }
+        br.close();
         return numberOfLines;
     }
 

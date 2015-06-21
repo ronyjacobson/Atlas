@@ -42,7 +42,7 @@ import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 import com.toedter.calendar.JDateChooser;
 
 /**
- * Create and show a add screen.
+ * Create and show a add or edit screen.
  * 
  * @throws IOException
  */

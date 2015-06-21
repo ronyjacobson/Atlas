@@ -70,13 +70,15 @@ public class UpdateFavoritesQuery extends BaseDBCommand<Void> {
             con.commit();
 			
 		} catch (SQLException e) {
-				e.printStackTrace();
-				throw new AtlasServerException(e.getMessage());
+			logger.error(e.getMessage());
+			rollback(con);
+			throw new AtlasServerException(e.getMessage());
 		} finally {
-			safelyClose(addStmt);
-			safelyClose(removeStmt);
+			safelyClose(addStmt, removeStmt);
+			safelyResetAutoCommit(con);
 		}
 		logger.info("Query executed properly.");
 		return null;
 	}
+
 }
