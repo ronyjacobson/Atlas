@@ -1,15 +1,19 @@
 package il.ac.tau.cs.databases.atlas.ui.screens;
 
 import il.ac.tau.cs.databases.atlas.Main;
-import il.ac.tau.cs.databases.atlas.db.DBConstants;
 import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
-import il.ac.tau.cs.databases.atlas.utils.DateUtils;
+import il.ac.tau.cs.databases.atlas.db.DBConstants;
 import il.ac.tau.cs.databases.atlas.ui.utils.GraphicUtils;
+import il.ac.tau.cs.databases.atlas.utils.DateUtils;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.*;
+import java.awt.Font;
+import java.util.Date;
 
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+@SuppressWarnings("serial")
 public class AddPersonScreen extends BaseModifyPersonScreen {
 
 	private static final String DEFAULT_CATEGORY = "Choose a category...";

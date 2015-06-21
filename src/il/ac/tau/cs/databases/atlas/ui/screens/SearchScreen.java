@@ -3,8 +3,8 @@ package il.ac.tau.cs.databases.atlas.ui.screens;
 import il.ac.tau.cs.databases.atlas.Main;
 import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
 import il.ac.tau.cs.databases.atlas.ui.listeners.MapBrowserListeners;
-import il.ac.tau.cs.databases.atlas.utils.DateUtils;
 import il.ac.tau.cs.databases.atlas.ui.utils.GraphicUtils;
+import il.ac.tau.cs.databases.atlas.utils.DateUtils;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

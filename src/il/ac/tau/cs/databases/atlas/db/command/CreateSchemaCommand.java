@@ -1,10 +1,10 @@
 package il.ac.tau.cs.databases.atlas.db.command;
 
+import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
+import il.ac.tau.cs.databases.atlas.db.command.base.BaseDBCommand;
 import il.ac.tau.cs.databases.atlas.db.connection.ConnectionPoolHolder;
 import il.ac.tau.cs.databases.atlas.db.connection.DynamicConnectionPool;
 import il.ac.tau.cs.databases.atlas.utils.ScriptRunner;
-import il.ac.tau.cs.databases.atlas.db.command.base.BaseDBCommand;
-import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

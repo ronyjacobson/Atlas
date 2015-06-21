@@ -1,11 +1,11 @@
 package il.ac.tau.cs.databases.atlas.db.command;
 
 import il.ac.tau.cs.databases.atlas.core.ResultsHolder;
-import il.ac.tau.cs.databases.atlas.db.command.base.BaseDBCommand;
-import il.ac.tau.cs.databases.atlas.db.DBConstants;
+import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
 import il.ac.tau.cs.databases.atlas.core.modal.Location;
 import il.ac.tau.cs.databases.atlas.core.modal.Result;
-import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
+import il.ac.tau.cs.databases.atlas.db.DBConstants;
+import il.ac.tau.cs.databases.atlas.db.command.base.BaseDBCommand;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

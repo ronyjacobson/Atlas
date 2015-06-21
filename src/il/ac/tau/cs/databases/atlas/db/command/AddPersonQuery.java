@@ -1,10 +1,10 @@
 package il.ac.tau.cs.databases.atlas.db.command;
 
 import il.ac.tau.cs.databases.atlas.Main;
-import il.ac.tau.cs.databases.atlas.db.command.base.BaseDBCommand;
-import il.ac.tau.cs.databases.atlas.db.DBConstants;
 import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
 import il.ac.tau.cs.databases.atlas.core.exception.PersonExistsError;
+import il.ac.tau.cs.databases.atlas.db.DBConstants;
+import il.ac.tau.cs.databases.atlas.db.command.base.BaseDBCommand;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

@@ -1,7 +1,5 @@
 package il.ac.tau.cs.databases.atlas.core.modal;
 
-import il.ac.tau.cs.databases.atlas.core.modal.Location;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

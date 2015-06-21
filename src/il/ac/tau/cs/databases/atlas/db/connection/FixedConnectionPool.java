@@ -2,7 +2,9 @@ package il.ac.tau.cs.databases.atlas.db.connection;
 
 import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;

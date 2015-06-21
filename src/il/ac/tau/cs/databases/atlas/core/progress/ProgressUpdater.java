@@ -2,8 +2,12 @@ package il.ac.tau.cs.databases.atlas.core.progress;
 
 import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
 
-import javax.swing.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.swing.JLabel;
+import javax.swing.JProgressBar;
+import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 
 /**
  * Created by user on 17/06/2015.

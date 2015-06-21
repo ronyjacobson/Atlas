@@ -1,11 +1,11 @@
 package il.ac.tau.cs.databases.atlas.db.queries;
 
 import il.ac.tau.cs.databases.atlas.Main;
+import il.ac.tau.cs.databases.atlas.core.ResultsHolder;
+import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
 import il.ac.tau.cs.databases.atlas.core.modal.Location;
 import il.ac.tau.cs.databases.atlas.core.modal.Result;
 import il.ac.tau.cs.databases.atlas.core.modal.User;
-import il.ac.tau.cs.databases.atlas.parsing.ParserConstants;
-import il.ac.tau.cs.databases.atlas.core.ResultsHolder;
 import il.ac.tau.cs.databases.atlas.db.command.AddPersonQuery;
 import il.ac.tau.cs.databases.atlas.db.command.CheckConnectivityCommand;
 import il.ac.tau.cs.databases.atlas.db.command.GetCategoriesQuery;
@@ -18,7 +18,7 @@ import il.ac.tau.cs.databases.atlas.db.command.RegisterUserQuery;
 import il.ac.tau.cs.databases.atlas.db.command.SearchResultsQuery;
 import il.ac.tau.cs.databases.atlas.db.command.UpdateFavoritesQuery;
 import il.ac.tau.cs.databases.atlas.db.command.UpdatePersonQuery;
-import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
+import il.ac.tau.cs.databases.atlas.parsing.ParserConstants;
 
 import java.io.File;
 import java.util.ArrayList;

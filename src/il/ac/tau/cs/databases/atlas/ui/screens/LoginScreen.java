@@ -1,17 +1,16 @@
 package il.ac.tau.cs.databases.atlas.ui.screens;
 
 import il.ac.tau.cs.databases.atlas.Main;
+import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
+import il.ac.tau.cs.databases.atlas.core.modal.User;
+import il.ac.tau.cs.databases.atlas.db.DBConstants;
 import il.ac.tau.cs.databases.atlas.db.connection.ConnectionPool;
 import il.ac.tau.cs.databases.atlas.db.connection.ConnectionPoolHolder;
-import il.ac.tau.cs.databases.atlas.db.DBConstants;
-import il.ac.tau.cs.databases.atlas.ui.listeners.DBFilesUploadListner;
 import il.ac.tau.cs.databases.atlas.db.queries.Queries;
-import il.ac.tau.cs.databases.atlas.core.modal.User;
-import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
-import il.ac.tau.cs.databases.atlas.ui.map.MapBrowser;
+import il.ac.tau.cs.databases.atlas.ui.listeners.DBFilesUploadListner;
 import il.ac.tau.cs.databases.atlas.ui.utils.AudioUtils;
-import il.ac.tau.cs.databases.atlas.utils.DateUtils;
 import il.ac.tau.cs.databases.atlas.ui.utils.GraphicUtils;
+import il.ac.tau.cs.databases.atlas.utils.DateUtils;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -21,7 +20,12 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,10 +47,10 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import org.apache.log4j.Logger;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 import com.toedter.calendar.JDateChooser;
-import org.apache.log4j.Logger;
 
 /**
  * Create and show a login screen.

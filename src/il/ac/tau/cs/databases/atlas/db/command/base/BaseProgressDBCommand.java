@@ -1,17 +1,28 @@
 package il.ac.tau.cs.databases.atlas.db.command.base;
 
-import il.ac.tau.cs.databases.atlas.core.progress.ProgressUpdater;
 import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
+import il.ac.tau.cs.databases.atlas.core.progress.ProgressUpdater;
 import il.ac.tau.cs.databases.atlas.ui.utils.GraphicUtils;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
 import java.sql.Connection;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 /**
  * Created by user on 17/06/2015.

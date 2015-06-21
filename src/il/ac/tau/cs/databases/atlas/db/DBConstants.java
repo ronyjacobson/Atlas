@@ -1,7 +1,6 @@
 package il.ac.tau.cs.databases.atlas.db;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 public class DBConstants {

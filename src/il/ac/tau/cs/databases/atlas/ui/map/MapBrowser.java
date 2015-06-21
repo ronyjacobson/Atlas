@@ -3,6 +3,7 @@ package il.ac.tau.cs.databases.atlas.ui.map;
 import java.awt.Canvas;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.browser.Browser;

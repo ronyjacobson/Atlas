@@ -1,13 +1,13 @@
 package il.ac.tau.cs.databases.atlas.db.command;
 
-import il.ac.tau.cs.databases.atlas.parsing.ParserConstants;
+import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
+import il.ac.tau.cs.databases.atlas.db.DBConstants;
+import il.ac.tau.cs.databases.atlas.db.command.base.BaseProgressDBCommand;
 import il.ac.tau.cs.databases.atlas.db.connection.ConnectionPoolHolder;
 import il.ac.tau.cs.databases.atlas.db.connection.DynamicConnectionPool;
-import il.ac.tau.cs.databases.atlas.db.command.base.BaseProgressDBCommand;
-import il.ac.tau.cs.databases.atlas.db.DBConstants;
-import il.ac.tau.cs.databases.atlas.parsing.YagoParser;
-import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
+import il.ac.tau.cs.databases.atlas.parsing.ParserConstants;
 import il.ac.tau.cs.databases.atlas.parsing.YagoLocation;
+import il.ac.tau.cs.databases.atlas.parsing.YagoParser;
 import il.ac.tau.cs.databases.atlas.parsing.YagoPerson;
 import il.ac.tau.cs.databases.atlas.utils.StringUtils;
 

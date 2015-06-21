@@ -1,7 +1,5 @@
 package il.ac.tau.cs.databases.atlas.ui.utils;
 
-import il.ac.tau.cs.databases.atlas.ui.utils.GraphicUtils;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

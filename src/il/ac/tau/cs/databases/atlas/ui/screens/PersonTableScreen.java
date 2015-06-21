@@ -3,17 +3,24 @@ package il.ac.tau.cs.databases.atlas.ui.screens;
 import il.ac.tau.cs.databases.atlas.core.modal.Location;
 import il.ac.tau.cs.databases.atlas.core.modal.Result;
 import il.ac.tau.cs.databases.atlas.ui.utils.GraphicUtils;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.swing.JOptionPane;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-
-import javax.swing.*;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 
 /**
  * Created by user on 17/06/2015.

@@ -1,7 +1,7 @@
 package il.ac.tau.cs.databases.atlas.db.command;
 
-import il.ac.tau.cs.databases.atlas.db.DBConstants;
 import il.ac.tau.cs.databases.atlas.core.modal.Result;
+import il.ac.tau.cs.databases.atlas.db.DBConstants;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

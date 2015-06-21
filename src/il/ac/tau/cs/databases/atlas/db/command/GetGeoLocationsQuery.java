@@ -1,8 +1,8 @@
 package il.ac.tau.cs.databases.atlas.db.command;
 
 import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
-import il.ac.tau.cs.databases.atlas.db.command.base.BaseDBCommand;
 import il.ac.tau.cs.databases.atlas.db.DBConstants;
+import il.ac.tau.cs.databases.atlas.db.command.base.BaseDBCommand;
 import il.ac.tau.cs.databases.atlas.db.queries.Queries;
 
 import java.sql.Connection;

@@ -1,13 +1,12 @@
 package il.ac.tau.cs.databases.atlas.ui.listeners;
 
 import il.ac.tau.cs.databases.atlas.Main;
+import il.ac.tau.cs.databases.atlas.core.ResultsHolder;
+import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
+import il.ac.tau.cs.databases.atlas.core.modal.Result;
+import il.ac.tau.cs.databases.atlas.ui.map.MapBrowser;
 import il.ac.tau.cs.databases.atlas.ui.screens.MapScreen;
 import il.ac.tau.cs.databases.atlas.ui.screens.PersonTableScreen;
-import il.ac.tau.cs.databases.atlas.core.ResultsHolder;
-import il.ac.tau.cs.databases.atlas.core.modal.Result;
-import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
-import il.ac.tau.cs.databases.atlas.db.DBConstants;
-import il.ac.tau.cs.databases.atlas.ui.map.MapBrowser;
 import il.ac.tau.cs.databases.atlas.ui.utils.GraphicUtils;
 
 import java.awt.event.ActionEvent;
@@ -49,8 +48,6 @@ public class MapBrowserListeners {
 						msg = "Couldnt get favorites from database.";
 						map.getBrowser().execute("showError(\"" + msg + "\");");
 					}
-				} else {
-					// TODO Show message? (Rony)
 				}
 			}
 		});
@@ -74,8 +71,6 @@ public class MapBrowserListeners {
 				public void run() {
 					if (map != null) {
 						map.getBrowser().execute("showError(\"" + msg + "\");");
-					} else {
-						// TODO Show message? (Rony)
 					}
 				}
 			});
@@ -130,8 +125,6 @@ public class MapBrowserListeners {
 				if (results != null) {
 					showResultsOnMap(results, category);
 				}
-			} else {
-				// TODO Show message? (Rony)
 			}
 		}
 	}
@@ -223,8 +216,6 @@ public class MapBrowserListeners {
 				public void run() {
 					if (map != null) {
 						map.getBrowser().execute("deleteMarkers();");
-					} else {
-						// TODO Show message? (Rony)
 					}
 				}
 			});
@@ -275,8 +266,6 @@ public class MapBrowserListeners {
 										.getStatsOfLatestResults()) + " Males";
 						hideSpinner();
 						map.getBrowser().execute("showStats(\"" + msg + "\");");
-					} else {
-						// TODO Show message? (Rony)
 					}
 				}
 			});
@@ -319,8 +308,6 @@ public class MapBrowserListeners {
 							map.getBrowser().execute("syncComplete();");
 						}
 
-					} else {
-						// TODO Show message? (Rony)
 					}
 				}
 			});
@@ -350,9 +337,7 @@ public class MapBrowserListeners {
 						int end = thisTimeline.getValue()
 								+ thisTimeline.getModel().getExtent();
 						map.getBrowser().execute("setTimespan(" + start + "," + end + ");");
-					} else {
-						// TODO Show message? (Rony)
-					}
+					} 
 				}
 			});
 

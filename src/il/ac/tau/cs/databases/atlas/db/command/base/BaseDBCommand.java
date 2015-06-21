@@ -1,11 +1,12 @@
 package il.ac.tau.cs.databases.atlas.db.command.base;
 
+import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
 import il.ac.tau.cs.databases.atlas.db.connection.ConnectionPool;
 import il.ac.tau.cs.databases.atlas.db.connection.ConnectionPoolHolder;
-import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
-import org.apache.log4j.Logger;
 
-import java.sql.*;
+import java.sql.Connection;
+
+import org.apache.log4j.Logger;
 
 /**
  * Created by user on 14/05/2015.

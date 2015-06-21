@@ -5,11 +5,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import il.ac.tau.cs.databases.atlas.Main;
+import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
 import il.ac.tau.cs.databases.atlas.core.modal.Result;
 import il.ac.tau.cs.databases.atlas.core.modal.User;
 import il.ac.tau.cs.databases.atlas.db.connection.ConnectionPoolHolder;
 import il.ac.tau.cs.databases.atlas.db.connection.DynamicConnectionPool;
-import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
 
 import java.util.ArrayList;
 import java.util.Date;

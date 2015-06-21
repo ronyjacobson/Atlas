@@ -1,9 +1,9 @@
 package il.ac.tau.cs.databases.atlas.ui.screens;
 
 import il.ac.tau.cs.databases.atlas.Main;
-import il.ac.tau.cs.databases.atlas.db.queries.Queries;
 import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
 import il.ac.tau.cs.databases.atlas.core.exception.PersonExistsError;
+import il.ac.tau.cs.databases.atlas.db.queries.Queries;
 import il.ac.tau.cs.databases.atlas.ui.listeners.MapBrowserListeners;
 import il.ac.tau.cs.databases.atlas.ui.utils.GraphicUtils;
 

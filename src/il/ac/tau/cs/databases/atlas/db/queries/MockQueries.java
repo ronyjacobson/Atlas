@@ -1,13 +1,16 @@
 package il.ac.tau.cs.databases.atlas.db.queries;
 
+import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
 import il.ac.tau.cs.databases.atlas.core.modal.Location;
 import il.ac.tau.cs.databases.atlas.core.modal.Result;
 import il.ac.tau.cs.databases.atlas.core.modal.User;
-import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 public class MockQueries implements Queries {
 	

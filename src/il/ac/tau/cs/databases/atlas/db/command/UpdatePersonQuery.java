@@ -1,11 +1,14 @@
 package il.ac.tau.cs.databases.atlas.db.command;
 
-import il.ac.tau.cs.databases.atlas.db.command.base.BaseDBCommand;
-import il.ac.tau.cs.databases.atlas.db.DBConstants;
 import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
 import il.ac.tau.cs.databases.atlas.core.exception.PersonExistsError;
+import il.ac.tau.cs.databases.atlas.db.DBConstants;
+import il.ac.tau.cs.databases.atlas.db.command.base.BaseDBCommand;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 
 public class UpdatePersonQuery extends BaseDBCommand<Void> {

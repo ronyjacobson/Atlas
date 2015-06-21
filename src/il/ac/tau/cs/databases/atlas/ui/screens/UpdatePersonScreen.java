@@ -1,18 +1,21 @@
 package il.ac.tau.cs.databases.atlas.ui.screens;
 
 import il.ac.tau.cs.databases.atlas.Main;
+import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
+import il.ac.tau.cs.databases.atlas.db.DBConstants;
 import il.ac.tau.cs.databases.atlas.db.connection.ConnectionPoolHolder;
 import il.ac.tau.cs.databases.atlas.db.connection.DynamicConnectionPool;
-import il.ac.tau.cs.databases.atlas.db.DBConstants;
-import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
-import il.ac.tau.cs.databases.atlas.utils.DateUtils;
 import il.ac.tau.cs.databases.atlas.ui.utils.GraphicUtils;
+import il.ac.tau.cs.databases.atlas.utils.DateUtils;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Font;
 import java.io.IOException;
 import java.util.Date;
 
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+@SuppressWarnings("serial")
 public class UpdatePersonScreen extends BaseModifyPersonScreen {
 
     protected int NUM_OF_COMPONENTS = 9;

@@ -1,10 +1,15 @@
 package il.ac.tau.cs.databases.atlas.parsing;
 
-import il.ac.tau.cs.databases.atlas.core.progress.ProgressUpdater;
 import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
+import il.ac.tau.cs.databases.atlas.core.progress.ProgressUpdater;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

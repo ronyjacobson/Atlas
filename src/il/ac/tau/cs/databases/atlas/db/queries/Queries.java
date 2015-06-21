@@ -1,11 +1,15 @@
 package il.ac.tau.cs.databases.atlas.db.queries;
 
+import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
 import il.ac.tau.cs.databases.atlas.core.modal.Result;
 import il.ac.tau.cs.databases.atlas.core.modal.User;
-import il.ac.tau.cs.databases.atlas.core.exception.AtlasServerException;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public interface Queries {
 	
@@ -98,7 +102,7 @@ public interface Queries {
 	public void storeFavoriteIDs(List<String> favoritesList, List<String> removeFromFavorites) throws AtlasServerException;
 	
 	/**
-	 * TODO: Rony
+	 * @return The location Id of @param locationName.
 	 */
 	public Long getLocationId(String locationName);
 

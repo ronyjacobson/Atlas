@@ -216,7 +216,6 @@ public class MapScreen extends JFrame {
 		Font fieldFont = new Font("Century Gothic", Font.PLAIN, GraphicUtils.FONT_SIZE_FIELD);
 		Dimension dimensionCategory = new Dimension(width / 7, height / 13);
 		Dimension dimensionGo = new Dimension(width / 15, height / 13);
-		Dimension dimensionStats = new Dimension((int) dimensionCategory.getWidth() / 3, (int) dimensionCategory.getHeight());
 		Dimension dimensionOther = new Dimension((int) dimensionCategory.getWidth() / 3, (int) dimensionCategory.getHeight() / 2);
 
 
