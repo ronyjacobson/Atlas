@@ -19,6 +19,8 @@ import java.util.Map;
  * Contains the core logic for any search query.
  */
 public class GetResultsGeneralQuery extends BaseDBCommand<Map<String, Result>> {
+	
+	
 	PreparedStatement statement = null;
 	ResultSet resultSet = null;
 
@@ -32,6 +34,8 @@ public class GetResultsGeneralQuery extends BaseDBCommand<Map<String, Result>> {
 	protected Map<String, Result> innerExecute(Connection con)
 			throws AtlasServerException {
 		logger.info("Generating General Results Query...");
+		ResultsHolder.INSTANCE.resetCounters();
+		
 		try {
 
 			String stmt = makeStmt();
@@ -89,8 +93,7 @@ public class GetResultsGeneralQuery extends BaseDBCommand<Map<String, Result>> {
 
 				// Set validity of result- whether show it on map or nor
 				birthResult.setValidResult(ExtraValidateResult(birthResult));
-				// Statistics:
-				setStatistics(birthResult);
+				
 
 				// Add to result set
 				addToHash("b" + personID, birthResult, results);
@@ -102,8 +105,7 @@ public class GetResultsGeneralQuery extends BaseDBCommand<Map<String, Result>> {
 					// Set validity of result- whether show it on map or nor
 					deathResult
 							.setValidResult(ExtraValidateResult(deathResult));
-					// Statistics:
-					setStatistics(deathResult);
+					
 
 					// Add to results set
 					addToHash("d" + personID, deathResult, results);
@@ -199,6 +201,8 @@ public class GetResultsGeneralQuery extends BaseDBCommand<Map<String, Result>> {
 		if (res != null) {
 			// Update summary
 			result.setSummary(result.getCategory() + ", " + res.getSummary());
+		} else {
+			setStatistics(result);
 		}
 		// Put the result or replace the existing one:
 		results.put(hashID, result);
