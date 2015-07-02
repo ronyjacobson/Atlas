@@ -128,6 +128,9 @@ public class GetResultsGeneralQuery extends BaseDBCommand<Map<String, Result>> {
 	 * Set the statistics of this query to the results holder.
 	 */
 	private void setStatistics(Result result) {
+		if (!result.isValidResult()) {
+			return;
+		}
 		ResultsHolder.INSTANCE.incNumOfResults();
 		if (result.isBirth()) {
 			ResultsHolder.INSTANCE.incNumOfBirths();
