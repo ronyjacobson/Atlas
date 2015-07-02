@@ -2,6 +2,7 @@ package il.ac.tau.cs.databases.atlas.parsing;
 
 import java.sql.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -111,7 +112,8 @@ public class YagoPerson {
      * if was missing prefLabel, set it to the first label
      */
     public boolean isValidPersonLabels() {
-        String label = labels.iterator().next();
+        final Iterator<String> iterator = labels.iterator();
+        String label = iterator.hasNext() ? iterator.next() : null;
         if (prefLabel == null) {
             prefLabel = label;
         }
